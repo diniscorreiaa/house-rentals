@@ -101,4 +101,40 @@ class LinearRegressionTest {
         println(err)
         assertTrue(err < 0.05) // small error on normalized scale
     }
+
+    // ===============================
+    // 4. New tests for each
+    // ===============================
+
+        @Test
+        fun `scale with single value should have delta 0`(){
+            val scale = Scale(listOf(10.0))
+            assertEquals(0.0, scale.delta, 1e-9)
+            assertTrue(scale.normalize(10.0).isNaN())
+        }
+
+        @Test
+        fun `scale to compute correct delta`() {
+            val scale = Scale(listOf(2.0, 6.0, 10.0))
+            assertEquals(8.0, scale.delta, 1e-9)
+        }
+
+        @Test
+        fun `params plus should do correct sum`() {
+            val p1 = Params(1.0, 2.0)
+            val p2 = Params(3.0, 4.0)
+            val result = p1 + p2
+
+            assertEquals(4.0, result.w, 1e-9)
+            assertEquals(6.0, result.b, 1e-9)
+    }
+
+        @Test
+        fun `train should change initial parameters`() {
+            val (_, _, data) = houses.normalize()
+            val params = train(data, epochs = 1000, lr = 0.05)
+
+
+            assertTrue(params.w != 0.0 || params.b != 0.0) //um deles não deve continuar a 0.0
+    }
 }
