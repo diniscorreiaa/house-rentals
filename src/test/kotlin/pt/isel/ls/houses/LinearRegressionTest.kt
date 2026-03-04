@@ -132,7 +132,7 @@ class LinearRegressionTest {
         @Test
         fun `train should change initial parameters`() {
             val (_, _, data) = houses.normalize()
-            val params = train(data, epochs = 1000, lr = 0.05)
+            val params = train(data, epochs = 1000, lr = 0.05) //train data
 
 
             assertTrue(params.w != 0.0 || params.b != 0.0) //um deles não deve continuar a 0.0
