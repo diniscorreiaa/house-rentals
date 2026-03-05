@@ -5,6 +5,9 @@ import org.postgresql.ds.PGSimpleDataSource
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+// Isto mostra alguns dos métodos de prepareStatement em java, mas é praticamente igual ao kotlin,
+// depois vejam: https://www.geeksforgeeks.org/java/how-to-use-preparedstatement-in-java/
+
 class AppDbTest {
 
     val dataSource = PGSimpleDataSource()
@@ -39,4 +42,22 @@ class AppDbTest {
         }
     }
 
+    // O teste está funcional, mas neste momento só dá para correr 1 vez, é preciso anular a inserção no final se não dá erro de duplicação.
+    @Test
+    fun `insert a new student`() {
+        dataSource.setURL(jdbcDatabaseURL)
+
+        dataSource.getConnection().use {
+            val st = it.prepareStatement("INSERT INTO students(number, name, course) VALUES (?, ?, ?)")
+            st.setInt(1, 99999)
+            st.setString(2, "teste")
+            st.setInt(3, 1)
+
+            val result = st.executeUpdate()
+
+            assertEquals(1, result) // Retorna nº de rows inseridas
+
+            //TODO: Find way to remove the insertion after test execution, thought about DELETE operation but is it right to use another SQL operation for this?
+        }
+    }
 }
