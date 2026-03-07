@@ -42,12 +42,12 @@ class AppDbTest {
         }
     }
 
-    // O teste está funcional, mas neste momento só dá para correr 1 vez, é preciso anular a inserção no final se não dá erro de duplicação.
     @Test
     fun `insert a new student`() {
         dataSource.setURL(jdbcDatabaseURL)
 
         dataSource.getConnection().use {
+            it.autoCommit = false
             val st = it.prepareStatement("INSERT INTO students(number, name, course) VALUES (?, ?, ?)")
             st.setInt(1, 99999)
             st.setString(2, "teste")
@@ -57,7 +57,8 @@ class AppDbTest {
 
             assertEquals(1, result) // Retorna nº de rows inseridas
 
-            //TODO: Find way to remove the insertion after test execution, thought about DELETE operation but is it right to use another SQL operation for this?
+            it.rollback()
+            it.autoCommit = true
         }
     }
 }
