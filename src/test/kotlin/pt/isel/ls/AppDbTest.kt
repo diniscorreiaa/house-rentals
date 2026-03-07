@@ -61,4 +61,23 @@ class AppDbTest {
             it.autoCommit = true
         }
     }
+
+    @Test
+    fun `update student`() {
+        dataSource.setURL(jdbcDatabaseURL)
+
+        dataSource.getConnection().use {
+            it.autoCommit = false
+            val st = it.prepareStatement("UPDATE students SET name = ? WHERE number = ?")
+            st.setString(1, "Alice -updated-")
+            st.setInt(2, 12345)
+
+            val result = st.executeUpdate()
+
+            assertEquals(1, result)
+
+            it.rollback()
+            it.autoCommit = true
+        }
+    }
 }
