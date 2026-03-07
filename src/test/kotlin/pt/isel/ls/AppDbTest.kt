@@ -80,4 +80,22 @@ class AppDbTest {
             it.autoCommit = true
         }
     }
+
+    @Test
+    fun `delete student`() {
+        dataSource.setURL(jdbcDatabaseURL)
+
+        dataSource.getConnection().use {
+            it.autoCommit = false
+            val st = it.prepareStatement("DELETE FROM students WHERE number = ?")
+            st.setInt(1, 12345)
+
+            val result = st.executeUpdate()
+
+            assertEquals(1, result)
+
+            it.rollback()
+            it.autoCommit = true
+        }
+    }
 }
