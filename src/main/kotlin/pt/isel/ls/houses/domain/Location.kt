@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Location(
-    val lid: Int, //unique identifier for the location
+    val idLocation: Int, //unique identifier for the location
     val name: String,
     val type: LocationType,
     val parentLocation: Int?
