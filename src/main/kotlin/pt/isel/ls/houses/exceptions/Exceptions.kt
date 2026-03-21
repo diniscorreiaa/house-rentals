@@ -16,3 +16,5 @@ class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist"
 class BookingDoesNotExist : HttpException(Status.NOT_FOUND, "Booking does not exist")
 
 class InvalidDate : HttpException(Status.BAD_REQUEST, "Invalid date")
+
+class InternalError : HttpException(Status.INTERNAL_SERVER_ERROR, "Internal error exception")
