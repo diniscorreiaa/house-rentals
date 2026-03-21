@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDateTime
 
 @Serializable
 data class Booking(
-    val idBooking: Int,
+    val bid: Int,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
     val userId: Int,
