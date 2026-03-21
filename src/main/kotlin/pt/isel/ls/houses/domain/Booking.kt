@@ -1,4 +1,13 @@
 package pt.isel.ls.houses.domain
 
-class Booking {
-}
+import kotlinx.serialization.Serializable
+import kotlinx.datetime.LocalDateTime
+
+@Serializable
+data class Booking(
+    val idBooking: Int,
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime,
+    val userId: Int,
+    val houseId: Int
+)
