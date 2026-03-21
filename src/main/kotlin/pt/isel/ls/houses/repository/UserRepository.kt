@@ -6,7 +6,7 @@ import kotlin.uuid.Uuid
 
 interface UserRepository {
     @OptIn(ExperimentalUuidApi::class)
-    fun createUser(name: String, email: String, token: Uuid): User
+    fun createUser(name: String, email: String): User
     fun getUser(uid: Int): User?
     fun getUserByEmail(email: String): User?
 }
