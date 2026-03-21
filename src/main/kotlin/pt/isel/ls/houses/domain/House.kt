@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class House(
-    val idHouse: Int, //unique identifier for the house
+    val idHouse: Int,
     val title: String,
     val location: Int,
     val area: Double,
