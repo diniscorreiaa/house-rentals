@@ -12,6 +12,7 @@ class UserDoesNotExist : HttpException(Status.NOT_FOUND, "User does not exist")
 class LocationDoesNotExist : HttpException(Status.NOT_FOUND, "Location does not exist")
 
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
+class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")
 
 class BookingDoesNotExist : HttpException(Status.NOT_FOUND, "Booking does not exist")
 
