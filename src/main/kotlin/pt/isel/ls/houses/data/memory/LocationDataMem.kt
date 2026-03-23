@@ -7,8 +7,8 @@ import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.repository.LocationRepository
 
 class LocationDataMem : LocationRepository {
-    val locations = LocationType.entries.associateWith { mutableListOf<Location>() } // TODO: Set???
-    var id = 1
+    private val locations = LocationType.entries.associateWith { mutableListOf<Location>() } // TODO: Set???
+    private var id = 1
 
     override fun createLocation(
         name: String,

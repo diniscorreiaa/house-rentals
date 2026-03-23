@@ -9,10 +9,10 @@ import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.DataRepository
 
 class DataMem: DataRepository {
-    val user = UserDataMem()
-    val location = LocationDataMem()
-    val house = HouseDataMem()
-    val booking = BookingDataMem(house)
+    private val user = UserDataMem()
+    private val location = LocationDataMem()
+    private val house = HouseDataMem()
+    private val booking = BookingDataMem(house)
 
     override fun createBooking(
         hid: Int,

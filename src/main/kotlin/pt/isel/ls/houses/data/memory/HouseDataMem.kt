@@ -4,8 +4,8 @@ import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.repository.HouseRepository
 
 class HouseDataMem: HouseRepository {
-    val houses = mutableListOf<House>()
-    var id = 1
+    private val houses = mutableListOf<House>()
+    private var id = 1
 
     override fun createHouse(
         title: String,

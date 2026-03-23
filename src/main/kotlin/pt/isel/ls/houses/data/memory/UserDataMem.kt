@@ -7,8 +7,8 @@ import kotlin.uuid.Uuid
 
 
 class UserDataMem : UserRepository {
-    val users = mutableListOf<User>()
-    var id = 1
+    private val users = mutableListOf<User>()
+    private var id = 1
 
     @OptIn(ExperimentalUuidApi::class)
     override fun createUser(name: String, email: String): User {

@@ -6,8 +6,8 @@ import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.repository.BookingRepository
 
 class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository {
-    val bookings = mutableListOf<Booking>()
-    var id = 1
+    private val bookings = mutableListOf<Booking>()
+    private var id = 1
 
     override fun createBooking(
         hid: Int,
@@ -33,6 +33,6 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
         endDate: LocalDateTime
     ): List<House> {
          val hIds = bookings.filter { it.startDate > endDate || it.endDate < startDate}.map { it.houseId }
-         return houseDataMem.houses.filter { it.hid in hIds }
+         return houseDataMem.getHouses().filter { it.hid in hIds }
      }
 }
