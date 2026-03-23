@@ -9,9 +9,8 @@ class UserServices(
     private val usersRepository: UserRepository
 ) {
     fun createUser(name: String, email: String): User {
-        if(usersRepository.getUserByEmail(email) != null) {
-            throw UserEmailAlreadyExists()
-        }
+        if (usersRepository.getUserByEmail(email) != null) throw UserEmailAlreadyExists()
+
         val user = usersRepository.createUser(name, email)
         return user
     }

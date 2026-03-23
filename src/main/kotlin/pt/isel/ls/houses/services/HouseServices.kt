@@ -10,18 +10,13 @@ class HouseServices(
     private val houseRepository: HouseRepository,
     private val locationRepository: LocationRepository
 ) {
-    fun createHouse(title: String, location: Int, areaSqMt: Double, pricePerNight: Double, description: String): House{
-        if (locationRepository.getLocation(location) == null) {
-            throw LocationDoesNotExist()
-        }
+    fun createHouse(title: String, location: Int, areaSqMt: Double, pricePerNight: Double, description: String): House {
+        if (locationRepository.getLocation(location) == null) throw LocationDoesNotExist()
+
         return houseRepository.createHouse(title, location, areaSqMt, pricePerNight, description)
     }
 
-    fun getHouse(hid: Int): House{
-        return houseRepository.getHouse(hid) ?: throw HouseDoesNotExist()
-    }
+    fun getHouse(hid: Int) = houseRepository.getHouse(hid) ?: throw HouseDoesNotExist()
 
-    fun getHouses(): List<House>{
-        return houseRepository.getHouses()
-    }
+    fun getHouses() = houseRepository.getHouses()
 }

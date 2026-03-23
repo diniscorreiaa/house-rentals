@@ -14,40 +14,29 @@ class BookingServices(
     val bookingRepository: BookingRepository,
     val houseRepository: HouseRepository
 ) {
-    fun createBooking(hid: Int, startDate: LocalDateTime, endDate: LocalDateTime): Booking{
-        if (startDate >= endDate) {
-            throw InvalidDate()
-        }
-        if (houseRepository.getHouse(hid) == null) {
-            throw HouseDoesNotExist()
-        }
-        val overlapBooking = bookingRepository.getBookings(hid, startDate,endDate)
-        if (overlapBooking.isNotEmpty()) {
-            throw HouseIsNotAvailable()
-        }
+    fun createBooking(hid: Int, startDate: LocalDateTime, endDate: LocalDateTime): Booking {
+        if (startDate >= endDate) throw InvalidDate()
+        if (houseRepository.getHouse(hid) == null) throw HouseDoesNotExist()
+
+        val overlapBooking = bookingRepository.getBookings(hid, startDate, endDate)
+
+        if (overlapBooking.isNotEmpty()) throw HouseIsNotAvailable()
+
         return bookingRepository.createBooking(hid, startDate, endDate)
     }
 
-    fun getBooking(bid: Int): Booking {
-        return bookingRepository.getBooking(bid) ?: throw BookingDoesNotExist()
-    }
+    fun getBooking(bid: Int) = bookingRepository.getBooking(bid) ?: throw BookingDoesNotExist()
 
     fun getBookings(hid: Int, startDate: LocalDateTime, endDate: LocalDateTime): List<Booking> {
-        if (startDate >= endDate) {
-            throw InvalidDate()
-        }
+        if (startDate >= endDate) throw InvalidDate()
 
-        if (houseRepository.getHouse(hid) == null) {
-            throw HouseDoesNotExist()
-        }
+        if (houseRepository.getHouse(hid) == null) throw HouseDoesNotExist()
 
         return bookingRepository.getBookings(hid, startDate, endDate)
     }
 
     fun getAvailableHouses(startDate: LocalDateTime, endDate: LocalDateTime): List<House> {
-        if (startDate >= endDate) {
-            throw InvalidDate()
-        }
+        if (startDate >= endDate) throw InvalidDate()
         return bookingRepository.getAvailableHouses(startDate, endDate)
     }
 }

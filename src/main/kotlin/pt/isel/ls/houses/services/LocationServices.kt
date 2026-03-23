@@ -9,9 +9,7 @@ class LocationServices(
     private val locationsRepository: LocationRepository
 ) {
     fun createLocation(name: String, type: LocationType, parentId: Int?): Location {
-        if (parentId != null) {
-            getLocation(parentId)
-        }
+        if (parentId != null) getLocation(parentId)
         return locationsRepository.createLocation(name, type, parentId)
     }
 
@@ -20,16 +18,12 @@ class LocationServices(
     }
 
     fun getChildLocations(lid: Int): List<Location> {
-        if (locationsRepository.getLocation(lid) == null) {
-            throw LocationDoesNotExist()
-        }
+        if (locationsRepository.getLocation(lid) == null) throw LocationDoesNotExist()
         return locationsRepository.getChildLocations(lid)
     }
 
     fun getHierarchy(lid: Int): List<Location> {
-        if (locationsRepository.getLocation(lid) == null) {
-            throw LocationDoesNotExist()
-        }
+        if (locationsRepository.getLocation(lid) == null) throw LocationDoesNotExist()
         return locationsRepository.getHierarchy(lid)
     }
 }
