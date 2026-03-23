@@ -26,7 +26,7 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
         hid: Int,
         startDate: LocalDateTime,
         endDate: LocalDateTime
-    ): List<Booking> = bookings
+    ): List<Booking> = bookings.filter { it.houseId == hid && (it.startDate >= startDate && it.endDate <= endDate) }
 
      override fun getAvailableHouses(
         startDate: LocalDateTime,
