@@ -1,4 +1,4 @@
-package pt.isel.ls.houses.data
+package pt.isel.ls.houses.data.memory
 
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.UserRepository

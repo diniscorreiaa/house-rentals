@@ -1,4 +1,4 @@
-package pt.isel.ls.houses.data
+package pt.isel.ls.houses.data.memory
 
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.repository.HouseRepository
@@ -22,5 +22,4 @@ class HouseDataMem: HouseRepository {
     override fun getHouse(hid: Int): House? = houses.find { it.hid == hid }
 
     override fun getHouses(): List<House> = houses
-
 }
