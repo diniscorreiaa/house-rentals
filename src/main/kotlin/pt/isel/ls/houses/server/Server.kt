@@ -38,7 +38,8 @@ const val SERVER_PORT = 8000
 
 fun main() {
     val userRoutes = routes(
-        "users" bind POST to ::createUser, "users/{uid}" bind GET to ::getUser
+        "users" bind POST to ::createUser,
+        "users/{uid}" bind GET to ::getUser
     )
 
     val locationRoutes = routes(
@@ -56,8 +57,8 @@ fun main() {
 
     val bookingRoutes = routes(
         "bookings" bind POST to ::createBooking,
-        "bookings/{bid}" bind GET to ::getBooking1,
-        "bookings?{hid}&{date-interval}" bind GET to ::getBooking2,
+        "bookings/{bid}" bind GET to ::getBooking,
+        "bookings?{hid}&{date-interval}" bind GET to ::getBookings,
         "houses/available?{startDate}&{endDate}" bind GET to ::getAvailableHouses,
     )
 
