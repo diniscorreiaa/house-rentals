@@ -6,7 +6,8 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.UserDataMem
-import pt.isel.ls.houses.exceptions.UserDoesNotExist
+import pt.isel.ls.houses.exceptions.InvalidIdentifier
+import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.services.UserServices
 import pt.isel.ls.houses.webapi.dtos.CreateUserIn
 import pt.isel.ls.houses.webapi.dtos.CreateUserOut
@@ -26,7 +27,11 @@ class UserWebApi {
     }
 
     fun getUser(request: Request): Response {
-        val userId = request.path("uid")?.toIntOrNull() ?: throw UserDoesNotExist()
+        val userId = request.path("uid").let {
+            it ?: throw RequiredPathParamNotFound("uid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("uid")
+        }
+
         val getUser = userServices.getUser(userId)
         return Response(OK)
             .header("content-type", "application/json")
