@@ -58,8 +58,8 @@ fun main() {
     val bookingRoutes = routes(
         "bookings" bind POST to ::createBooking,
         "bookings/{bid}" bind GET to ::getBooking,
-        "bookings?{hid}&{date-interval}" bind GET to ::getBookings,
-        "houses/available?{startDate}&{endDate}" bind GET to ::getAvailableHouses,
+        "bookings?{hid}&{date-interval}" bind GET to ::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
+        "houses/available?{startDate}&{endDate}" bind GET to ::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
     )
 
     val app = routes(
