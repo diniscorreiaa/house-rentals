@@ -26,7 +26,7 @@ class BookingWebApi {
 
     fun createBooking(request: Request): Response {
         val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
-        val newBooking = bookingServices.createBooking(booking.bid, booking.startDate, booking.endDate)
+        val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))

@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 
 /////////// Input ///////////
 
-data class CreateBookingIn(val bid: Int, val startDate: LocalDateTime, val endDate: LocalDateTime)
+data class CreateBookingIn(val hid: Int, val startDate: LocalDateTime, val endDate: LocalDateTime)
 
 /////////// Output ///////////
 
