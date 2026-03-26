@@ -9,8 +9,7 @@ import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
-import pt.isel.ls.houses.exceptions.PathParamNotFound
-import pt.isel.ls.houses.exceptions.InvalidDate
+import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
 import pt.isel.ls.houses.exceptions.WrongFormatDate
 import pt.isel.ls.houses.exceptions.WrongSeparatorDate
 import pt.isel.ls.houses.services.BookingServices
@@ -42,17 +41,17 @@ class BookingWebApi {
     }
 
     fun getBookings(request: Request): Response {
-        val houseId = request.path("hid")?.toIntOrNull() ?: throw BookingDoesNotExist() // TODO: De certeza que faz sentido ser passado no path???
-        val fullDate = request.path("date-interval").let { intervalStr ->
-            if (intervalStr == null) throw PathParamNotFound("date-interval")
+        val houseId = request.query("hid")?.toIntOrNull() ?: throw BookingDoesNotExist() // TODO: De certeza que faz sentido ser passado no path???
+        val interval = request.query("date-interval").let { intervalStr ->
+            if (intervalStr == null) throw RequiredQueryParamNotFound("date-interval")
             intervalStr.intervalToDates().let {
                 if (it == null) throw WrongSeparatorDate(intervalStr)
                 it
             }
         }
 
-        val startDate = fullDate.startDate
-        val endDate = fullDate.endDate
+        val startDate = interval.startDate
+        val endDate = interval.endDate
 
         val bookings = bookingServices.getBookings(houseId, startDate, endDate)
 
@@ -62,9 +61,22 @@ class BookingWebApi {
     }
 
     fun getAvailableHouses(request: Request): Response {
-        val fullDate = request.path("date-interval")?.split(":")?.map { LocalDateTime.parse(it) } ?: throw InvalidDate() // Assumi que no path vinha intervalo (ver TODO em Server)
-        val startDate = fullDate.first()
-        val endDate = fullDate.last()
+        val startDate = request.query("startDate").let { dateStr ->
+            if (dateStr == null) throw RequiredQueryParamNotFound("startDate")
+            parseDateOrNull(dateStr).let { date ->
+                if (date == null) throw WrongFormatDate(dateStr)
+                date
+            }
+        }
+
+        val endDate = request.query("endDate").let { dateStr ->
+            if (dateStr == null) throw RequiredQueryParamNotFound("endDate")
+            parseDateOrNull(dateStr).let { date ->
+                if (date == null) throw WrongFormatDate(dateStr)
+                date
+            }
+        }
+
         val available = bookingServices.getAvailableHouses(startDate, endDate)
         return Response(OK)
             .header("content-type", "application/json")
