@@ -14,7 +14,7 @@ import pt.isel.ls.houses.repository.HouseRepository
 class BookingServices(
     private val data: DataRepository
 ) {
-    fun createBooking(hid: Int, startDate: LocalDateTime, endDate: LocalDateTime): Booking {
+    fun createBooking(hid: Int, uid: Int, startDate: LocalDateTime, endDate: LocalDateTime): Booking {
         if (startDate >= endDate) throw InvalidDate()
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
@@ -22,7 +22,7 @@ class BookingServices(
 
         if (overlapBooking.isNotEmpty()) throw HouseIsNotAvailable()
 
-        return data.createBooking(hid, startDate, endDate)
+        return data.createBooking(hid, uid, startDate, endDate)
     }
 
     fun getBooking(bid: Int) = data.getBooking(bid) ?: throw BookingDoesNotExist()
