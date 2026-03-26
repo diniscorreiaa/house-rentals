@@ -1,32 +1,58 @@
 package pt.isel.ls.houses.webapi
 
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
+import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
+import pt.isel.ls.houses.exceptions.BookingDoesNotExist
+import pt.isel.ls.houses.exceptions.InvalidDate
 import pt.isel.ls.houses.services.BookingServices
+import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
+import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
+import pt.isel.ls.houses.webapi.dtos.GetBookingOut
+import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 
 class BookingWebApi {
-    private val bookingWebApi = BookingServices(BookingDataMem(HouseDataMem()), HouseDataMem())
+    private val bookingServices = BookingServices(BookingDataMem(HouseDataMem()), HouseDataMem())
 
     fun createBooking(request: Request): Response {
-
+        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
+        val newBooking = bookingServices.createBooking(booking.bid, booking.startDate, booking.endDate)
         return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))
     }
 
     fun getBooking(request: Request): Response {
-
+        val bookingId = request.path("bid")?.toIntOrNull() ?: throw BookingDoesNotExist()
+        val booking = bookingServices.getBooking(bookingId)
         return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(GetBookingOut(booking.startDate, booking.endDate, booking.userId, booking.houseId)))
     }
 
     fun getBookings(request: Request): Response {
-
+        val houseId = request.path("hid")?.toIntOrNull() ?: throw BookingDoesNotExist() // TODO: De certeza que faz sentido ser passado no path???
+        val fullDate = request.path("date-interval")?.split(":")?.map { LocalDateTime.parse(it) } ?: throw InvalidDate() // Assumi que o separador é ':'
+        val startDate = fullDate.first()
+        val endDate = fullDate.last()
+        val bookings = bookingServices.getBookings(houseId, startDate, endDate)
         return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(bookings.map{ GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
     }
 
     fun getAvailableHouses(request: Request): Response {
-
+        val fullDate = request.path("date-interval")?.split(":")?.map { LocalDateTime.parse(it) } ?: throw InvalidDate() // Assumi que no path vinha intervalo (ver TODO em Server)
+        val startDate = fullDate.first()
+        val endDate = fullDate.last()
+        val available = bookingServices.getAvailableHouses(startDate, endDate)
         return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(available.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
     }
 }
