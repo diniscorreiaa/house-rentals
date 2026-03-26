@@ -7,6 +7,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.HouseDataMem
 import pt.isel.ls.houses.data.memory.LocationDataMem
+import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
@@ -25,7 +26,11 @@ class HouseWebApi {
     }
 
     fun getHouse(request: Request): Response {
-        val houseId = request.path("hid")?.toIntOrNull() ?: throw RequiredPathParamNotFound("hid")
+        val houseId = request.path("hid").let {
+            it ?: throw RequiredPathParamNotFound("hid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("hid")
+        }
+
         val house = houseServices.getHouse(houseId)
         return Response(OK)
             .header("content-type", "application/json")

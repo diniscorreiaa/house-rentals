@@ -8,6 +8,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
+import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
 import pt.isel.ls.houses.exceptions.WrongFormatDate
@@ -33,7 +34,10 @@ class BookingWebApi {
     }
 
     fun getBooking(request: Request): Response {
-        val bookingId = request.path("bid")?.toIntOrNull() ?: throw RequiredPathParamNotFound("bid")
+        val bookingId = request.path("bid").let{
+            it ?: throw RequiredPathParamNotFound("bid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("bid")
+        }
         val booking = bookingServices.getBooking(bookingId)
         return Response(OK)
             .header("content-type", "application/json")
@@ -41,13 +45,14 @@ class BookingWebApi {
     }
 
     fun getBookings(request: Request): Response {
-        val houseId = request.query("hid")?.toIntOrNull() ?: throw RequiredQueryParamNotFound("hid") // TODO: De certeza que faz sentido ser passado no path???
+        // TODO: De certeza que faz sentido ser passado no path???
+        val houseId = request.query("hid").let {
+            it ?:  throw RequiredQueryParamNotFound("hid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("hid")
+        }
         val interval = request.query("date-interval").let { intervalStr ->
-            if (intervalStr == null) throw RequiredQueryParamNotFound("date-interval")
-            intervalStr.intervalToDates().let {
-                if (it == null) throw WrongSeparatorDate(intervalStr)
-                it
-            }
+            intervalStr ?: throw RequiredQueryParamNotFound("date-interval")
+            intervalStr.intervalToDates() ?: throw WrongSeparatorDate(intervalStr)
         }
 
         val startDate = interval.startDate
@@ -61,20 +66,14 @@ class BookingWebApi {
     }
 
     fun getAvailableHouses(request: Request): Response {
-        val startDate = request.query("startDate").let { dateStr ->
-            if (dateStr == null) throw RequiredQueryParamNotFound("startDate")
-            parseDateOrNull(dateStr).let { date ->
-                if (date == null) throw WrongFormatDate(dateStr)
-                date
-            }
+        val startDate = request.query("startDate").let {
+            it ?: throw RequiredQueryParamNotFound("startDate")
+            parseDateOrNull(it) ?: throw WrongFormatDate(it)
         }
 
-        val endDate = request.query("endDate").let { dateStr ->
-            if (dateStr == null) throw RequiredQueryParamNotFound("endDate")
-            parseDateOrNull(dateStr).let { date ->
-                if (date == null) throw WrongFormatDate(dateStr)
-                date
-            }
+        val endDate = request.query("endDate").let {
+            it ?: throw RequiredQueryParamNotFound("endDate")
+            parseDateOrNull(it) ?: throw WrongFormatDate(it)
         }
 
         val available = bookingServices.getAvailableHouses(startDate, endDate)
