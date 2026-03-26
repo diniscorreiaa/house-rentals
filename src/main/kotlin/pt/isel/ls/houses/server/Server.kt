@@ -37,29 +37,34 @@ get /houses/available?{startDate}&{endDate}
 const val SERVER_PORT = 8000
 
 fun main() {
+    val userWebApi = UserWebApi()
+    val locationWebApi = LocationWebApi()
+    val houseWebApi = HouseWebApi()
+    val bookingWebApi = BookingWebApi()
+
     val userRoutes = routes(
-        "users" bind POST to ::createUser,
-        "users/{uid}" bind GET to ::getUser
+        "users" bind POST to userWebApi::createUser,
+        "users/{uid}" bind GET to userWebApi::getUser
     )
 
     val locationRoutes = routes(
-        "locations" bind POST to ::createLocation,
-        "locations/{lid}" bind GET to ::getLocation,
-        "locations/{lid}/children" bind GET to ::getChildLocations,
-        "locations/{lid}/full" bind GET to ::getHierarchy,
+        "locations" bind POST to locationWebApi::createLocation,
+        "locations/{lid}" bind GET to locationWebApi::getLocation,
+        "locations/{lid}/children" bind GET to locationWebApi::getChildLocations,
+        "locations/{lid}/full" bind GET to locationWebApi::getHierarchy,
     )
 
     val houseRoutes = routes(
-        "houses" bind POST to ::createHouse,
-        "houses/{hid}" bind GET to ::getHouse,
-        "houses" bind GET to ::getHouses,
+        "houses" bind POST to houseWebApi::createHouse,
+        "houses/{hid}" bind GET to houseWebApi::getHouse,
+        "houses" bind GET to houseWebApi::getHouses,
     )
 
     val bookingRoutes = routes(
-        "bookings" bind POST to ::createBooking,
-        "bookings/{bid}" bind GET to ::getBooking,
-        "bookings?{hid}&{date-interval}" bind GET to ::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
-        "houses/available?{startDate}&{endDate}" bind GET to ::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
+        "bookings" bind POST to bookingWebApi::createBooking,
+        "bookings/{bid}" bind GET to bookingWebApi::getBooking,
+        "bookings?{hid}&{date-interval}" bind GET to bookingWebApi::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
+        "houses/available?{startDate}&{endDate}" bind GET to bookingWebApi::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
     )
 
     val app = routes(
