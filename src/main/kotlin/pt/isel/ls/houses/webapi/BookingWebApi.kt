@@ -9,12 +9,18 @@ import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
+import pt.isel.ls.houses.exceptions.PathParamNotFound
 import pt.isel.ls.houses.exceptions.InvalidDate
+import pt.isel.ls.houses.exceptions.WrongFormatDate
+import pt.isel.ls.houses.exceptions.WrongSeparatorDate
 import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
 import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
+import java.time.format.DateTimeParseException
+
+const val INTERVAL_DELIMITER = ':'
 
 class BookingWebApi {
     private val bookingServices = BookingServices(BookingDataMem(HouseDataMem()), HouseDataMem())
@@ -37,10 +43,19 @@ class BookingWebApi {
 
     fun getBookings(request: Request): Response {
         val houseId = request.path("hid")?.toIntOrNull() ?: throw BookingDoesNotExist() // TODO: De certeza que faz sentido ser passado no path???
-        val fullDate = request.path("date-interval")?.split(":")?.map { LocalDateTime.parse(it) } ?: throw InvalidDate() // Assumi que o separador é ':'
-        val startDate = fullDate.first()
-        val endDate = fullDate.last()
+        val fullDate = request.path("date-interval").let { intervalStr ->
+            if (intervalStr == null) throw PathParamNotFound("date-interval")
+            intervalStr.intervalToDates().let {
+                if (it == null) throw WrongSeparatorDate(intervalStr)
+                it
+            }
+        }
+
+        val startDate = fullDate.startDate
+        val endDate = fullDate.endDate
+
         val bookings = bookingServices.getBookings(houseId, startDate, endDate)
+
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(bookings.map{ GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
@@ -54,5 +69,25 @@ class BookingWebApi {
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(available.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
+    }
+}
+
+private class Interval(val startDate: LocalDateTime, val endDate: LocalDateTime)
+
+// TODO: refactor later
+private fun String.intervalToDates(): Interval? {
+    val split = this.split(INTERVAL_DELIMITER)
+    if (split.size != 2) return null
+
+    val start = parseDateOrNull(split.first()) ?: throw WrongFormatDate(split.first())
+    val end = parseDateOrNull(split.last()) ?: throw WrongFormatDate(split.last())
+    return Interval(start, end)
+}
+
+private fun parseDateOrNull(date: String): LocalDateTime? {
+    return try {
+        LocalDateTime.parse(date)
+    } catch (_: DateTimeParseException) {
+        null
     }
 }
