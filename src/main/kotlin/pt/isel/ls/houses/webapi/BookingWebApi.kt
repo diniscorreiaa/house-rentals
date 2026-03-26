@@ -8,7 +8,7 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
-import pt.isel.ls.houses.exceptions.BookingDoesNotExist
+import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
 import pt.isel.ls.houses.exceptions.WrongFormatDate
 import pt.isel.ls.houses.exceptions.WrongSeparatorDate
@@ -33,7 +33,7 @@ class BookingWebApi {
     }
 
     fun getBooking(request: Request): Response {
-        val bookingId = request.path("bid")?.toIntOrNull() ?: throw BookingDoesNotExist()
+        val bookingId = request.path("bid")?.toIntOrNull() ?: throw RequiredPathParamNotFound("bid")
         val booking = bookingServices.getBooking(bookingId)
         return Response(OK)
             .header("content-type", "application/json")
@@ -41,7 +41,7 @@ class BookingWebApi {
     }
 
     fun getBookings(request: Request): Response {
-        val houseId = request.query("hid")?.toIntOrNull() ?: throw BookingDoesNotExist() // TODO: De certeza que faz sentido ser passado no path???
+        val houseId = request.query("hid")?.toIntOrNull() ?: throw RequiredQueryParamNotFound("hid") // TODO: De certeza que faz sentido ser passado no path???
         val interval = request.query("date-interval").let { intervalStr ->
             if (intervalStr == null) throw RequiredQueryParamNotFound("date-interval")
             intervalStr.intervalToDates().let {

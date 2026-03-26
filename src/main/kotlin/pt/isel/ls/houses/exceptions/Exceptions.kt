@@ -18,7 +18,8 @@ class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not availab
 class BookingDoesNotExist : HttpException(Status.NOT_FOUND, "Booking does not exist")
 
 class InvalidDate : HttpException(Status.BAD_REQUEST, "Invalid date")
-class RequiredQueryParamNotFound(pathParamName: String) : HttpException(Status.BAD_REQUEST, "Did not find required query parameter $pathParamName")
+class RequiredQueryParamNotFound(queryParamName: String) : HttpException(Status.BAD_REQUEST, "Did not find required query parameter $queryParamName")
+class RequiredPathParamNotFound(pathParamName: String) : HttpException(Status.BAD_REQUEST, "Did not find required path parameter $pathParamName")
 class WrongFormatDate(date: String) : HttpException(Status.BAD_REQUEST, "Invalid date: $date\nPlease use the format yy-mm-dd")
 class WrongSeparatorDate(interval: String) : HttpException(Status.BAD_REQUEST, "Invalid interval: $interval\nPlease use $INTERVAL_DELIMITER to separate the intervals")
 class InternalError : HttpException(Status.INTERNAL_SERVER_ERROR, "Internal error exception")
