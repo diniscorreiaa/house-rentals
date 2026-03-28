@@ -22,7 +22,7 @@ import java.time.format.DateTimeParseException
 
 const val INTERVAL_DELIMITER = ':'
 
-class BookingWebApi(val bookingServices: BookingServices) {
+class BookingWebApi(private val bookingServices: BookingServices) {
 
     fun createBooking(request: Request): Response {
         val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())

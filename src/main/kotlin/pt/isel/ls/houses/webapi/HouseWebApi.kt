@@ -14,7 +14,7 @@ import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
 import pt.isel.ls.houses.webapi.dtos.CreateHouseOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 
-class HouseWebApi(val houseServices: HouseServices) {
+class HouseWebApi(private val houseServices: HouseServices) {
 
     fun createHouse(request: Request): Response {
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())

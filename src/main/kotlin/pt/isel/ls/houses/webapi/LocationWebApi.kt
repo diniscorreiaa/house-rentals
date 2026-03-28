@@ -15,7 +15,7 @@ import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
 import pt.isel.ls.houses.webapi.dtos.CreateLocationOut
 import pt.isel.ls.houses.webapi.dtos.GetLocationOut
 
-class LocationWebApi(val locationServices: LocationServices) {
+class LocationWebApi(private val locationServices: LocationServices) {
 
     fun createLocation(request: Request): Response {
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
