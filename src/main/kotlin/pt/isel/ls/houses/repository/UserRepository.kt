@@ -9,4 +9,6 @@ interface UserRepository {
     fun createUser(name: String, email: String): User
     fun getUser(uid: Int): User?
     fun getUserByEmail(email: String): User?
+    @OptIn(ExperimentalUuidApi::class)
+    fun getUserByToken(token: Uuid) : User?
 }

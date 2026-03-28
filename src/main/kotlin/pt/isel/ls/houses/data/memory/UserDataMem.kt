@@ -22,4 +22,7 @@ class UserDataMem : UserRepository {
 
     override fun getUserByEmail(email: String): User? = users.find { it.email == email }
 
+    @OptIn(ExperimentalUuidApi::class)
+    override fun getUserByToken(token: Uuid): User? = users.find { it.token == token }
+
 }

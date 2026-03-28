@@ -5,6 +5,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
+import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.data.memory.UserDataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
@@ -14,10 +15,11 @@ import pt.isel.ls.houses.webapi.dtos.CreateUserOut
 import pt.isel.ls.houses.webapi.dtos.GetUserOut
 import kotlin.uuid.ExperimentalUuidApi
 
-class UserWebApi(private val userServices: UserServices) {
+class UserWebApi(private val userServices: UserServices, private val data: DataMem) {
 
     @OptIn(ExperimentalUuidApi::class)
     fun createUser(request: Request): Response {
+        verifyAndGetAuth(request, data)
         val user = Json.decodeFromString<CreateUserIn>(request.bodyString())
         val newUser = userServices.createUser(user.name, user.email)
         return Response(OK)

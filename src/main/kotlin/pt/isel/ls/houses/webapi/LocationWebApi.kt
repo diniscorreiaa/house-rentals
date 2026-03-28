@@ -6,6 +6,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.lens.Invalid
 import org.http4k.routing.path
+import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.data.memory.LocationDataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
@@ -15,9 +16,10 @@ import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
 import pt.isel.ls.houses.webapi.dtos.CreateLocationOut
 import pt.isel.ls.houses.webapi.dtos.GetLocationOut
 
-class LocationWebApi(private val locationServices: LocationServices) {
+class LocationWebApi(private val locationServices: LocationServices, private val data: DataMem) {
 
     fun createLocation(request: Request): Response {
+        verifyAndGetAuth(request, data)
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
         val newLocation = locationServices.createLocation(location.name, location.type, location.parentLocation)
         return Response(OK)
