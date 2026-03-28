@@ -7,6 +7,8 @@ import pt.isel.ls.houses.domain.Location
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.DataRepository
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class DataMem: DataRepository {
     private val user = UserDataMem()
@@ -63,5 +65,8 @@ class DataMem: DataRepository {
     override fun getUser(uid: Int): User? = user.getUser(uid)
 
     override fun getUserByEmail(email: String): User? = user.getUserByEmail(email)
+
+    @OptIn(ExperimentalUuidApi::class)
+    override fun getUserByToken(token: Uuid): User? = user.getUserByToken(token)
 
 }

@@ -7,6 +7,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.BookingDataMem
+import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.data.memory.HouseDataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
@@ -19,14 +20,17 @@ import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 import java.time.format.DateTimeParseException
+import kotlin.uuid.ExperimentalUuidApi
 
 const val INTERVAL_DELIMITER = ':'
 
-class BookingWebApi(private val bookingServices: BookingServices) {
+class BookingWebApi(private val bookingServices: BookingServices, private val data: DataMem) {
 
+    @OptIn(ExperimentalUuidApi::class)
     fun createBooking(request: Request): Response {
+        val user = verifyAndGetAuth(request, data)
         val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
-        val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate)
+        val newBooking = bookingServices.createBooking(booking.hid, user.uid, booking.startDate, booking.endDate)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))

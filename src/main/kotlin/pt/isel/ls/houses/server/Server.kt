@@ -41,7 +41,7 @@ const val SERVER_PORT = 8000
 fun main() {
     val data = DataMem()
     val services = Services(data)
-    val webApi = WebApi(services)
+    val webApi = WebApi(services, data)
 
 
     val userRoutes = routes(
@@ -64,9 +64,9 @@ fun main() {
 
     val bookingRoutes = routes(
         "bookings" bind POST to webApi.booking::createBooking,
+        "bookings?{hid}&{date-interval}" bind GET to webApi.booking::getBookings,
         "bookings/{bid}" bind GET to webApi.booking::getBooking,
-        "bookings?{hid}&{date-interval}" bind GET to webApi.booking::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
-        "houses/available?{startDate}&{endDate}" bind GET to webApi.booking::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
+        "houses/available?{startDate}&{endDate}" bind GET to webApi.booking::getAvailableHouses,
     )
 
     val app = routes(
