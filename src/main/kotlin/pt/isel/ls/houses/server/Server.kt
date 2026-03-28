@@ -6,6 +6,8 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import pt.isel.ls.houses.data.memory.DataMem
+import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.*
 
 
@@ -37,34 +39,34 @@ get /houses/available?{startDate}&{endDate}
 const val SERVER_PORT = 8000
 
 fun main() {
-    val userWebApi = UserWebApi()
-    val locationWebApi = LocationWebApi()
-    val houseWebApi = HouseWebApi()
-    val bookingWebApi = BookingWebApi()
+    val data = DataMem()
+    val services = Services(data)
+    val webApi = WebApi(services)
+
 
     val userRoutes = routes(
-        "users" bind POST to userWebApi::createUser,
-        "users/{uid}" bind GET to userWebApi::getUser
+        "users" bind POST to webApi.user::createUser,
+        "users/{uid}" bind GET to webApi.user::getUser
     )
 
     val locationRoutes = routes(
-        "locations" bind POST to locationWebApi::createLocation,
-        "locations/{lid}" bind GET to locationWebApi::getLocation,
-        "locations/{lid}/children" bind GET to locationWebApi::getChildLocations,
-        "locations/{lid}/full" bind GET to locationWebApi::getHierarchy,
+        "locations" bind POST to webApi.location::createLocation,
+        "locations/{lid}" bind GET to webApi.location::getLocation,
+        "locations/{lid}/children" bind GET to webApi.location::getChildLocations,
+        "locations/{lid}/full" bind GET to webApi.location::getHierarchy,
     )
 
     val houseRoutes = routes(
-        "houses" bind POST to houseWebApi::createHouse,
-        "houses/{hid}" bind GET to houseWebApi::getHouse,
-        "houses" bind GET to houseWebApi::getHouses,
+        "houses" bind POST to webApi.house::createHouse,
+        "houses/{hid}" bind GET to webApi.house::getHouse,
+        "houses" bind GET to webApi.house::getHouses,
     )
 
     val bookingRoutes = routes(
-        "bookings" bind POST to bookingWebApi::createBooking,
-        "bookings/{bid}" bind GET to bookingWebApi::getBooking,
-        "bookings?{hid}&{date-interval}" bind GET to bookingWebApi::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
-        "houses/available?{startDate}&{endDate}" bind GET to bookingWebApi::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
+        "bookings" bind POST to webApi.booking::createBooking,
+        "bookings/{bid}" bind GET to webApi.booking::getBooking,
+        "bookings?{hid}&{date-interval}" bind GET to webApi.booking::getBookings, // TODO: NAO FAZ SENTIDO TER bookings/{bid} num endpoint e bookings/{hid} noutro, temos de ser consistentes com o formato do path. hid deve ser passado no body (seletor html)!!! (ACHO EU) - Confirmar
+        "houses/available?{startDate}&{endDate}" bind GET to webApi.booking::getAvailableHouses, // TODO: Não faz sentido um URI ter date interval e o outro startDate e endDate separados
     )
 
     val app = routes(
