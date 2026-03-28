@@ -14,8 +14,7 @@ import pt.isel.ls.houses.webapi.dtos.CreateUserOut
 import pt.isel.ls.houses.webapi.dtos.GetUserOut
 import kotlin.uuid.ExperimentalUuidApi
 
-class UserWebApi {
-    private val userServices = UserServices(UserDataMem())
+class UserWebApi(private val userServices: UserServices) {
 
     @OptIn(ExperimentalUuidApi::class)
     fun createUser(request: Request): Response {
