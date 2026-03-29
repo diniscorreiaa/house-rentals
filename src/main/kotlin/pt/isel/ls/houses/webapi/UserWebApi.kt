@@ -19,7 +19,6 @@ class UserWebApi(private val userServices: UserServices, private val data: DataM
 
     @OptIn(ExperimentalUuidApi::class)
     fun createUser(request: Request): Response {
-        verifyAndGetAuth(request, data)
         val user = Json.decodeFromString<CreateUserIn>(request.bodyString())
         val newUser = userServices.createUser(user.name, user.email)
         return Response(OK)
