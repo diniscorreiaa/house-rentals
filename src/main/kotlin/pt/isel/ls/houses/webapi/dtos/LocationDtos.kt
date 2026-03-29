@@ -1,14 +1,16 @@
 package pt.isel.ls.houses.webapi.dtos
 
+import kotlinx.serialization.Serializable
 import pt.isel.ls.houses.domain.LocationType
 
 /////////// Input ///////////
-
+@Serializable
 data class CreateLocationIn(val name: String, val type: LocationType, val parentLocation: Int?)
 
 
 /////////// Output ///////////
-
+@Serializable
 data class CreateLocationOut(val lid: Int)
 
+@Serializable
 data class GetLocationOut(val name: String, val type: LocationType)
