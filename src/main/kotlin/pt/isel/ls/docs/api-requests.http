@@ -1,0 +1,35 @@
+@api = http://localhost:8000/
+@accept-content = application/json
+
+### Create user
+POST {{api}}/users
+Content-Type: {{accept-content}}
+
+{
+    "name": "22",
+    "email": "dummy@example.com"
+}
+
+### 400, user with this email alread exists
+POST {{api}}/users
+Content-Type: {{accept-content}}
+
+{
+    "name": "dummy",
+    "email": "dummy@example.com"
+}
+
+### 400, user with this email alread exists
+POST {{api}}/users
+Content-Type: {{accept-content}}
+
+{
+    "name": "dummier",
+    "email": "dummy@example.com"
+}
+
+### Get user
+GET {{api}}/users/1
+
+### 404, user doesn't exist
+GET {{api}}//users/2
