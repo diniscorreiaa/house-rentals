@@ -8,7 +8,7 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
-import pt.isel.ls.houses.webapi.*
+import pt.isel.ls.houses.webapi.WebApi
 
 
 /*
@@ -43,7 +43,6 @@ fun main() {
     val services = Services(data)
     val webApi = WebApi(services, data)
 
-
     val userRoutes = routes(
         "users" bind POST to webApi.user::createUser,
         "users/{uid}" bind GET to webApi.user::getUser
@@ -69,9 +68,11 @@ fun main() {
         "houses/available?{startDate}&{endDate}" bind GET to webApi.booking::getAvailableHouses,
     )
 
-    val app = routes(
+    routes(
         userRoutes, locationRoutes, houseRoutes, bookingRoutes
-    ).asServer(Jetty(SERVER_PORT)).start().also { println("Started server on port $SERVER_PORT") }
+    ).withFilter(filter).asServer(Jetty(SERVER_PORT)).start().also {
+        println("Started server on port $SERVER_PORT")
+    }
 
 
 }
