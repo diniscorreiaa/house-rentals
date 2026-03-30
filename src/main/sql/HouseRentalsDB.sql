@@ -31,7 +31,7 @@ CREATE TABLE HOUSE (
     "Location" int NOT NULL,
     "Area" double precision NOT NULL,
     "Price" double precision NOT NULL,
-    "Description" text,
+    "Description" text NOT NULL,
     CONSTRAINT PK_HOUSE PRIMARY KEY ("IdHouse"),
     CONSTRAINT FK_HOUSE_LOCATION
         FOREIGN KEY ("Location")
@@ -40,11 +40,10 @@ CREATE TABLE HOUSE (
 
 CREATE TABLE BOOKING (
     "IdBooking" int GENERATED ALWAYS AS IDENTITY,
-    "StartDate" date,
-    "EndDate" date,
+    "StartDate" date NOT NULL,
+    "EndDate" date NOT NULL,
     "IdUser" int NOT NULL,
     "IdHouse" int NOT NULL,
-    "Description" text,
     CONSTRAINT PK_BOOKING PRIMARY KEY ("IdBooking"),
     CONSTRAINT FK_BOOKING_IDUSER
         FOREIGN KEY ("IdUser")
