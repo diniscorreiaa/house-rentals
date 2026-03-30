@@ -32,7 +32,7 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
         startDate: LocalDate,
         endDate: LocalDate
     ): List<House> {
-         val hIds = bookings.filter { it.startDate > endDate || it.endDate < startDate}.map { it.houseId }
-         return houseDataMem.getHouses().filter { it.hid in hIds }
+         val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate}.map { it.houseId }
+         return houseDataMem.getHouses().filter { it.hid !in occupiedHIds }
      }
 }
