@@ -52,17 +52,11 @@ class DataPostgresSQL: DataRepository {
         areaSqMt: Double,
         pricePerNight: Double,
         description: String
-    ): House {
-        TODO("Not yet implemented")
-    }
+    ): House = house.createHouse(title, location, areaSqMt, pricePerNight, description)
 
-    override fun getHouse(hid: Int): House? {
-        TODO("Not yet implemented")
-    }
+    override fun getHouse(hid: Int): House? = house.getHouse(hid)
 
-    override fun getHouses(): List<House> {
-        TODO("Not yet implemented")
-    }
+    override fun getHouses(): List<House> = house.getHouses()
 
     override fun createLocation(
         name: String,
