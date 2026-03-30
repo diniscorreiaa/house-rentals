@@ -6,6 +6,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import pt.isel.ls.houses.data.db.DataPostgresSQL
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.*
@@ -39,6 +40,7 @@ get /houses/available?{startDate}&{endDate}
 const val SERVER_PORT = 8000
 
 fun main() {
+    //val data = DataPostgresSQL()
     val data = DataMem()
     val services = Services(data)
     val webApi = WebApi(services, data)
