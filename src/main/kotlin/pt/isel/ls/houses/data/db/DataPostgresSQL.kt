@@ -1,6 +1,6 @@
 package pt.isel.ls.houses.data.db
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
@@ -23,8 +23,8 @@ class DataPostgresSQL: DataRepository {
     override fun createBooking(
         hid: Int,
         userId: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ) = TODO()
 
     override fun getBooking(bid: Int): Booking? {
@@ -33,15 +33,15 @@ class DataPostgresSQL: DataRepository {
 
     override fun getBookings(
         hid: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<Booking> {
         TODO("Not yet implemented")
     }
 
     override fun getAvailableHouses(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<House> {
         TODO("Not yet implemented")
     }

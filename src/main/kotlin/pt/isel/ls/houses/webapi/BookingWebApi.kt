@@ -1,6 +1,6 @@
 package pt.isel.ls.houses.webapi
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -86,7 +86,7 @@ class BookingWebApi(private val bookingServices: BookingServices, private val da
     }
 }
 
-private class Interval(val startDate: LocalDateTime, val endDate: LocalDateTime)
+private class Interval(val startDate: LocalDate, val endDate: LocalDate)
 
 // TODO: refactor later
 private fun String.intervalToDates(): Interval? {
@@ -98,9 +98,9 @@ private fun String.intervalToDates(): Interval? {
     return Interval(start, end)
 }
 
-private fun parseDateOrNull(date: String): LocalDateTime? {
+private fun parseDateOrNull(date: String): LocalDate? {
     return try {
-        LocalDateTime.parse(date)
+        LocalDate.parse(date)
     } catch (_: DateTimeParseException) {
         null
     }
