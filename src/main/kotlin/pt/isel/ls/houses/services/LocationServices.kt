@@ -14,9 +14,7 @@ class LocationServices(
         return data.createLocation(name, type, parentId)
     }
 
-    fun getLocation(lid: Int): Location {
-        return data.getLocation(lid) ?: throw LocationDoesNotExist()
-    }
+    fun getLocation(lid: Int) = data.getLocation(lid) ?: throw LocationDoesNotExist()
 
     fun getChildLocations(lid: Int): List<Location> {
         if (data.getLocation(lid) == null) throw LocationDoesNotExist()
