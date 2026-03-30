@@ -7,5 +7,5 @@ data class Location(
     val lid: Int,
     val name: String,
     val type: LocationType,
-    val parentLocation: Int?
+    val parentLocation: Int?    // TODO: rename to parentId (gonna affect datamem and datapostgres)
 )
