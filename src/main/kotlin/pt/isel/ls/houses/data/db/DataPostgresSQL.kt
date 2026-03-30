@@ -18,33 +18,27 @@ class DataPostgresSQL: DataRepository {
     private val user = UserDataPostgresql(dataSource)
     private val location = LocationDataPostgresql(dataSource)
     private val house = HouseDataPostgresql(dataSource)
-    private val booking = BookingDataPostgresql(dataSource, house)
+    private val booking = BookingDataPostgresql(dataSource)
 
     override fun createBooking(
         hid: Int,
         userId: Int,
         startDate: LocalDate,
         endDate: LocalDate
-    ) = TODO()
+    ) = booking.createBooking(hid, userId, startDate, endDate)
 
-    override fun getBooking(bid: Int): Booking? {
-        TODO("Not yet implemented")
-    }
+    override fun getBooking(bid: Int): Booking? = booking.getBooking(bid)
 
     override fun getBookings(
         hid: Int,
         startDate: LocalDate,
         endDate: LocalDate
-    ): List<Booking> {
-        TODO("Not yet implemented")
-    }
+    ): List<Booking> = booking.getBookings(hid, startDate, endDate)
 
     override fun getAvailableHouses(
         startDate: LocalDate,
         endDate: LocalDate
-    ): List<House> {
-        TODO("Not yet implemented")
-    }
+    ): List<House> = booking.getAvailableHouses(startDate, endDate)
 
     override fun createHouse(
         title: String,
