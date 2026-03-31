@@ -6,14 +6,12 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
-import pt.isel.ls.houses.data.memory.BookingDataMem
-import pt.isel.ls.houses.data.memory.DataMem
-import pt.isel.ls.houses.data.memory.HouseDataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
 import pt.isel.ls.houses.exceptions.WrongFormatDate
 import pt.isel.ls.houses.exceptions.WrongSeparatorDate
+import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
 import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
@@ -24,7 +22,7 @@ import kotlin.uuid.ExperimentalUuidApi
 
 const val INTERVAL_DELIMITER = ':'
 
-class BookingWebApi(private val bookingServices: BookingServices, private val data: DataMem) {
+class BookingWebApi(private val bookingServices: BookingServices, private val data: DataRepository) {
 
     @OptIn(ExperimentalUuidApi::class)
     fun createBooking(request: Request): Response {

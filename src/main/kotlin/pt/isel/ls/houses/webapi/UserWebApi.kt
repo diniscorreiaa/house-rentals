@@ -9,13 +9,14 @@ import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.data.memory.UserDataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
+import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.UserServices
 import pt.isel.ls.houses.webapi.dtos.CreateUserIn
 import pt.isel.ls.houses.webapi.dtos.CreateUserOut
 import pt.isel.ls.houses.webapi.dtos.GetUserOut
 import kotlin.uuid.ExperimentalUuidApi
 
-class UserWebApi(private val userServices: UserServices, private val data: DataMem) {
+class UserWebApi(private val userServices: UserServices, private val data: DataRepository) {
 
     @OptIn(ExperimentalUuidApi::class)
     fun createUser(request: Request): Response {
