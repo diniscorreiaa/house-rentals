@@ -65,13 +65,14 @@ fun main() {
 
     val bookingRoutes = routes(
         "bookings" bind POST to webApi.booking::createBooking,
-        "bookings?{hid}&{date-interval}" bind GET to webApi.booking::getBookings,
+        "bookings" bind GET to webApi.booking::getBookings,
         "bookings/{bid}" bind GET to webApi.booking::getBooking,
-        "houses/available?{startDate}&{endDate}" bind GET to webApi.booking::getAvailableHouses,
+        "houses/available" bind GET to webApi.booking::getAvailableHouses,
     )
 
+    // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}
     routes(
-        userRoutes, locationRoutes, houseRoutes, bookingRoutes
+        userRoutes, locationRoutes, bookingRoutes, houseRoutes,
     ).withFilter(filter).asServer(Jetty(SERVER_PORT)).start().also {
         println("Started server on port $SERVER_PORT")
     }

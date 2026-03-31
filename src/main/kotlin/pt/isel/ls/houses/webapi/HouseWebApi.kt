@@ -19,7 +19,7 @@ class HouseWebApi(private val houseServices: HouseServices, private val data: Da
     fun createHouse(request: Request): Response {
         verifyAndGetAuth(request, data)
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())
-        val newHouse = houseServices.createHouse(house.title, house.location, house.area, house.price, house.description)
+        val newHouse = houseServices.createHouse(house.title, house.location, house.areaSqMt, house.pricePerNight, house.description)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateHouseOut(newHouse.hid)))

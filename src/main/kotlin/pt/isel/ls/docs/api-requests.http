@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = e68f0b96-0fdb-40a4-8b3e-6915be461840
+@token = 3cb2e707-dbc9-455a-bf7a-0a3fd383bc1b
 
 // User Management
 
@@ -138,3 +138,72 @@ GET {{api}}/locations/3/children
 
 ### Get full hierarchical path
 GET {{api}}/locations/4/full
+
+
+// House Management
+
+### Create house
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T2 com vista para o rio",
+    "location": 4,
+    "areaSqMt": 80,
+    "pricePerNight": 141,
+    "description": "Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
+}
+
+### Create house
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T3 Moradia independente",
+    "location": 4,
+    "areaSqMt": 88,
+    "pricePerNight": 300,
+    "description": "T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos"
+}
+
+### Get house
+GET {{api}}/houses/1
+
+### Get house
+GET {{api}}/houses
+
+
+// Booking Management
+
+### Create booking
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "hid": 1,
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-12"
+}
+
+### Create booking
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "hid": 2,
+    "startDate": "2025-12-02",
+    "endDate": "2025-12-11"
+}
+
+### Get booking
+GET {{api}}/bookings/2
+
+### Get bookings for interval
+GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12
+
+### Get houses for date
+GET {{api}}/houses/available?startDate=2025-12-01&endDate=2025-12-12
