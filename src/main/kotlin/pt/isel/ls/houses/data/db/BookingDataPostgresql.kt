@@ -77,8 +77,8 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
                 bookings.add(
                     Booking(
                         rs.getInt("IdBooking"),
-                        startDate,
-                        endDate,
+                        rs.getDate("StartDate").toLocalDate().toKotlinLocalDate(),
+                        rs.getDate("EndDate").toLocalDate().toKotlinLocalDate(),
                         rs.getInt("IdUser"),
                         hid
                     )
@@ -99,13 +99,13 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
                 SELECT H.* 
                 FROM HOUSE AS H
                 LEFT OUTER JOIN BOOKING AS B ON H."IdHouse" = B."IdHouse" AND "StartDate" <= ? AND "EndDate" >= ? 
-                WHERE B."IdHouse" = NULL
+                WHERE B."IdHouse" IS NULL
                 ORDER BY H."IdHouse"
                 """
             )
 
-            st.setDate(1, Date.valueOf(startDate.toJavaLocalDate()))
-            st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
+            st.setDate(1, Date.valueOf(endDate.toJavaLocalDate()))
+            st.setDate(2, Date.valueOf(startDate.toJavaLocalDate()))
 
             val rs = st.executeQuery()
 
