@@ -15,7 +15,7 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { /
 
     override fun createUser(name: String, email: String): User {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO \"user\" (UserName, Email) VALUES (?, ?) RETURNING IdUser, Token")
+            val st = it.prepareStatement("INSERT INTO \"user\" (\"UserName\", \"Email\") VALUES (?, ?) RETURNING \"IdUser\", \"Token\"")
 
             st.setString(1, name)
             st.setString(2, email)
@@ -33,7 +33,7 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { /
 
     override fun getUser(uid: Int): User? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE IdUser = ?")
+            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE \"IdUser\" = ?")
             st.setInt(1, uid)
 
             val rs = st.executeQuery()
@@ -50,7 +50,7 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { /
 
     override fun getUserByEmail(email: String): User? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE Email = ?")
+            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE \"Email\" = ?")
             st.setString(1, email)
 
             val rs = st.executeQuery()
@@ -67,7 +67,7 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { /
 
     override fun getUserByToken(token: Uuid): User? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE Token = ?")
+            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE \"Token\" = ?::uuid") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
             st.setString(1, token.toString())
 
             val rs = st.executeQuery()

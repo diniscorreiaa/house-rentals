@@ -14,7 +14,7 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
         parentId: Int?
     ): Location {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO LOCATION (LocationName, Type, ParentLocation) VALUES (?, ?, ?) RETURNING IdLocation")
+            val st = it.prepareStatement("INSERT INTO LOCATION (\"LocationName\", \"Type\", \"ParentLocation\") VALUES (?, ?::loc_type, ?) RETURNING \"IdLocation\"") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
 
             st.setString(1, name)
             st.setString(2, type.toString())
@@ -34,7 +34,7 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
 
     override fun getLocation(lid: Int): Location? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM LOCATION WHERE IdLocation = ?")
+            val st = it.prepareStatement("SELECT * FROM LOCATION WHERE \"IdLocation\" = ?")
 
             st.setInt(1, lid)
 
@@ -45,14 +45,14 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
                 lid,
                 rs.getString("LocationName"),
                 LocationType.valueOf(rs.getString("Type")),
-                rs.getInt("ParentLocation")
+                rs.getInt("ParentLocation").let { value -> if (value == 0) null else value }
             )
         }
     }
 
     override fun getChildLocations(lid: Int): List<Location> {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM LOCATION WHERE ParentLocation = ?")
+            val st = it.prepareStatement("SELECT * FROM LOCATION WHERE \"ParentLocation\" = ?")
 
             st.setInt(1, lid)
 
@@ -79,13 +79,13 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
                     WITH RECURSIVE HIERARCHY AS (
                         SELECT * 
                         FROM LOCATION
-                        WHERE IdLocation = ?
+                        WHERE "IdLocation" = ?
                         
                         UNION ALL
                         
                         SELECT L.*
                         FROM LOCATION AS L
-                        INNER JOIN HIERARCHY AS H ON L.IdLocation = H.ParentLocation
+                        INNER JOIN HIERARCHY AS H ON L."IdLocation" = H."ParentLocation"
                     )
                     SELECT * FROM HIERARCHY
                 """)
@@ -100,7 +100,7 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
                         rs.getInt("IdLocation"),
                         rs.getString("LocationName"),
                         LocationType.valueOf(rs.getString("Type")),
-                        rs.getInt("ParentLocation")
+                        rs.getInt("ParentLocation").let { value -> if (value == 0) null else value }
                     )
                 )
             }
