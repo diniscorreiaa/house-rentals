@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    //implementation(group = "org.postgresql", name = "postgresql", version = "42.+")
+    implementation(group = "org.postgresql", name = "postgresql", version = "42.+")
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     //implementation("org.slf4j:slf4j-simple:2.0.9") // for logging

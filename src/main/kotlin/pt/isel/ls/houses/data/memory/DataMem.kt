@@ -1,6 +1,6 @@
 package pt.isel.ls.houses.data.memory
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.domain.Location
@@ -19,21 +19,21 @@ class DataMem: DataRepository {
     override fun createBooking(
         hid: Int,
         userId: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): Booking = booking.createBooking(hid, userId, startDate, endDate)
 
     override fun getBooking(bid: Int): Booking? = booking.getBooking(bid)
 
     override fun getBookings(
         hid: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<Booking> = booking.getBookings(hid, startDate, endDate)
 
     override fun getAvailableHouses(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<House> = booking.getAvailableHouses(startDate, endDate)
 
     override fun createHouse(

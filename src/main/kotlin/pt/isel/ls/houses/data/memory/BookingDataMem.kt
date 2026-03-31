@@ -1,6 +1,6 @@
 package pt.isel.ls.houses.data.memory
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.repository.BookingRepository
@@ -12,8 +12,8 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
     override fun createBooking(
         hid: Int,
         userId: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): Booking {
         val booking = Booking(id++, startDate, endDate, userId, hid)
         bookings.add(booking)
@@ -24,15 +24,15 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
 
     override fun getBookings(
         hid: Int,
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<Booking> = bookings.filter { it.houseId == hid && (it.startDate >= startDate && it.endDate <= endDate) }
 
      override fun getAvailableHouses(
-        startDate: LocalDateTime,
-        endDate: LocalDateTime
+        startDate: LocalDate,
+        endDate: LocalDate
     ): List<House> {
-         val hIds = bookings.filter { it.startDate > endDate || it.endDate < startDate}.map { it.houseId }
-         return houseDataMem.getHouses().filter { it.hid in hIds }
+         val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate}.map { it.houseId }
+         return houseDataMem.getHouses().filter { it.hid !in occupiedHIds }
      }
 }

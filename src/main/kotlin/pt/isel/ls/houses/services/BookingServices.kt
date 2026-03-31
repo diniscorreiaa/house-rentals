@@ -1,6 +1,6 @@
 package pt.isel.ls.houses.services
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
@@ -14,7 +14,7 @@ import pt.isel.ls.houses.repository.HouseRepository
 class BookingServices(
     private val data: DataRepository
 ) {
-    fun createBooking(hid: Int, uid: Int, startDate: LocalDateTime, endDate: LocalDateTime): Booking {
+    fun createBooking(hid: Int, uid: Int, startDate: LocalDate, endDate: LocalDate): Booking {
         if (startDate >= endDate) throw InvalidDate()
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
@@ -27,7 +27,7 @@ class BookingServices(
 
     fun getBooking(bid: Int) = data.getBooking(bid) ?: throw BookingDoesNotExist()
 
-    fun getBookings(hid: Int, startDate: LocalDateTime, endDate: LocalDateTime): List<Booking> {
+    fun getBookings(hid: Int, startDate: LocalDate, endDate: LocalDate): List<Booking> {
         if (startDate >= endDate) throw InvalidDate()
 
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
@@ -35,7 +35,7 @@ class BookingServices(
         return data.getBookings(hid, startDate, endDate)
     }
 
-    fun getAvailableHouses(startDate: LocalDateTime, endDate: LocalDateTime): List<House> {
+    fun getAvailableHouses(startDate: LocalDate, endDate: LocalDate): List<House> {
         if (startDate >= endDate) throw InvalidDate()
         return data.getAvailableHouses(startDate, endDate)
     }
