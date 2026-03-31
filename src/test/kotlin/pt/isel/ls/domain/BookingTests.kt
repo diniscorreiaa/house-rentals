@@ -1,5 +1,6 @@
 package pt.isel.ls.domain
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -9,15 +10,15 @@ import pt.isel.ls.houses.domain.Booking
 
 class BookingTests {
     private val validBid = 1
-    private val validStart = LocalDateTime(2025, 6, 1, 14, 0)
-    private val validEnd = LocalDateTime(2025, 6, 7, 11, 0)
+    private val validStart = LocalDate(2025, 6, 1)
+    private val validEnd = LocalDate(2025, 6, 7)
     private val validUserId = 1
     private val validHouseId = 3
 
     private fun booking(
         bid: Int = validBid,
-        startDate: LocalDateTime = validStart,
-        endDate: LocalDateTime = validEnd,
+        startDate: LocalDate = validStart,
+        endDate: LocalDate = validEnd,
         userId: Int = validUserId,
         houseId: Int = validHouseId
     ) = Booking(bid, startDate, endDate, userId, houseId)
@@ -35,8 +36,8 @@ class BookingTests {
     @Test
     fun `create booking where endDate is after startDate should succeed`() {
         val b = booking(
-            startDate = LocalDateTime(2025, 1, 1, 10, 0),
-            endDate   = LocalDateTime(2025, 1, 10, 10, 0)
+            startDate = LocalDate(2025, 1, 1),
+            endDate   = LocalDate(2025, 1, 10)
         )
         assertTrue(b.endDate > b.startDate)
     }
