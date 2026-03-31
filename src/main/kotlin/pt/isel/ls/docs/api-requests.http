@@ -1,5 +1,8 @@
 @api = http://localhost:8000/
 @accept-content = application/json
+@token = e68f0b96-0fdb-40a4-8b3e-6915be461840
+
+// User Management
 
 ### Create user
 POST {{api}}/users
@@ -33,3 +36,105 @@ GET {{api}}/users/1
 
 ### 404, user doesn't exist
 GET {{api}}//users/2
+
+
+// Location Management
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Portugal",
+    "type": "COUNTRY",
+    "parentId": null
+}
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Lisboa",
+    "type": "DISTRICT",
+    "parentId": 1
+}
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Oeiras",
+    "type": "MUNICIPALITY",
+    "parentId": 2
+}
+
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Paço de Arcos",
+    "type": "LOCALITY",
+    "parentId": 3
+}
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Algés",
+    "type": "LOCALITY",
+    "parentId": 3
+}
+
+### CREATE LOCATION
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Barcarena",
+    "type": "LOCALITY",
+    "parentId": 3
+}
+
+
+### 401, unathorized
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+
+{
+    "name": "Portugal",
+    "type": "COUNTRY",
+    "parentId": 3
+}
+
+### GET location 1
+GET {{api}}/locations/1
+
+### GET location 2
+GET {{api}}/locations/2
+
+### GET location 3
+GET {{api}}/locations/3
+
+### GET location 4
+GET {{api}}/locations/4
+
+### GET location 100
+GET {{api}}/locations/100
+
+### Get child locations
+GET {{api}}/locations/3/children
+
+### Get full hierarchical path
+GET {{api}}/locations/4/full

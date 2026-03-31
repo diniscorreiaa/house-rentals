@@ -35,19 +35,21 @@ class LocationDataMem : LocationRepository {
         return locations[childIdx]?.filter { it.parentLocation == loc.lid } ?: throw InternalError()
     }
 
+    // TODO: I'm depending a lot on !! which is not a good practice
+    //  but it seems to work so it's fine for now, as we are short on time.
+    //  Refactor later
     override fun getHierarchy(lid: Int): List<Location> {
         val loc = getLocation(lid) ?: throw LocationDoesNotExist()
         if (loc.type == LocationType.COUNTRY) return listOf(loc)
 
-        val list = mutableListOf<Location>()
+        val list = mutableListOf(loc)
 
-        var prevParentId = loc.parentLocation
-        for (i in loc.type.ordinal - 1 downTo  LocationType.REGION.ordinal) { // Vai até REGION pois é o limite para determinar o parentLocation
-            val parent = locations[LocationType.entries[i]]?.find { it.lid == prevParentId } ?: return list
-            list.add(0, parent) // Coloca sempre no indice 0 e faz shiftRight dos que já lá estavam, assim preserva-se a ordem da hierarquia
-            prevParentId = parent.lid
+        var parentId = loc.parentLocation!!     // assuming that since it's not LocationType.COUNTRY, it must have a parentId
+        while (true) {
+            val parent = getLocation(parentId)!!    // assuming that there's always a parent location until LocationType.COUNTRY
+            list.addFirst(parent)
+            parentId = parent.parentLocation ?: return list
         }
-        return list
     }
 
 }

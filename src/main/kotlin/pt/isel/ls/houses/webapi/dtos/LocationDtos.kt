@@ -5,7 +5,7 @@ import pt.isel.ls.houses.domain.LocationType
 
 /////////// Input ///////////
 @Serializable
-data class CreateLocationIn(val name: String, val type: LocationType, val parentLocation: Int?)
+data class CreateLocationIn(val name: String, val type: LocationType, val parentId: Int?)
 
 
 /////////// Output ///////////

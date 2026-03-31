@@ -12,6 +12,7 @@ class UserEmailAlreadyExists : HttpException(Status.BAD_REQUEST, "User email alr
 class UserDoesNotExist : HttpException(Status.NOT_FOUND, "User does not exist")
 
 class LocationDoesNotExist : HttpException(Status.NOT_FOUND, "Location does not exist")
+class LocationAlreadyExists : HttpException(Status.BAD_REQUEST, "Location already exists")
 
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
 class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")
