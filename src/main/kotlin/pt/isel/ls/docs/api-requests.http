@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = e68f0b96-0fdb-40a4-8b3e-6915be461840
+@token = 6f3f17be-d2f8-4787-b85c-4ed65853d282
 
 // User Management
 
@@ -138,3 +138,41 @@ GET {{api}}/locations/3/children
 
 ### Get full hierarchical path
 GET {{api}}/locations/4/full
+
+
+// House Management
+
+### Create house
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T2 com vista para o rio",
+    "location": 4,
+    "areaSqMt": 80,
+    "pricePerNight": 141,
+    "description": "Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
+}
+
+### Create house
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T3 Moradia independente",
+    "location": 4,
+    "areaSqMt": 88,
+    "pricePerNight": 300,
+    "description": "T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos"
+}
+
+### Get house
+GET {{api}}/houses/1
+
+### Get house
+GET {{api}}/houses
+
+
+// Booking Management
