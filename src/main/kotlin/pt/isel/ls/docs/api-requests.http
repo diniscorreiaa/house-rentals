@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 3cb2e707-dbc9-455a-bf7a-0a3fd383bc1b
+@token = b702f649-953f-46c0-96b8-b9896c32768f
 
 // User Management
 
@@ -171,7 +171,7 @@ Authorization: {{token}}
 ### Get house
 GET {{api}}/houses/1
 
-### Get house
+### Get houses
 GET {{api}}/houses
 
 
@@ -185,7 +185,7 @@ Authorization: {{token}}
 {
     "hid": 1,
     "startDate": "2025-12-01",
-    "endDate": "2025-12-12"
+    "endDate": "2025-12-03"
 }
 
 ### Create booking
@@ -195,7 +195,7 @@ Authorization: {{token}}
 
 {
     "hid": 2,
-    "startDate": "2025-12-02",
+    "startDate": "2025-12-07",
     "endDate": "2025-12-11"
 }
 
@@ -205,5 +205,5 @@ GET {{api}}/bookings/2
 ### Get bookings for interval
 GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12
 
-### Get houses for date
-GET {{api}}/houses/available?startDate=2025-12-01&endDate=2025-12-12
+### Get available houses for date
+GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06
