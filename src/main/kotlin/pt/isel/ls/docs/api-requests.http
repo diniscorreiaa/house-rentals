@@ -119,22 +119,22 @@ Content-Type: {{accept-content}}
 }
 
 ### GET location 1
-GET {{api}}//locations/1
+GET {{api}}/locations/1
 
 ### GET location 2
-GET {{api}}//locations/2
+GET {{api}}/locations/2
 
 ### GET location 3
-GET {{api}}//locations/3
+GET {{api}}/locations/3
 
 ### GET location 4
-GET {{api}}//locations/4
+GET {{api}}/locations/4
 
 ### GET location 100
-GET {{api}}//locations/100
+GET {{api}}/locations/100
 
 ### Get child locations
-GET {{api}}//locations/3/children
+GET {{api}}/locations/3/children
 
 ### Get full hierarchical path
-GET {{api}}//locations/4/full
+GET {{api}}/locations/4/full
