@@ -8,12 +8,13 @@ import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
+import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
 import pt.isel.ls.houses.webapi.dtos.CreateLocationOut
 import pt.isel.ls.houses.webapi.dtos.GetLocationOut
 
-class LocationWebApi(private val locationServices: LocationServices, private val data: DataMem) {
+class LocationWebApi(private val locationServices: LocationServices, private val data: DataRepository)  {
 
     fun createLocation(request: Request): Response {
         verifyAndGetAuth(request, data)

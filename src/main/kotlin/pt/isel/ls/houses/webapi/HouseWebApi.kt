@@ -8,12 +8,13 @@ import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
+import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
 import pt.isel.ls.houses.webapi.dtos.CreateHouseOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 
-class HouseWebApi(private val houseServices: HouseServices, private val data: DataMem) {
+class HouseWebApi(private val houseServices: HouseServices, private val data: DataRepository) {
 
     fun createHouse(request: Request): Response {
         verifyAndGetAuth(request, data)

@@ -18,7 +18,7 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
         endDate: LocalDate
     ): Booking {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO BOOKING (StartDate, EndDate, IdUser, IdHouse) VALUES (?, ?, ?, ?) RETURNING IdBooking")
+            val st = it.prepareStatement("INSERT INTO BOOKING (\"StartDate\", \"EndDate\", \"IdUser\", \"IdHouse\") VALUES (?, ?, ?, ?) RETURNING \"IdBooking\"")
 
             st.setDate(1, Date.valueOf(startDate.toJavaLocalDate())) // TODO: Provavelmente isto terá de ser melhorado
             st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
@@ -40,7 +40,7 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
 
     override fun getBooking(bid: Int): Booking? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM BOOKING WHERE IdBooking = ?")
+            val st = it.prepareStatement("SELECT * FROM BOOKING WHERE \"IdBooking\" = ?")
 
             st.setInt(1, bid)
 
@@ -63,7 +63,7 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
         endDate: LocalDate
     ): List<Booking> {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM BOOKING WHERE IdHouse = ? AND StartDate >= ? AND EndDate <= ? ORDER BY StartDate")
+            val st = it.prepareStatement("SELECT * FROM BOOKING WHERE \"IdHouse\" = ? AND \"StartDate\" >= ? AND \"EndDate\" <= ? ORDER BY \"StartDate\"")
 
             st.setInt(1, hid)
             st.setDate(2, Date.valueOf(startDate.toJavaLocalDate()))
@@ -98,9 +98,9 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
                 """
                 SELECT H.* 
                 FROM HOUSE AS H
-                LEFT OUTER JOIN BOOKING AS B ON H.IdHouse = B.IdHouse AND StartDate <= ? AND EndDate >= ? 
-                WHERE B.IdHouse = NULL
-                ORDER BY H.IdHouse
+                LEFT OUTER JOIN BOOKING AS B ON H."IdHouse" = B."IdHouse" AND "StartDate" <= ? AND "EndDate" >= ? 
+                WHERE B."IdHouse" = NULL
+                ORDER BY H."IdHouse"
                 """
             )
 

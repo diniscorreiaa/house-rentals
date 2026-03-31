@@ -14,7 +14,7 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
         description: String
     ): House {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO HOUSE (Title, Location, Area, Price, Description) VALUES (?, ?, ?, ?, ?) RETURNING IdHouse")
+            val st = it.prepareStatement("INSERT INTO HOUSE (\"Title\", \"Location\", \"Area\", \"Price\", \"Description\") VALUES (?, ?, ?, ?, ?) RETURNING \"IdHouse\"")
 
             st.setString(1, title)
             st.setInt(2, location)
@@ -30,7 +30,7 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
 
     override fun getHouse(hid: Int): House? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM HOUSE WHERE IdHouse = ?")
+            val st = it.prepareStatement("SELECT * FROM HOUSE WHERE \"IdHouse\" = ?")
             st.setInt(1, hid)
 
             val rs = st.executeQuery()

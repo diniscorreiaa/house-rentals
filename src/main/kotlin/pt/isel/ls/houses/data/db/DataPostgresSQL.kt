@@ -66,11 +66,11 @@ class DataPostgresSQL: DataRepository {
 
     override fun createUser(name: String, email: String) = user.createUser(name, email)
 
-    override fun getUser(uid: Int): User? = getUser(uid)
+    override fun getUser(uid: Int): User? = user.getUser(uid)
 
-    override fun getUserByEmail(email: String): User? = getUserByEmail(email)
+    override fun getUserByEmail(email: String): User? = user.getUserByEmail(email)
 
     @OptIn(ExperimentalUuidApi::class)
-    override fun getUserByToken(token: Uuid): User? = getUserByToken(token)
+    override fun getUserByToken(token: Uuid): User? = user.getUserByToken(token)
 
 }
