@@ -73,7 +73,8 @@ if the Id for the Location passed matches an actual location, etc.
 
 From the services layer we then call the data layer, with the corresponding function, which gets us the data we need or
 creates some record. After this, through return statements used in the layers above, this data bubbles its way up again
-to the WebApi layer, where it's encoded our response, put in the body, and sent back to the client. The status code to be
+to the WebApi layer, where it's encoded our response, put in the body, and sent back to the client. The status code to
+be
 sent is also defined in WebApi.
 
 ### Connection Management
@@ -88,7 +89,37 @@ sent is also defined in WebApi.
 
 ### Error Handling/Processing
 
-(_describe how errors are handled and their effects on the application behavior_).
+Errors are handled by the filter defined in [ServerUtils.kt](../../ls/houses/server/ServerUtils.kt). This filter is
+executed before the requests gets to the routes. We wrap the HttpHandler in a try catch. This handler will then match
+with a route, if any, then go to WebApi, services, data, etc...
+
+We created our own exceptions, defined in [Exceptions.kt](../houses/exceptions/Exceptions.kt).
+
+We did this by implementing a base class, HttpException (which itself inherits from Throwable), from which all the more
+specific exceptions will inherit.
+This class stores an http status code, and a message.
+
+If exceptions are thrown at any of those layers, they are caught in the filter.
+
+When an exception is caught, it can go into one of the following catch blocks:
+
+- The first catch catches HttpException, which is the exception we defined;
+- The second catch catches MissingFieldException, which occurs when Json.decodeFromString fails to decode a json payload
+  because a field is missing
+- Lastly, it's just a generic Exception, to catch everything uncaught until now. This happens when an exception we
+  didn't anticipate happens.
+  We don't give any information on purpose for security reasons. Although this is an academic project, where security
+  doesn't matter, in production, giving information of unhandled behavior could give hackers levarage on how
+  to exploit our api. It's why we just send an internal server error.
+
+We wanted to catch kotlinx.serialization.json.internal.JsonDecodingException, which happends when the request sent type
+for a property is not what was expected, but couldn't because we can't import this exception. We suspect it's because
+it's "internal".
+
+We could have just wrap the Json.decodeFromString in a try catch block, and when it throws, gives a generic message, for
+example "Failed to decode json payload", but we wanted something more specific about what exactly failed, and what we
+tried didn't work out.
+This is something we will have to work on in the next phase.
 
 ## Critical Evaluation
 
