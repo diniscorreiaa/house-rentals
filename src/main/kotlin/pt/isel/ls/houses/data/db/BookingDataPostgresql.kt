@@ -60,14 +60,23 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
     override fun getBookings(
         hid: Int,
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?,
     ): List<Booking> {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM BOOKING WHERE \"IdHouse\" = ? AND \"StartDate\" >= ? AND \"EndDate\" <= ? ORDER BY \"StartDate\"")
+            var query = "SELECT * FROM BOOKING WHERE \"IdHouse\" = ? AND \"StartDate\" >= ? AND \"EndDate\" <= ?"
+            if (limit != null) query += " ORDER BY \"StartDate\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
 
             st.setInt(1, hid)
             st.setDate(2, Date.valueOf(startDate.toJavaLocalDate()))
             st.setDate(3, Date.valueOf(endDate.toJavaLocalDate()))
+            if (limit != null) {
+                st.setInt(4, limit)
+                st.setInt(5, skip ?: 0)
+            }
 
             val rs = st.executeQuery()
 
@@ -91,21 +100,27 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
 
     override fun getAvailableHouses(
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?
     ): List<House> {
         dataSource.connection.use {
-            val st = it.prepareStatement(
-                """
+            var query = """
                 SELECT H.* 
                 FROM HOUSE AS H
                 LEFT OUTER JOIN BOOKING AS B ON H."IdHouse" = B."IdHouse" AND "StartDate" <= ? AND "EndDate" >= ? 
                 WHERE B."IdHouse" IS NULL
-                ORDER BY H."IdHouse"
                 """
-            )
+            if (limit != null) query += " ORDER BY H.\"IdHouse\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
 
             st.setDate(1, Date.valueOf(endDate.toJavaLocalDate()))
             st.setDate(2, Date.valueOf(startDate.toJavaLocalDate()))
+            if (limit != null) {
+                st.setInt(3, limit)
+                st.setInt(4, skip ?: 0)
+            }
 
             val rs = st.executeQuery()
 

@@ -50,11 +50,19 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
         }
     }
 
-    override fun getChildLocations(lid: Int): List<Location> {
+    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM LOCATION WHERE \"ParentLocation\" = ?")
+            var query = "SELECT * FROM LOCATION WHERE \"ParentLocation\" = ?"
+            if (limit != null) query += " ORDER BY \"IdLocation\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
+
 
             st.setInt(1, lid)
+            if (limit != null) {
+                st.setInt(2, limit)
+                st.setInt(3, skip ?: 0)
+            }
 
             val rs = st.executeQuery()
             val locations = mutableListOf<Location>()
