@@ -17,8 +17,8 @@ val filter = Filter { handler ->
             Response(e.status).body(e.message)
         } catch (e: MissingFieldException) { // TODO: this is a hack, we probably should map it to our own errors
             Response(Status.BAD_REQUEST).body("Field ${e.missingFields} is required, but hasn't been passed")
-        } catch (_: Exception) {
-            Response(Status.INTERNAL_SERVER_ERROR)
+        } catch (e: Exception) {
+            Response(Status.INTERNAL_SERVER_ERROR).body("Internal error, contact the developers to report this situation")
         }
     }
     wrapperHandler

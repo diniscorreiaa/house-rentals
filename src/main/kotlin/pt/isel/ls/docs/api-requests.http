@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 00e14054-85b6-4130-a51c-19ebf58dc952
+@token = 7f91ad68-6d5f-4f4f-9d7d-5b3481022a45
 
 // User Management
 
@@ -36,6 +36,9 @@ GET {{api}}/users/1
 
 ### 404, user doesn't exist
 GET {{api}}//users/2
+
+### 400, invalid user id
+GET {{api}}//users/abc
 
 
 // Location Management
@@ -107,6 +110,16 @@ Authorization: {{token}}
     "parentId": 3
 }
 
+### CREATE LOCATION without specifying type gets 400
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Barcarena",
+    "parentId": 3
+}
+
 
 ### 401, unathorized
 POST {{api}}/locations
@@ -130,17 +143,26 @@ GET {{api}}/locations/3
 ### GET location 4
 GET {{api}}/locations/4
 
-### GET location 100
+### GET location with invalid id (400)
+GET {{api}}/locations/abc
+
+### GET location 100 (404)
 GET {{api}}/locations/100
 
-### Get child locations
-GET {{api}}/locations/3/children
+### Get child locations with invalid id (400)
+GET {{api}}/locations/abc/children
 
 ### Get child locations with paging
 GET {{api}}/locations/3/children?limit=1&skip=1
 
 ### Get full hierarchical path
 GET {{api}}/locations/4/full
+
+### Get full hierarchical path of non existing id
+GET {{api}}/locations/100/full
+
+### Get full hierarchical path of invalid id
+GET {{api}}/locations/abc/full
 
 
 // House Management
@@ -162,6 +184,30 @@ Authorization: {{token}}
 POST {{api}}/houses
 Content-Type: {{accept-content}}
 Authorization: {{token}}
+
+{
+    "title": "T3 Moradia independente",
+    "location": 4,
+    "areaSqMt": 88,
+    "pricePerNight": 300,
+    "description": "T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos"
+}
+
+### Create house missing parameters in body
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T3 Moradia independente",
+    "location": 4,
+    "areaSqMt": 88,
+    "description": "T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos"
+}
+
+### Create house without authentication
+POST {{api}}/houses
+Content-Type: {{accept-content}}
 
 {
     "title": "T3 Moradia independente",
@@ -208,8 +254,45 @@ Authorization: {{token}}
     "endDate": "2025-12-11"
 }
 
+### Create booking without passing hid (400)
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2025-12-07",
+    "endDate": "2025-12-11"
+}
+
+### Create booking with non existing hid
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "hid": 1000,
+    "startDate": "2025-12-07",
+    "endDate": "2025-12-11"
+}
+
+### Create booking without authentication
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+
+{
+    "hid": 2,
+    "startDate": "2025-12-07",
+    "endDate": "2025-12-11"
+}
+
 ### Get booking
 GET {{api}}/bookings/2
+
+### Get booking for non existing id
+GET {{api}}/bookings/1000
+
+### Get booking for invalid id
+GET {{api}}/bookings/abc
 
 ### Get bookings for interval
 GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12
@@ -219,6 +302,9 @@ GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12&limit=1&skip=0
 
 ### Get available houses for date
 GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06
+
+### Get available houses for date without passing required query
+GET {{api}}/houses/available?startDate=2025-12-04
 
 ### Get available houses for date with paging
 GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06&limit=1&skip=1
