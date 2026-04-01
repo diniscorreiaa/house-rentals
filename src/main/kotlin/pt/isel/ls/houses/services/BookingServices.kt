@@ -25,14 +25,14 @@ class BookingServices(
         return data.createBooking(hid, uid, startDate, endDate)
     }
 
-    fun getBooking(bid: Int) = data.getBooking(bid) ?: throw BookingDoesNotExist()
+    fun getBooking(bid: Int, limit: Int?, skip: Int?) = data.getBooking(bid, limit, skip) ?: throw BookingDoesNotExist()
 
-    fun getBookings(hid: Int, startDate: LocalDate, endDate: LocalDate): List<Booking> {
+    fun getBookings(hid: Int, startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<Booking> {
         if (startDate >= endDate) throw InvalidDate()
 
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
-        return data.getBookings(hid, startDate, endDate)
+        return data.getBookings(hid, startDate, endDate, limit, skip)
     }
 
     fun getAvailableHouses(startDate: LocalDate, endDate: LocalDate): List<House> {

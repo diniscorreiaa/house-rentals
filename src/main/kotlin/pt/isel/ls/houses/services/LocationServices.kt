@@ -25,9 +25,9 @@ class LocationServices(
 
     fun getLocation(lid: Int) = data.getLocation(lid) ?: throw LocationDoesNotExist()
 
-    fun getChildLocations(lid: Int): List<Location> {
+    fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> {
         if (data.getLocation(lid) == null) throw LocationDoesNotExist()
-        return data.getChildLocations(lid)
+        return data.getChildLocations(lid, limit, skip)
     }
 
     fun getHierarchy(lid: Int): List<Location> {

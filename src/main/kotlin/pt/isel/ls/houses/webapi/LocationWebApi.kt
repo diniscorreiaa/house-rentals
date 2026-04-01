@@ -8,6 +8,8 @@ import org.http4k.routing.path
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
+import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
+import pt.isel.ls.houses.exceptions.WrongSeparatorDate
 import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
@@ -43,7 +45,8 @@ class LocationWebApi(private val locationServices: LocationServices, private val
             it.toIntOrNull() ?: throw InvalidIdentifier("lid")
         }
 
-        val locations = locationServices.getChildLocations(locationId)
+        val paging = getLimitAndSkip(request)
+        val locations = locationServices.getChildLocations(locationId, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(locations.map { GetLocationOut(it.name, it.type) }))
