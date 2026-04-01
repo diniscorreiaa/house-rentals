@@ -23,7 +23,7 @@ Location Management
 post /locations
 get /locations/{lid}
 get /locations/{lid}/children (paging)
-get /locations/{lid}/full (paging)
+get /locations/{lid}/full
 
 House Management
 post /houses
