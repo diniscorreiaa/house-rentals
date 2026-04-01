@@ -47,11 +47,11 @@ We highlight the following aspects of this model:
 
 ### Open-API Specification ###
 
-(_include a link to the YAML or JSON file containing the Open-API Specification_)
+Our Open-API specification is available [here](houseRentals-api-spec.yaml).
+
+We decided to implement the specification in yaml because it's easier to read and is less verbose than json.
 
 In our Open-API specification, we highlight the following aspects:
-
-(_include a list of relevant issues or details in your specification_)
 
 ### Request Details
 
