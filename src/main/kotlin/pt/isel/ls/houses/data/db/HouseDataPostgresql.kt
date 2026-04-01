@@ -47,9 +47,17 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
         }
     }
 
-    override fun getHouses(): List<House> {
+    override fun getHouses(limit: Int?, skip: Int?): List<House> {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM HOUSE")
+            var query = "SELECT * FROM HOUSE"
+            if (limit != null) query += " ORDER BY \"IdHouse\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
+
+            if (limit != null) {
+                st.setInt(1, limit)
+                st.setInt(2, skip ?: 0)
+            }
 
             val rs = st.executeQuery()
 

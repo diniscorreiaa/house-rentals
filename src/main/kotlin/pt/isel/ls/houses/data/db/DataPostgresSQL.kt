@@ -32,13 +32,17 @@ class DataPostgresSQL: DataRepository {
     override fun getBookings(
         hid: Int,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): List<Booking> = booking.getBookings(hid, startDate, endDate)
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?,
+    ): List<Booking> = booking.getBookings(hid, startDate, endDate, limit, skip)
 
     override fun getAvailableHouses(
         startDate: LocalDate,
-        endDate: LocalDate
-    ): List<House> = booking.getAvailableHouses(startDate, endDate)
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?,
+    ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
 
     override fun createHouse(
         title: String,
@@ -50,7 +54,7 @@ class DataPostgresSQL: DataRepository {
 
     override fun getHouse(hid: Int): House? = house.getHouse(hid)
 
-    override fun getHouses(): List<House> = house.getHouses()
+    override fun getHouses(limit: Int?, skip: Int?): List<House> = house.getHouses(limit, skip)
 
     override fun createLocation(
         name: String,
@@ -60,7 +64,7 @@ class DataPostgresSQL: DataRepository {
 
     override fun getLocation(lid: Int): Location? = location.getLocation(lid)
 
-    override fun getChildLocations(lid: Int): List<Location> = location.getChildLocations(lid)
+    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> = location.getChildLocations(lid, limit, skip)
 
     override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
 

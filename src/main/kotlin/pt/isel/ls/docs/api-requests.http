@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = b702f649-953f-46c0-96b8-b9896c32768f
+@token = 00e14054-85b6-4130-a51c-19ebf58dc952
 
 // User Management
 
@@ -136,6 +136,9 @@ GET {{api}}/locations/100
 ### Get child locations
 GET {{api}}/locations/3/children
 
+### Get child locations with paging
+GET {{api}}/locations/3/children?limit=1&skip=1
+
 ### Get full hierarchical path
 GET {{api}}/locations/4/full
 
@@ -174,6 +177,12 @@ GET {{api}}/houses/1
 ### Get houses
 GET {{api}}/houses
 
+### Get houses with paging
+GET {{api}}/houses?limit=1&skip=1
+
+### Get houses with incomplete paging returns all results (ignores query)
+GET {{api}}/houses?skip=1
+
 
 // Booking Management
 
@@ -205,5 +214,11 @@ GET {{api}}/bookings/2
 ### Get bookings for interval
 GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12
 
+### Get bookings for interval with paging
+GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12&limit=1&skip=0
+
 ### Get available houses for date
 GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06
+
+### Get available houses for date with paging
+GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06&limit=1&skip=1

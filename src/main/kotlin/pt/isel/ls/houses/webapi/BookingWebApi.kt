@@ -58,8 +58,8 @@ class BookingWebApi(private val bookingServices: BookingServices, private val da
 
         val startDate = interval.startDate
         val endDate = interval.endDate
-
-        val bookings = bookingServices.getBookings(houseId, startDate, endDate)
+        val paging = getLimitAndSkip(request)
+        val bookings = bookingServices.getBookings(houseId, startDate, endDate, paging.limit, paging.skip)
 
         return Response(OK)
             .header("content-type", "application/json")
@@ -77,7 +77,8 @@ class BookingWebApi(private val bookingServices: BookingServices, private val da
             parseDateOrNull(it) ?: throw WrongFormatDate(it)
         }
 
-        val available = bookingServices.getAvailableHouses(startDate, endDate)
+        val paging = getLimitAndSkip(request)
+        val available = bookingServices.getAvailableHouses(startDate, endDate, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(available.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))

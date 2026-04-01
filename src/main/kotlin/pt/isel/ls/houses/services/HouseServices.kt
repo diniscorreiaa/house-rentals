@@ -18,5 +18,5 @@ class HouseServices(
 
     fun getHouse(hid: Int) = data.getHouse(hid) ?: throw HouseDoesNotExist()
 
-    fun getHouses() = data.getHouses()
+    fun getHouses(limit: Int?, skip: Int?) = data.getHouses(limit, skip)
 }

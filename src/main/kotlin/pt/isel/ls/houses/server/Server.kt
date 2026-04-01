@@ -22,20 +22,20 @@ get /users/{uid}
 Location Management
 post /locations
 get /locations/{lid}
-get /locations/{lid}/children
+get /locations/{lid}/children (paging)
 get /locations/{lid}/full
 
 House Management
 post /houses
 get /houses/{hid}
-get /houses
+get /houses (paging)
 
 Booking Management
 post /bookings
 get /bookings/{bid}
-get /bookings?{hid}&{date-interval}
-get /houses/available?{startDate}&{endDate}
- */
+get /bookings?{hid}&{date-interval} (paging)
+get /houses/available?{startDate}&{endDate} (paging)
+*/
 
 const val SERVER_PORT = 8000
 

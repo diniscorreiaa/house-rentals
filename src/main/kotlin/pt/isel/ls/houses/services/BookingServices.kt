@@ -18,7 +18,7 @@ class BookingServices(
         if (startDate >= endDate) throw InvalidDate()
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
-        val overlapBooking = data.getBookings(hid, startDate, endDate)
+        val overlapBooking = data.getBookings(hid, startDate, endDate, null, null)
 
         if (overlapBooking.isNotEmpty()) throw HouseIsNotAvailable()
 
@@ -27,16 +27,16 @@ class BookingServices(
 
     fun getBooking(bid: Int) = data.getBooking(bid) ?: throw BookingDoesNotExist()
 
-    fun getBookings(hid: Int, startDate: LocalDate, endDate: LocalDate): List<Booking> {
+    fun getBookings(hid: Int, startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<Booking> {
         if (startDate >= endDate) throw InvalidDate()
 
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
-        return data.getBookings(hid, startDate, endDate)
+        return data.getBookings(hid, startDate, endDate, limit, skip)
     }
 
-    fun getAvailableHouses(startDate: LocalDate, endDate: LocalDate): List<House> {
+    fun getAvailableHouses(startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<House> {
         if (startDate >= endDate) throw InvalidDate()
-        return data.getAvailableHouses(startDate, endDate)
+        return data.getAvailableHouses(startDate, endDate, limit, skip)
     }
 }
