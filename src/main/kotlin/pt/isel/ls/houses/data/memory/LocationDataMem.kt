@@ -29,10 +29,12 @@ class LocationDataMem : LocationRepository {
         return null
     }
 
-    override fun getChildLocations(lid: Int): List<Location> {
+    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> {
         val loc = getLocation(lid) ?: throw LocationDoesNotExist()
         val childIdx = LocationType.entries[loc.type.ordinal + 1]
-        return locations[childIdx]?.filter { it.parentLocation == loc.lid } ?: throw InternalError()
+        val locations = locations[childIdx]?.filter { it.parentLocation == loc.lid } ?: throw InternalError()
+        if (limit != null) return locations.subList(skip ?: 0, (skip ?: 0) + limit)
+        return locations
     }
 
     // TODO: I'm depending a lot on !! which is not a good practice

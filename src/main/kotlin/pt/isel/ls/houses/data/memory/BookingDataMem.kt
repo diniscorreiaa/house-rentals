@@ -25,14 +25,24 @@ class BookingDataMem(private val houseDataMem: HouseDataMem): BookingRepository 
     override fun getBookings(
         hid: Int,
         startDate: LocalDate,
-        endDate: LocalDate
-    ): List<Booking> = bookings.filter { it.houseId == hid && (it.startDate >= startDate && it.endDate <= endDate) }
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?,
+    ): List<Booking> {
+        val bookings = bookings.filter { it.houseId == hid && (it.startDate >= startDate && it.endDate <= endDate) }
+        if (limit != null) return bookings.subList(skip ?: 0, (skip ?: 0) + limit)
+        return bookings
+    }
 
      override fun getAvailableHouses(
         startDate: LocalDate,
-        endDate: LocalDate
+        endDate: LocalDate,
+        limit: Int?,
+        skip: Int?
     ): List<House> {
          val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate}.map { it.houseId }
-         return houseDataMem.getHouses().filter { it.hid !in occupiedHIds }
+         val houses = houseDataMem.getHouses(null, null).filter { it.hid !in occupiedHIds }
+         if (limit != null) return houses.subList(skip ?: 0, (skip ?: 0) + limit)
+         return houses
      }
 }
