@@ -8,19 +8,34 @@ This document contains the relevant design and implementation aspects of LS proj
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-(_include an image or a link to the conceptual diagram_)
+![Entity-Relationship diagram](EA-diagram.drawio.png)
 
 We highlight the following aspects:
 
-* (_include a list of relevant design issues_)
+- A booking is made by a single user, necessarily, and a user can make many bookings;
+- A house can have many booking, and a booking must have, necessarily, one house;
+- A house has to have a location, necessarily, and a location can have many houses;
+- A location can have many children, but can only have one parent.
+
+The attributes of each entity were defined in this phase's requirements, the only additional attribute being the token
+of the USER entity, since we don't use the token as an id itself.
 
 The conceptual model has the following restrictions:
 
-* (_include a list of relevant design issues_)
-    
+- All attributes in the ER diagram are NOT NULL, except ParentId.
+
+#### Why we chose surrogate keys as primary keys
+
+We decided to stick to surrogate keys only, which is why even when we had good natural keys, such as the token in the
+user entity,
+we still decided to create a separate attribute UserId.
+
+This was done because of consistency, we know that the identifier name of a particular
+entity is going to be its name, and the Id suffix, in Pascal Case, e.g. UserId, LocationId, etc...
+
 ### Physical Model ###
 
-The physical model of the database is available in (_link to the SQL script with the schema definition_).
+The physical model of the database is available in [here](../../../../../sql/HouseRentalsDB.sql).
 
 We highlight the following aspects of this model:
 
