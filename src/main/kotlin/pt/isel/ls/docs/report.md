@@ -79,13 +79,36 @@ sent is also defined in WebApi.
 
 ### Connection Management
 
-(_describe how connections are created, used and disposed_, namely its relation with transaction scopes).
+We create a connection for every method of the various DataPostgresql classes (BookingDataPostgresql,
+LocationDataPostgrsql, etc...).
+We use (and create) connections through the connection property, and use function the .use{}, which when it finishes to
+run its block of code, automatically closes it's connection.
 
 ### Data Access
 
-(_describe any created classes to help on data access_).
+We created the classes BookingDataPostgresql, LocationDataPostgrsql, HouseDataPostgrsql, UserDataPostgrsql, where each is
+of these is responsable for the data operations of their purpose. We then merge them all into a DataPostgrsql class.
 
-(_identify any non-trivial used SQL statements_).
+The most complex queries made in this project were performed in the functions getHierarchy and getAvailableHouses,
+located in LocationDataPostgresql.kt and BookingDataPostgresql.kt respectively.
+
+In the getHierarchy function we used the WITH RECURSIVE SQL statement so that it allows as to do checkings through the
+different hierarchy layers.  It works like this: the first SELECT statement after the WITH RECURSIVE statement is the
+starting point, so in this SELECT statement we pass the id of the location at the lower part of the hierarchy (locality),
+after this the next SELECT statement looks for the parent location of the location obtained in the previous SELECT 
+statement by looking for the at the matching locations with attributes ParentLocation and IdLocation. After this first 
+iteration the parent location obtained previously now is going to check for this parent the same way. This cycle ends
+when there are no locations that have matching IdLocation and ParentLocation attributes. The SELECT statement in the end
+returns us all the locations obtained during all the iterations of this cycle which represent the complete hierarchy.
+
+In the getAvailableHouses function we join the HOUSES table with the BOOKING table when both have matching house ids and
+both of these are true: the start date at the database is lower or equal than the one passed as parameter and the end date
+at the database is higher or equal than the one passed as parameter - this condition gets us the occupied houses
+(which are not available). The LEFT OUTER JOIN here is important, it works together with the WHERE B."IdHouse" IS NULL statement: 
+the WHERE statement gets the houses that had no match in the join (the available ones), however if we used the INNER JOIN
+statement here we wouldn't be able to access the available houses because they wouldn't have passed the JOIN statement,
+so the LEFT OUTER JOIN statement returns us all the HOUSES including the ones that don't pass the JOIN condition and then
+all we need to do is to filter the results with the WHERE statement.
 
 ### Error Handling/Processing
 
