@@ -123,6 +123,19 @@ This is something we will have to work on in the next phase.
 
 ## Critical Evaluation
 
-(_enumerate the functionality that is not concluded and the identified defects_)
+### Functionality that is not concluded and the identified defects:
 
-(_identify improvements to be made on the next phase_)
+- We have to improve our error handling for malformed json payloads. Right now, we only handle one scenario, where a
+  field isn't present, but others are unhandled and result in a 500;
+- We didn't implement price prediction functionality;
+- Our current authentication method breaks the dependency injection, because it requires data to be injected into
+  WebApi;
+- The error responses' payloads are currently given in plain text, instead of in json;
+- Then we have some smaller things, identified by the TODOs in the code.
+
+### identify improvements to be made on the next phase:
+- Fix the defects above;
+- We ought to finish making automated tests for all layers, our testing was mainly done through the .http file, which
+  requires manual testing and is time-consuming to test with. 
+- Split the data layer into multiple files, just like we did for all the other layers. 
+The data layer is split, but then we merged them all into one data. We'll have to revert this.
