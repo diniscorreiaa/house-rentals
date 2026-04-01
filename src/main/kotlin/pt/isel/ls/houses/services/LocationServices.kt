@@ -15,7 +15,7 @@ class LocationServices(
 
             // TODO: We are only making sure that locations WITH parentIds are not duplicate. those without
             //  parentId (countries) can still be duplicate. Data layer will need changes to support this functionality
-            getChildLocations(parentId).forEach {
+            getChildLocations(parentId, null, null).forEach {
                 if (it.name.equals(name, ignoreCase = true)) throw LocationAlreadyExists()
             }
         }

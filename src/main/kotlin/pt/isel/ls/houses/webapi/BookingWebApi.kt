@@ -39,8 +39,7 @@ class BookingWebApi(private val bookingServices: BookingServices, private val da
             it ?: throw RequiredPathParamNotFound("bid")
             it.toIntOrNull() ?: throw InvalidIdentifier("bid")
         }
-        val paging = getLimitAndSkip(request)
-        val booking = bookingServices.getBooking(bookingId, paging.limit, paging.skip)
+        val booking = bookingServices.getBooking(bookingId)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(GetBookingOut(booking.startDate, booking.endDate, booking.userId, booking.houseId)))
@@ -78,7 +77,8 @@ class BookingWebApi(private val bookingServices: BookingServices, private val da
             parseDateOrNull(it) ?: throw WrongFormatDate(it)
         }
 
-        val available = bookingServices.getAvailableHouses(startDate, endDate)
+        val paging = getLimitAndSkip(request)
+        val available = bookingServices.getAvailableHouses(startDate, endDate, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(available.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
