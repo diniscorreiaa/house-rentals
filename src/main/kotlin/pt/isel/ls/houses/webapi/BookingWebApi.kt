@@ -22,13 +22,14 @@ import kotlin.uuid.ExperimentalUuidApi
 
 const val INTERVAL_DELIMITER = ':'
 
-class BookingWebApi(private val bookingServices: BookingServices, private val data: DataRepository) {
+class BookingWebApi(private val bookingServices: BookingServices) {
 
     @OptIn(ExperimentalUuidApi::class)
     fun createBooking(request: Request): Response {
-        val user = verifyAndGetAuth(request, data)
         val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
-        val newBooking = bookingServices.createBooking(booking.hid, user.uid, booking.startDate, booking.endDate)
+        val token = getToken(request)
+
+        val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))

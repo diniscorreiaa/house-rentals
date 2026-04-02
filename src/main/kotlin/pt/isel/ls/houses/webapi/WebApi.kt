@@ -8,5 +8,5 @@ class WebApi(services: Services, data: DataRepository) { // TODO: DEVIA SER User
     val user = UserWebApi(services.users)
     val location = LocationWebApi(services.location)
     val house = HouseWebApi(services.houses)
-    val booking = BookingWebApi(services.booking, data)
+    val booking = BookingWebApi(services.booking)
 }
