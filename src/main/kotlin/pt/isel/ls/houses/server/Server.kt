@@ -43,7 +43,7 @@ fun main() {
     //val data = DataPostgresSQL()
     val data = DataMem()
     val services = Services(data)
-    val webApi = WebApi(services, data)
+    val webApi = WebApi(services)
 
     val userRoutes = routes(
         "users" bind POST to webApi.user::createUser,

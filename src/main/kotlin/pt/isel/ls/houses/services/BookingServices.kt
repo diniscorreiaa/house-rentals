@@ -7,14 +7,20 @@ import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseIsNotAvailable
 import pt.isel.ls.houses.exceptions.InvalidDate
+import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.BookingRepository
 import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.repository.HouseRepository
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class BookingServices(
     private val data: DataRepository
 ) {
-    fun createBooking(hid: Int, uid: Int, startDate: LocalDate, endDate: LocalDate): Booking {
+    @OptIn(ExperimentalUuidApi::class)
+    fun createBooking(hid: Int, startDate: LocalDate, endDate: LocalDate, token: Uuid): Booking {
+        val user = data.getUserByToken(token) ?: throw Unauthorized()
+
         if (startDate >= endDate) throw InvalidDate()
         if (data.getHouse(hid) == null) throw HouseDoesNotExist()
 
@@ -22,7 +28,7 @@ class BookingServices(
 
         if (overlapBooking.isNotEmpty()) throw HouseIsNotAvailable()
 
-        return data.createBooking(hid, uid, startDate, endDate)
+        return data.createBooking(hid, user.uid, startDate, endDate)
     }
 
     fun getBooking(bid: Int) = data.getBooking(bid) ?: throw BookingDoesNotExist()

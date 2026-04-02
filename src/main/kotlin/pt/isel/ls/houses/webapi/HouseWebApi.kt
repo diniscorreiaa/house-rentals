@@ -13,13 +13,15 @@ import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
 import pt.isel.ls.houses.webapi.dtos.CreateHouseOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
+import kotlin.uuid.ExperimentalUuidApi
 
-class HouseWebApi(private val houseServices: HouseServices, private val data: DataRepository) {
+class HouseWebApi(private val houseServices: HouseServices) {
 
+    @OptIn(ExperimentalUuidApi::class)
     fun createHouse(request: Request): Response {
-        verifyAndGetAuth(request, data)
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())
-        val newHouse = houseServices.createHouse(house.title, house.location, house.areaSqMt, house.pricePerNight, house.description)
+        val token = getToken(request)
+        val newHouse = houseServices.createHouse(house.title, house.location, house.areaSqMt, house.pricePerNight, house.description, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateHouseOut(newHouse.hid)))
