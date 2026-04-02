@@ -15,13 +15,15 @@ import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
 import pt.isel.ls.houses.webapi.dtos.CreateLocationOut
 import pt.isel.ls.houses.webapi.dtos.GetLocationOut
+import kotlin.uuid.ExperimentalUuidApi
 
-class LocationWebApi(private val locationServices: LocationServices, private val data: DataRepository)  {
+class LocationWebApi(private val locationServices: LocationServices)  {
 
+    @OptIn(ExperimentalUuidApi::class)
     fun createLocation(request: Request): Response {
-        verifyAndGetAuth(request, data)
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
-        val newLocation = locationServices.createLocation(location.name, location.type, location.parentId)
+        val token = getToken(request)
+        val newLocation = locationServices.createLocation(location.name, location.type, location.parentId, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateLocationOut(newLocation.lid)))

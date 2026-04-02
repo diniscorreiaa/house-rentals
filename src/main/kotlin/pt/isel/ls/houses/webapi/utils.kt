@@ -13,6 +13,13 @@ fun verifyAndGetAuth(request: Request, data: DataRepository) =
         data.getUserByToken(Uuid.parse(it))
     } ?: throw Unauthorized()
 
+@OptIn(ExperimentalUuidApi::class)
+fun getToken(request: Request) = request.header("Authorization").let {
+    it ?: throw Unauthorized()
+    Uuid.parseOrNull(it) ?: throw Unauthorized()
+}
+
+
 data class Paging(val limit: Int?, val skip: Int?)
 
 fun getLimitAndSkip(request: Request): Paging {

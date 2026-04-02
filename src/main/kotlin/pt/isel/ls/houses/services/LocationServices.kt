@@ -4,12 +4,18 @@ import pt.isel.ls.houses.domain.Location
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.LocationAlreadyExists
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
+import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.DataRepository
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class LocationServices(
     private val data: DataRepository
 ) {
-    fun createLocation(name: String, type: LocationType, parentId: Int?): Location {
+    @OptIn(ExperimentalUuidApi::class)
+    fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
+        data.getUserByToken(token) ?: throw Unauthorized()
+
         if (parentId != null) {
             getLocation(parentId)
 
