@@ -9,21 +9,29 @@ import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.services.LocationServices
+import pt.isel.ls.houses.services.UserServices
+import kotlin.uuid.ExperimentalUuidApi
 
 class HouseServicesTests {
+    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createHouse with existing location is created successfully`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
-        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null)
+
+        @OptIn(ExperimentalUuidApi::class)
+        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
+        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 
         val house = houses.createHouse(
             title = "Beach House",
             location = loc.lid,
             areaSqMt = 120.0,
             pricePerNight = 95.0,
-            description = "Near the sea"
+            description = "Near the sea",
+            token
         )
 
         assertEquals(1, house.hid)
@@ -33,13 +41,17 @@ class HouseServicesTests {
         assertEquals(95.0, house.price)
         assertEquals("Near the sea", house.description)
         assertEquals(house, houses.getHouse(house.hid))
-        assertEquals(listOf(house), houses.getHouses())
+        assertEquals(listOf(house), houses.getHouses(null, null))
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createHouse for non existing location throws LocationDoesNotExist Exception`() {
         val data = DataMem()
         val houses = HouseServices(data)
+
+        @OptIn(ExperimentalUuidApi::class)
+        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
         assertFailsWith<LocationDoesNotExist> {
             houses.createHouse(
@@ -47,23 +59,30 @@ class HouseServicesTests {
                 location = 404,
                 areaSqMt = 80.0,
                 pricePerNight = 70.0,
-                description = "No location"
+                description = "No location",
+                token
             )
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `getHouse for unknown id throws HouseDoesNotExist Exception`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
-        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null)
+
+        @OptIn(ExperimentalUuidApi::class)
+        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
+        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
         houses.createHouse(
             title = "House",
             location = loc.lid,
             areaSqMt = 100.0,
             pricePerNight = 90.0,
-            description = "desc"
+            description = "desc",
+            token
         )
 
         assertFailsWith<HouseDoesNotExist> {
@@ -71,28 +90,35 @@ class HouseServicesTests {
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `getHouses returns all created houses`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
-        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null)
+
+        @OptIn(ExperimentalUuidApi::class)
+        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
+        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 
         val house1 = houses.createHouse(
             title = "House1",
             location = loc.lid,
             areaSqMt = 100.0,
             pricePerNight = 90.0,
-            description = "description1"
+            description = "description1",
+            token
         )
         val house2 = houses.createHouse(
             title = "House2",
             location = loc.lid,
             areaSqMt = 200.0,
             pricePerNight = 190.0,
-            description = "description2"
+            description = "description2",
+            token
         )
 
-        assertEquals(listOf(house1, house2), houses.getHouses())
+        assertEquals(listOf(house1, house2), houses.getHouses(null, null))
     }
 }
