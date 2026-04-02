@@ -13,18 +13,21 @@ import pt.isel.ls.houses.exceptions.InvalidDate
 import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.services.LocationServices
-import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.houses.services.UserServices
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class BookingServicesTests {
+	@OptIn(ExperimentalUuidApi::class)
+    lateinit var token: Uuid
+
 	@OptIn(ExperimentalUuidApi::class)
     private fun createHouse(data: DataMem): Int {
 		val locations = LocationServices(data)
 		val houses = HouseServices(data)
 
 		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 		return houses.createHouse(
@@ -45,8 +48,7 @@ class BookingServicesTests {
 		val hid = createHouse(data)
 		val start = LocalDate(2025, 6, 1)
 		val end = LocalDate(2025, 6, 7)
-		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
 
 		val booking = bookingServices.createBooking(hid = hid, startDate = start, endDate = end, token)
 
@@ -65,9 +67,6 @@ class BookingServicesTests {
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
 
-		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
-
 		assertFailsWith<InvalidDate> {
 			bookingServices.createBooking(
 				hid = hid,
@@ -85,7 +84,7 @@ class BookingServicesTests {
 		val bookingServices = BookingServices(data)
 
 		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		assertFailsWith<HouseDoesNotExist> {
 			bookingServices.createBooking(
@@ -106,8 +105,6 @@ class BookingServicesTests {
 		val start = LocalDate(2025, 8, 1)
 		val end = LocalDate(2025, 8, 5)
 
-		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		bookingServices.createBooking(hid = hid, startDate = start, endDate = end, token)
 
@@ -166,8 +163,6 @@ class BookingServicesTests {
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
 
-		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		val first = bookingServices.createBooking(
 			hid = hid,
@@ -216,7 +211,7 @@ class BookingServicesTests {
 		val houses = HouseServices(data)
 
 		@OptIn(ExperimentalUuidApi::class)
-		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		val locId = LocationServices(data).createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token).lid
 		val busyHouse = houses.createHouse("Busy", locId, 80.0, 70.0, "Booked inside interval", token)
