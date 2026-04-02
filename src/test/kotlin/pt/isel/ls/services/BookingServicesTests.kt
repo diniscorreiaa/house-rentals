@@ -14,81 +14,105 @@ import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.services.LocationServices
 import kotlinx.datetime.LocalDateTime
+import pt.isel.ls.houses.services.UserServices
+import kotlin.uuid.ExperimentalUuidApi
 
 class BookingServicesTests {
-	private fun createHouse(data: DataMem): Int {
+	@OptIn(ExperimentalUuidApi::class)
+    private fun createHouse(data: DataMem): Int {
 		val locations = LocationServices(data)
 		val houses = HouseServices(data)
-		val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null)
+
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
+		val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 		return houses.createHouse(
 			title = "Beach House",
 			location = loc.lid,
 			areaSqMt = 100.0,
 			pricePerNight = 90.0,
-			description = "Near the sea"
+			description = "Near the sea",
+			token
 		).hid
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `createBooking is successful`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
 		val start = LocalDate(2025, 6, 1)
 		val end = LocalDate(2025, 6, 7)
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
-		val booking = bookingServices.createBooking(hid = hid, uid = 1, startDate = start, endDate = end)
+		val booking = bookingServices.createBooking(hid = hid, startDate = start, endDate = end, token)
 
 		assertEquals(1, booking.bid)
 		assertEquals(hid, booking.houseId)
 		assertEquals(start, booking.startDate)
 		assertEquals(end, booking.endDate)
 		assertEquals(booking, bookingServices.getBooking(booking.bid))
-		assertEquals(listOf(booking), bookingServices.getBookings(hid = hid, startDate = start, endDate = end))
+		assertEquals(listOf(booking), bookingServices.getBookings(hid = hid, startDate = start, endDate = end, null, null))
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `createBooking with start after end throws InvalidDate Exception`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
 
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
 		assertFailsWith<InvalidDate> {
 			bookingServices.createBooking(
 				hid = hid,
-				uid = 1,
 				startDate = LocalDate(2025, 6, 10),
-				endDate = LocalDate(2025, 6, 5)
+				endDate = LocalDate(2025, 6, 5),
+				token
 			)
 		}
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `createBooking for unknown house throws HouseDoesNotExist Exception`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
 		assertFailsWith<HouseDoesNotExist> {
 			bookingServices.createBooking(
 				hid = 10,
-				uid = 1,
 				startDate = LocalDate(2025, 7, 1),
-				endDate = LocalDate(2025, 7, 3)
+				endDate = LocalDate(2025, 7, 3),
+				token
 			)
 		}
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `createBooking on occupied interval throws HouseIsNotAvailable Exception`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
 		val start = LocalDate(2025, 8, 1)
 		val end = LocalDate(2025, 8, 5)
-		bookingServices.createBooking(hid = hid, uid = 1, startDate = start, endDate = end)
+
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
+		bookingServices.createBooking(hid = hid, startDate = start, endDate = end, token)
 
 		assertFailsWith<HouseIsNotAvailable> {
-			bookingServices.createBooking(hid = hid, uid = 2, startDate = start, endDate = end)
+			bookingServices.createBooking(hid = hid, startDate = start, endDate = end, token)
 		}
 	}
 
@@ -112,7 +136,9 @@ class BookingServicesTests {
 			bookingServices.getBookings(
 				hid = hid,
 				startDate = LocalDate(2025, 9, 10),
-				endDate = LocalDate(2025, 9, 5)
+				endDate = LocalDate(2025, 9, 5),
+				null,
+				null
 			)
 		}
 	}
@@ -126,33 +152,42 @@ class BookingServicesTests {
 			bookingServices.getBookings(
 				hid = 8,
 				startDate = LocalDate(2025, 10, 1),
-				endDate = LocalDate(2025, 10, 5)
+				endDate = LocalDate(2025, 10, 5),
+				null,
+				null
 			)
 		}
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `getBookings returns bookings within interval`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val hid = createHouse(data)
+
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+
 		val first = bookingServices.createBooking(
 			hid = hid,
-			uid = 1,
 			startDate = LocalDate(2025, 11, 1),
-			endDate = LocalDate(2025, 11, 3)
+			endDate = LocalDate(2025, 11, 3),
+			token
 		)
 		bookingServices.createBooking(
 			hid = hid,
-			uid = 2,
 			startDate = LocalDate(2025, 11, 5),
-			endDate = LocalDate(2025, 11, 7)
+			endDate = LocalDate(2025, 11, 7),
+			token
 		)
 
 		val bookings = bookingServices.getBookings(
 			hid = hid,
 			startDate = LocalDate(2025, 11, 1),
-			endDate = LocalDate(2025, 11, 4)
+			endDate = LocalDate(2025, 11, 4),
+			null,
+			null
 		)
 
 		assertEquals(listOf(first), bookings)
@@ -166,24 +201,31 @@ class BookingServicesTests {
 		assertFailsWith<InvalidDate> {
 			bookingServices.getAvailableHouses(
 				startDate = LocalDate(2025, 12, 10),
-				endDate = LocalDate(2025, 12, 5)
+				endDate = LocalDate(2025, 12, 5),
+				null,
+				null
 			)
 		}
 	}
 
-	@Test
+	@OptIn(ExperimentalUuidApi::class)
+    @Test
 	fun `getAvailableHouses returns houses with non overlapping bookings`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val houses = HouseServices(data)
-		val locId = LocationServices(data).createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null).lid
-		val busyHouse = houses.createHouse("Busy", locId, 80.0, 70.0, "Booked inside interval")
-		val freeHouse = houses.createHouse("Free", locId, 90.0, 85.0, "Booked outside interval")
 
-		bookingServices.createBooking(busyHouse.hid, 1, LocalDate(2026, 1, 2), LocalDate(2026, 1, 4))
-		bookingServices.createBooking(freeHouse.hid, 2, LocalDate(2025, 12, 1), LocalDate(2025, 12, 5))
+		@OptIn(ExperimentalUuidApi::class)
+		val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
-		val available = bookingServices.getAvailableHouses(LocalDate(2026, 1, 1), LocalDate(2026, 1, 10))
+		val locId = LocationServices(data).createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token).lid
+		val busyHouse = houses.createHouse("Busy", locId, 80.0, 70.0, "Booked inside interval", token)
+		val freeHouse = houses.createHouse("Free", locId, 90.0, 85.0, "Booked outside interval", token)
+
+		bookingServices.createBooking(busyHouse.hid, LocalDate(2026, 1, 2), LocalDate(2026, 1, 4), token)
+		bookingServices.createBooking(freeHouse.hid, LocalDate(2025, 12, 1), LocalDate(2025, 12, 5), token)
+
+		val available = bookingServices.getAvailableHouses(LocalDate(2026, 1, 1), LocalDate(2026, 1, 10), null, null)
 		assertEquals(listOf(freeHouse), available)
 	}
 }
