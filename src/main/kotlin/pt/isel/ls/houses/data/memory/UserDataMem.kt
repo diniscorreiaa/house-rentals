@@ -10,7 +10,6 @@ class UserDataMem : UserRepository {
     private val users = mutableListOf<User>()
     private var id = 1
 
-    @OptIn(ExperimentalUuidApi::class)
     override fun createUser(name: String, email: String): User {
         val user = User(id++,name, email, Uuid.random())
         users.add(user)
@@ -22,7 +21,6 @@ class UserDataMem : UserRepository {
 
     override fun getUserByEmail(email: String): User? = users.find { it.email == email }
 
-    @OptIn(ExperimentalUuidApi::class)
     override fun getUserByToken(token: Uuid): User? = users.find { it.token == token }
 
 }

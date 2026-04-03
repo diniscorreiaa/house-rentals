@@ -12,7 +12,6 @@ import kotlin.uuid.Uuid
 class LocationServices(
     private val data: DataRepository
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
         data.getUserByToken(token) ?: throw Unauthorized()
 

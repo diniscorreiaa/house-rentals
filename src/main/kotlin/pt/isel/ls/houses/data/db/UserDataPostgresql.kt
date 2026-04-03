@@ -7,7 +7,6 @@ import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalUuidApi::class)
 class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { // TODO: FALTA setUrl()!!!
 
     // Deu bastante jeito: https://www.jooq.org/doc/latest/manual/sql-building/sql-statements/insert-statement/insert-returning/

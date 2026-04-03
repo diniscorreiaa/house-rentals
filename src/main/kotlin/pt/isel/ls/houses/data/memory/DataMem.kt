@@ -70,7 +70,6 @@ class DataMem: DataRepository {
 
     override fun getUserByEmail(email: String): User? = user.getUserByEmail(email)
 
-    @OptIn(ExperimentalUuidApi::class)
     override fun getUserByToken(token: Uuid): User? = user.getUserByToken(token)
 
 }

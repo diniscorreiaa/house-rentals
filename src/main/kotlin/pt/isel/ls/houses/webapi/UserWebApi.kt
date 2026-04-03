@@ -18,7 +18,6 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class UserWebApi(private val userServices: UserServices) {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createUser(request: Request): Response {
         val user = Json.decodeFromString<CreateUserIn>(request.bodyString())
         val newUser = userServices.createUser(user.name, user.email)

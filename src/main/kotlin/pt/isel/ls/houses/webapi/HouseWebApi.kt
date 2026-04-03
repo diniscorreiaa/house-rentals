@@ -17,7 +17,6 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class HouseWebApi(private val houseServices: HouseServices) {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createHouse(request: Request): Response {
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())
         val token = getToken(request)

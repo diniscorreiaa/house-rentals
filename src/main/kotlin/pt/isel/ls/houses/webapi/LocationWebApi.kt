@@ -19,7 +19,6 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class LocationWebApi(private val locationServices: LocationServices)  {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createLocation(request: Request): Response {
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
         val token = getToken(request)

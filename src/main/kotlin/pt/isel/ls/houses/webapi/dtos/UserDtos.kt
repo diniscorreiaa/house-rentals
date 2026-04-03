@@ -11,7 +11,7 @@ data class CreateUserIn(val name: String, val email: String)
 
 /////////// Output ///////////
 @Serializable
-data class CreateUserOut @OptIn(ExperimentalUuidApi::class) constructor(
+data class CreateUserOut (
     val uid: Int,
     val token: Uuid
 )

@@ -24,7 +24,6 @@ const val INTERVAL_DELIMITER = ':'
 
 class BookingWebApi(private val bookingServices: BookingServices) {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createBooking(request: Request): Response {
         val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
         val token = getToken(request)

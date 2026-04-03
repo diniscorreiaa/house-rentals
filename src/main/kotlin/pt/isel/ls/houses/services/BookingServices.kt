@@ -17,7 +17,6 @@ import kotlin.uuid.Uuid
 class BookingServices(
     private val data: DataRepository
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     fun createBooking(hid: Int, startDate: LocalDate, endDate: LocalDate, token: Uuid): Booking {
         val user = data.getUserByToken(token) ?: throw Unauthorized()
 
