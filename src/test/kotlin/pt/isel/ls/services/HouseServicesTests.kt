@@ -1,3 +1,6 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.services
 
 import kotlin.test.Test
@@ -13,14 +16,12 @@ import pt.isel.ls.houses.services.UserServices
 import kotlin.uuid.ExperimentalUuidApi
 
 class HouseServicesTests {
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createHouse with existing location is created successfully`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
 
-        @OptIn(ExperimentalUuidApi::class)
         val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
@@ -44,13 +45,11 @@ class HouseServicesTests {
         assertEquals(listOf(house), houses.getHouses(null, null))
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createHouse for non existing location throws LocationDoesNotExist Exception`() {
         val data = DataMem()
         val houses = HouseServices(data)
 
-        @OptIn(ExperimentalUuidApi::class)
         val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
         assertFailsWith<LocationDoesNotExist> {
@@ -65,14 +64,12 @@ class HouseServicesTests {
         }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `getHouse for unknown id throws HouseDoesNotExist Exception`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
 
-        @OptIn(ExperimentalUuidApi::class)
         val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
@@ -90,14 +87,12 @@ class HouseServicesTests {
         }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `getHouses returns all created houses`() {
         val data = DataMem()
         val locations = LocationServices(data)
         val houses = HouseServices(data)
 
-        @OptIn(ExperimentalUuidApi::class)
         val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)

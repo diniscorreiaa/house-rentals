@@ -1,4 +1,8 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.services
+
 
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
@@ -17,16 +21,15 @@ import pt.isel.ls.houses.services.UserServices
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+
+
 class BookingServicesTests {
-	@OptIn(ExperimentalUuidApi::class)
     lateinit var token: Uuid
 
-	@OptIn(ExperimentalUuidApi::class)
     private fun createHouse(data: DataMem): Int {
 		val locations = LocationServices(data)
 		val houses = HouseServices(data)
 
-		@OptIn(ExperimentalUuidApi::class)
 		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
@@ -40,7 +43,6 @@ class BookingServicesTests {
 		).hid
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createBooking is successful`() {
 		val data = DataMem()
@@ -60,7 +62,6 @@ class BookingServicesTests {
 		assertEquals(listOf(booking), bookingServices.getBookings(hid = hid, startDate = start, endDate = end, null, null))
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createBooking with start after end throws InvalidDate Exception`() {
 		val data = DataMem()
@@ -77,13 +78,11 @@ class BookingServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createBooking for unknown house throws HouseDoesNotExist Exception`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 
-		@OptIn(ExperimentalUuidApi::class)
 		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		assertFailsWith<HouseDoesNotExist> {
@@ -96,7 +95,6 @@ class BookingServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createBooking on occupied interval throws HouseIsNotAvailable Exception`() {
 		val data = DataMem()
@@ -156,7 +154,6 @@ class BookingServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `getBookings returns bookings within interval`() {
 		val data = DataMem()
@@ -203,14 +200,12 @@ class BookingServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `getAvailableHouses returns houses with non overlapping bookings`() {
 		val data = DataMem()
 		val bookingServices = BookingServices(data)
 		val houses = HouseServices(data)
 
-		@OptIn(ExperimentalUuidApi::class)
 		token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
 		val locId = LocationServices(data).createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token).lid

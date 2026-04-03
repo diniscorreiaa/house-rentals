@@ -1,3 +1,6 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.dataMem
 
 import kotlin.test.Test
@@ -43,7 +46,6 @@ class UserDataMemTests {
 		assertEquals(created, fetched)
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
 	@Test
 	fun `getUserByToken returns created user successfully`() {
 		val repo = newRepo()
@@ -55,7 +57,6 @@ class UserDataMemTests {
 		assertEquals(created, fetched)
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
 	@Test
 	fun `createUser generates unique tokens`() {
 		val repo = newRepo()

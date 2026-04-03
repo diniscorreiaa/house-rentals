@@ -1,3 +1,6 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.services
 
 import kotlin.test.Test
@@ -14,10 +17,8 @@ class LocationServicesTests {
 	private val data = DataMem()
 	private fun newServices() = LocationServices(data)
 
-	@OptIn(ExperimentalUuidApi::class)
     private val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createLocation without parent persists`() {
 		val services = newServices()
@@ -29,7 +30,6 @@ class LocationServicesTests {
 		assertEquals(country, services.getLocation(country.lid))
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `createLocation with non existing parent throws LocationDoesNotExist Exception`() {
 		val services = newServices()
@@ -39,7 +39,6 @@ class LocationServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `getChildLocations returns children for parent`() {
 		val services = newServices()
@@ -62,7 +61,6 @@ class LocationServicesTests {
 		}
 	}
 
-	@OptIn(ExperimentalUuidApi::class)
     @Test
 	fun `getHierarchy returns parents for non-country`() {
 		val services = newServices()

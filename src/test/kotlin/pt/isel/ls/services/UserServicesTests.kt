@@ -1,3 +1,6 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.services
 
 import org.junit.Assert.assertNotEquals
@@ -34,7 +37,6 @@ class UserServicesTests {
         assertEquals(1, user.uid)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createUser generates unique tokens for each user`() {
         val services = newServices()
