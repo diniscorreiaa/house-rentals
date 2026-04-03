@@ -1,10 +1,10 @@
 package pt.isel.ls.dataMem
 
+import pt.isel.ls.houses.data.memory.HouseDataMem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import pt.isel.ls.houses.data.memory.HouseDataMem
 
 class HouseDataMemTests {
 	private fun newRepo() = HouseDataMem()

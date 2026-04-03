@@ -5,9 +5,6 @@ import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.DataRepository
-import pt.isel.ls.houses.repository.HouseRepository
-import pt.isel.ls.houses.repository.LocationRepository
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class HouseServices(

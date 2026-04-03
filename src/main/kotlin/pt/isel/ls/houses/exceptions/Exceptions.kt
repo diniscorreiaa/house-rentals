@@ -1,6 +1,5 @@
 package pt.isel.ls.houses.exceptions
 
-import kotlinx.serialization.StringFormat
 import org.http4k.core.Status
 import pt.isel.ls.houses.webapi.INTERVAL_DELIMITER
 

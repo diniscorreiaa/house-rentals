@@ -5,9 +5,6 @@ package pt.isel.ls.services
 
 
 import kotlinx.datetime.LocalDate
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
@@ -18,9 +15,11 @@ import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.services.UserServices
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-
 
 
 class BookingServicesTests {

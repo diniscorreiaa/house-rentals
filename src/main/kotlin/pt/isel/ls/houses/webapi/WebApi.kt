@@ -1,6 +1,5 @@
 package pt.isel.ls.houses.webapi
 
-import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.Services
 
 

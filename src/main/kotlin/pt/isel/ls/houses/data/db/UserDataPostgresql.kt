@@ -4,7 +4,6 @@ import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.UserRepository
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { // TODO: FALTA setUrl()!!!

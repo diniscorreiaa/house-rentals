@@ -7,7 +7,6 @@ import pt.isel.ls.houses.domain.Location
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.DataRepository
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class DataMem: DataRepository {

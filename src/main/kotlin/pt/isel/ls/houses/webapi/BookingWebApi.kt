@@ -11,14 +11,12 @@ import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
 import pt.isel.ls.houses.exceptions.WrongFormatDate
 import pt.isel.ls.houses.exceptions.WrongSeparatorDate
-import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.BookingServices
 import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
 import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 import java.time.format.DateTimeParseException
-import kotlin.uuid.ExperimentalUuidApi
 
 const val INTERVAL_DELIMITER = ':'
 

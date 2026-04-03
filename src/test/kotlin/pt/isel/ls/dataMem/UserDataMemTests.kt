@@ -3,11 +3,11 @@
 
 package pt.isel.ls.dataMem
 
+import pt.isel.ls.houses.data.memory.UserDataMem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
-import pt.isel.ls.houses.data.memory.UserDataMem
 import kotlin.uuid.ExperimentalUuidApi
 
 class UserDataMemTests {

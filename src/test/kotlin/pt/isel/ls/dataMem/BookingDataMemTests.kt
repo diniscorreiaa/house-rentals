@@ -1,12 +1,12 @@
 package pt.isel.ls.dataMem
 
+import kotlinx.datetime.LocalDate
+import pt.isel.ls.houses.data.memory.BookingDataMem
+import pt.isel.ls.houses.data.memory.HouseDataMem
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlinx.datetime.LocalDate
-import pt.isel.ls.houses.data.memory.BookingDataMem
-import pt.isel.ls.houses.data.memory.HouseDataMem
 
 class BookingDataMemTests {
     @Test

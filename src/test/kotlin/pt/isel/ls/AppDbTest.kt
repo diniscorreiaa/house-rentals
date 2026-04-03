@@ -1,8 +1,8 @@
 package pt.isel.ls
 
 import org.junit.Before
-import kotlin.test.Test
 import org.postgresql.ds.PGSimpleDataSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -1,7 +1,6 @@
 package pt.isel.ls.houses.repository
 
 import pt.isel.ls.houses.domain.User
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 interface UserRepository {

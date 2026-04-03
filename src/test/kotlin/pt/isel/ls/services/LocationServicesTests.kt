@@ -3,14 +3,14 @@
 
 package pt.isel.ls.services
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.services.UserServices
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class LocationServicesTests {

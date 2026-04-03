@@ -6,7 +6,6 @@ import pt.isel.ls.houses.exceptions.LocationAlreadyExists
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.DataRepository
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class LocationServices(

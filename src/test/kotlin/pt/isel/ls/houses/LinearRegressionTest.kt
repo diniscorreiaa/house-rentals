@@ -1,7 +1,9 @@
 package pt.isel.ls.houses
 
 import kotlin.math.absoluteValue
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class LinearRegressionTest {
 

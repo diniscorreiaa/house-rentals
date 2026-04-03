@@ -1,12 +1,12 @@
 package pt.isel.ls.dataMem
 
+import pt.isel.ls.houses.data.memory.LocationDataMem
+import pt.isel.ls.houses.domain.LocationType
+import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
-import pt.isel.ls.houses.data.memory.LocationDataMem
-import pt.isel.ls.houses.domain.LocationType
-import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 
 class LocationDataMemTests {
 

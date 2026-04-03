@@ -1,7 +1,6 @@
 package pt.isel.ls.houses.webapi.dtos
 
 import kotlinx.serialization.Serializable
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /////////// Input ///////////

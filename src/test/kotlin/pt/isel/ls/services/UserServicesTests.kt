@@ -4,13 +4,13 @@
 package pt.isel.ls.services
 
 import org.junit.Assert.assertNotEquals
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
 import pt.isel.ls.houses.services.UserServices
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class UserServicesTests {
