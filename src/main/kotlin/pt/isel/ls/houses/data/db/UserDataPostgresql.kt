@@ -6,19 +6,21 @@ import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
-class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { // TODO: FALTA setUrl()!!!
+class UserDataPostgresql(val dataSource: PGSimpleDataSource) : UserRepository { // TODO: FALTA setUrl()!!!
 
     // Deu bastante jeito: https://www.jooq.org/doc/latest/manual/sql-building/sql-statements/insert-statement/insert-returning/
     // Baseei-me na resposta do Thiago Silva pois a resposta no topo implica imports: https://www.devmedia.com.br/forum/postgresql-insert-returning-id-resolvido/569757
 
     override fun createUser(name: String, email: String): User {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO \"user\" (\"UserName\", \"Email\") VALUES (?, ?) RETURNING \"IdUser\", \"Token\"")
+            val st =
+                it.prepareStatement("INSERT INTO \"user\" (\"UserName\", \"Email\") VALUES (?, ?) RETURNING \"IdUser\", \"Token\"")
 
             st.setString(1, name)
             st.setString(2, email)
 
-            val rs = st.executeQuery() // A expressão RETURNING é detetada como uma query pois estamos a receber dados da base de dados
+            val rs =
+                st.executeQuery() // A expressão RETURNING é detetada como uma query pois estamos a receber dados da base de dados
             if (!rs.next()) throw InternalError() // Avança para a 1a linha// TODO: Podemos lançar exceções daqui?
             return User(
                 rs.getInt(1),
@@ -65,7 +67,8 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource): UserRepository { /
 
     override fun getUserByToken(token: Uuid): User? {
         dataSource.connection.use {
-            val st = it.prepareStatement("SELECT * FROM \"user\" WHERE \"Token\" = ?::uuid") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
+            val st =
+                it.prepareStatement("SELECT * FROM \"user\" WHERE \"Token\" = ?::uuid") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
             st.setString(1, token.toString())
 
             val rs = st.executeQuery()

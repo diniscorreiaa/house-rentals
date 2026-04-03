@@ -10,7 +10,7 @@ class UserDataMem : UserRepository {
     private var id = 1
 
     override fun createUser(name: String, email: String): User {
-        val user = User(id++,name, email, Uuid.random())
+        val user = User(id++, name, email, Uuid.random())
         users.add(user)
         return user
     }

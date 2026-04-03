@@ -10,10 +10,10 @@ data class CreateUserIn(val name: String, val email: String)
 
 /////////// Output ///////////
 @Serializable
-data class CreateUserOut (
+data class CreateUserOut(
     val uid: Int,
     val token: Uuid
 )
 
 @Serializable
-data class GetUserOut (val uid: Int, val name: String, val email: String)
+data class GetUserOut(val uid: Int, val name: String, val email: String)

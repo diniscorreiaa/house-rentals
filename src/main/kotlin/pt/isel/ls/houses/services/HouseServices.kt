@@ -10,7 +10,14 @@ import kotlin.uuid.Uuid
 class HouseServices(
     private val data: DataRepository
 ) {
-    fun createHouse(title: String, location: Int, areaSqMt: Double, pricePerNight: Double, description: String, token: Uuid): House {
+    fun createHouse(
+        title: String,
+        location: Int,
+        areaSqMt: Double,
+        pricePerNight: Double,
+        description: String,
+        token: Uuid
+    ): House {
         data.getUserByToken(token) ?: throw Unauthorized()
 
 

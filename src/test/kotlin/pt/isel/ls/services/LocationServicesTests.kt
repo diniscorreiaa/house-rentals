@@ -14,69 +14,72 @@ import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class LocationServicesTests {
-	private val data = DataMem()
-	private fun newServices() = LocationServices(data)
+    private val data = DataMem()
+    private fun newServices() = LocationServices(data)
 
     private val token = UserServices(data).createUser("dummy", "dummy@example.com").token
 
     @Test
-	fun `createLocation without parent persists`() {
-		val services = newServices()
+    fun `createLocation without parent persists`() {
+        val services = newServices()
 
-		val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
+        val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 
-		assertEquals(1, country.lid)
-		assertEquals(LocationType.COUNTRY, country.type)
-		assertEquals(country, services.getLocation(country.lid))
-	}
-
-    @Test
-	fun `createLocation with non existing parent throws LocationDoesNotExist Exception`() {
-		val services = newServices()
-
-		assertFailsWith<LocationDoesNotExist> {
-			services.createLocation(name = "Lisbon", type = LocationType.DISTRICT, parentId = 99, token)
-		}
-	}
+        assertEquals(1, country.lid)
+        assertEquals(LocationType.COUNTRY, country.type)
+        assertEquals(country, services.getLocation(country.lid))
+    }
 
     @Test
-	fun `getChildLocations returns children for parent`() {
-		val services = newServices()
-		val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
-		val region1 = services.createLocation(name = "Region1", type = LocationType.REGION, parentId = country.lid, token)
-		val region2 = services.createLocation(name = "Region2", type = LocationType.REGION, parentId = country.lid, token)
+    fun `createLocation with non existing parent throws LocationDoesNotExist Exception`() {
+        val services = newServices()
 
-		val children = services.getChildLocations(country.lid, null, null)
-		println(children)
-
-		assertEquals(listOf(region1, region2), children)
-	}
-
-	@Test
-	fun `getChildLocations for non existing parent throws LocationDoesNotExist Exception`() {
-		val services = newServices()
-
-		assertFailsWith<LocationDoesNotExist> {
-			services.getChildLocations(lid = 123, null, null)
-		}
-	}
+        assertFailsWith<LocationDoesNotExist> {
+            services.createLocation(name = "Lisbon", type = LocationType.DISTRICT, parentId = 99, token)
+        }
+    }
 
     @Test
-	fun `getHierarchy returns parents for non-country`() {
-		val services = newServices()
-		val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
-		val region = services.createLocation(name = "Region", type = LocationType.REGION, parentId = country.lid, token)
-		val district = services.createLocation(name = "District", type = LocationType.DISTRICT, parentId = region.lid, token)
+    fun `getChildLocations returns children for parent`() {
+        val services = newServices()
+        val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
+        val region1 =
+            services.createLocation(name = "Region1", type = LocationType.REGION, parentId = country.lid, token)
+        val region2 =
+            services.createLocation(name = "Region2", type = LocationType.REGION, parentId = country.lid, token)
 
-		assertEquals(listOf(region), services.getHierarchy(district.lid))
-	}
+        val children = services.getChildLocations(country.lid, null, null)
+        println(children)
 
-	@Test
-	fun `getHierarchy for non existing location throws LocationDoesNotExist Exception`() {
-		val services = newServices()
+        assertEquals(listOf(region1, region2), children)
+    }
 
-		assertFailsWith<LocationDoesNotExist> {
-			services.getHierarchy(lid = 42)
-		}
-	}
+    @Test
+    fun `getChildLocations for non existing parent throws LocationDoesNotExist Exception`() {
+        val services = newServices()
+
+        assertFailsWith<LocationDoesNotExist> {
+            services.getChildLocations(lid = 123, null, null)
+        }
+    }
+
+    @Test
+    fun `getHierarchy returns parents for non-country`() {
+        val services = newServices()
+        val country = services.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
+        val region = services.createLocation(name = "Region", type = LocationType.REGION, parentId = country.lid, token)
+        val district =
+            services.createLocation(name = "District", type = LocationType.DISTRICT, parentId = region.lid, token)
+
+        assertEquals(listOf(region), services.getHierarchy(district.lid))
+    }
+
+    @Test
+    fun `getHierarchy for non existing location throws LocationDoesNotExist Exception`() {
+        val services = newServices()
+
+        assertFailsWith<LocationDoesNotExist> {
+            services.getHierarchy(lid = 42)
+        }
+    }
 }

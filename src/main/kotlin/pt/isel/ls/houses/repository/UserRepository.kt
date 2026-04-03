@@ -7,5 +7,5 @@ interface UserRepository {
     fun createUser(name: String, email: String): User
     fun getUser(uid: Int): User?
     fun getUserByEmail(email: String): User?
-    fun getUserByToken(token: Uuid) : User?
+    fun getUserByToken(token: Uuid): User?
 }

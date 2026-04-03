@@ -17,7 +17,14 @@ class HouseWebApi(private val houseServices: HouseServices) {
     fun createHouse(request: Request): Response {
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())
         val token = getToken(request)
-        val newHouse = houseServices.createHouse(house.title, house.location, house.areaSqMt, house.pricePerNight, house.description, token)
+        val newHouse = houseServices.createHouse(
+            house.title,
+            house.location,
+            house.areaSqMt,
+            house.pricePerNight,
+            house.description,
+            token
+        )
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateHouseOut(newHouse.hid)))
@@ -32,7 +39,17 @@ class HouseWebApi(private val houseServices: HouseServices) {
         val house = houseServices.getHouse(houseId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GetHouseOut(house.title, house.location, house.area, house.price, house.description)))
+            .body(
+                Json.encodeToString(
+                    GetHouseOut(
+                        house.title,
+                        house.location,
+                        house.area,
+                        house.price,
+                        house.description
+                    )
+                )
+            )
     }
 
     // TODO: verificar se é possível remover o parâmetro não usado request
@@ -41,6 +58,14 @@ class HouseWebApi(private val houseServices: HouseServices) {
         val houses = houseServices.getHouses(paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(houses.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
+            .body(Json.encodeToString(houses.map {
+                GetHouseOut(
+                    it.title,
+                    it.location,
+                    it.area,
+                    it.price,
+                    it.description
+                )
+            }))
     }
 }

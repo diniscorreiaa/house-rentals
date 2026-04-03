@@ -4,7 +4,13 @@ import kotlinx.serialization.Serializable
 
 /////////// Input ///////////
 @Serializable
-data class CreateHouseIn(val title: String, val location: Int, val areaSqMt: Double, val pricePerNight: Double, val description: String)
+data class CreateHouseIn(
+    val title: String,
+    val location: Int,
+    val areaSqMt: Double,
+    val pricePerNight: Double,
+    val description: String
+)
 
 
 /////////// Output ///////////
@@ -12,4 +18,10 @@ data class CreateHouseIn(val title: String, val location: Int, val areaSqMt: Dou
 data class CreateHouseOut(val hid: Int)
 
 @Serializable
-data class GetHouseOut(val title: String, val location: Int, val areaSqMt: Double, val pricePerNight: Double, val description: String)
+data class GetHouseOut(
+    val title: String,
+    val location: Int,
+    val areaSqMt: Double,
+    val pricePerNight: Double,
+    val description: String
+)

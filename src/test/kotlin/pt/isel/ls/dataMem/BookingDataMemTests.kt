@@ -44,8 +44,10 @@ class BookingDataMemTests {
         val booking2 = bookingRepo.createBooking(house.hid, 2, LocalDate(2025, 1, 3), LocalDate(2025, 1, 4))
         val booking3 = bookingRepo.createBooking(house.hid, 3, LocalDate(2025, 1, 5), LocalDate(2025, 1, 6))
 
-        val middle = bookingRepo.getBookings(house.hid, LocalDate(2025, 1, 1), LocalDate(2025, 1, 31), limit = 1, skip = 1)
-        val tail = bookingRepo.getBookings(house.hid, LocalDate(2025, 1, 1), LocalDate(2025, 1, 31), limit = 1, skip = 2)
+        val middle =
+            bookingRepo.getBookings(house.hid, LocalDate(2025, 1, 1), LocalDate(2025, 1, 31), limit = 1, skip = 1)
+        val tail =
+            bookingRepo.getBookings(house.hid, LocalDate(2025, 1, 1), LocalDate(2025, 1, 31), limit = 1, skip = 2)
 
         assertEquals(listOf(booking2), middle)
         assertEquals(listOf(booking3), tail)
@@ -62,7 +64,8 @@ class BookingDataMemTests {
         bookingRepo.createBooking(house1.hid, 1, LocalDate(2025, 3, 10), LocalDate(2025, 3, 12))
         bookingRepo.createBooking(house2.hid, 2, LocalDate(2025, 4, 1), LocalDate(2025, 4, 3))
 
-        val available = bookingRepo.getAvailableHouses(LocalDate(2025, 3, 11), LocalDate(2025, 3, 15), limit = null, skip = null)
+        val available =
+            bookingRepo.getAvailableHouses(LocalDate(2025, 3, 11), LocalDate(2025, 3, 15), limit = null, skip = null)
         val paged = bookingRepo.getAvailableHouses(LocalDate(2025, 3, 11), LocalDate(2025, 3, 15), limit = 1, skip = 1)
 
         assertEquals(listOf(house2, house3), available)

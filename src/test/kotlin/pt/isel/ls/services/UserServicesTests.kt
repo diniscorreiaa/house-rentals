@@ -42,7 +42,7 @@ class UserServicesTests {
         val services = newServices()
 
         val user1 = services.createUser(name = "Dummy", email = "dummy@email.com")
-        val user2 = services.createUser(name = "Dummy2",   email = "dummy2@email.com")
+        val user2 = services.createUser(name = "Dummy2", email = "dummy2@email.com")
 
         assertNotEquals(user1.token, user2.token)
     }

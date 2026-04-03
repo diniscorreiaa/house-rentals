@@ -10,7 +10,7 @@ import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.DataRepository
 import kotlin.uuid.Uuid
 
-class DataPostgresSQL: DataRepository {
+class DataPostgresSQL : DataRepository {
 
     private val dataSource = PGSimpleDataSource().apply { setUrl(System.getenv("JDBC_DATABASE_URL")) }
 
@@ -63,7 +63,8 @@ class DataPostgresSQL: DataRepository {
 
     override fun getLocation(lid: Int): Location? = location.getLocation(lid)
 
-    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> = location.getChildLocations(lid, limit, skip)
+    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> =
+        location.getChildLocations(lid, limit, skip)
 
     override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
 

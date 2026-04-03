@@ -33,20 +33,29 @@ class BookingWebApi(private val bookingServices: BookingServices) {
     }
 
     fun getBooking(request: Request): Response {
-        val bookingId = request.path("bid").let{
+        val bookingId = request.path("bid").let {
             it ?: throw RequiredPathParamNotFound("bid")
             it.toIntOrNull() ?: throw InvalidIdentifier("bid")
         }
         val booking = bookingServices.getBooking(bookingId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GetBookingOut(booking.startDate, booking.endDate, booking.userId, booking.houseId)))
+            .body(
+                Json.encodeToString(
+                    GetBookingOut(
+                        booking.startDate,
+                        booking.endDate,
+                        booking.userId,
+                        booking.houseId
+                    )
+                )
+            )
     }
 
     fun getBookings(request: Request): Response {
         // TODO: De certeza que faz sentido ser passado no path???
         val houseId = request.query("hid").let {
-            it ?:  throw RequiredQueryParamNotFound("hid")
+            it ?: throw RequiredQueryParamNotFound("hid")
             it.toIntOrNull() ?: throw InvalidIdentifier("hid")
         }
         val interval = request.query("date-interval").let { intervalStr ->
@@ -61,7 +70,7 @@ class BookingWebApi(private val bookingServices: BookingServices) {
 
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(bookings.map{ GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
+            .body(Json.encodeToString(bookings.map { GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
     }
 
     fun getAvailableHouses(request: Request): Response {
@@ -79,7 +88,15 @@ class BookingWebApi(private val bookingServices: BookingServices) {
         val available = bookingServices.getAvailableHouses(startDate, endDate, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(available.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
+            .body(Json.encodeToString(available.map {
+                GetHouseOut(
+                    it.title,
+                    it.location,
+                    it.area,
+                    it.price,
+                    it.description
+                )
+            }))
     }
 }
 
