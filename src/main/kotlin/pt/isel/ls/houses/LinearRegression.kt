@@ -35,8 +35,10 @@ class Scale(values: List<Double>) {
     val min: Double = values.min()  // Minimum value of the scale
     val max: Double = values.max()  // Maximum value of the scale
     val delta: Double = max - min   // Length of the scale ONLY NEEDED TO CHANGE THIS to minus
+
     // Normalize a value to the [0, 1] interval
     fun normalize(value: Double) = (value - min) / delta
+
     // Denormalize a value back to the original scale
     fun denormalize(value: Double) = value * delta + min
 }
@@ -104,7 +106,7 @@ fun train(
 
     // Learning loop
     repeat(epochs) {
-        val total = data.fold(Params(0.0,0.0)) { p, house ->
+        val total = data.fold(Params(0.0, 0.0)) { p, house ->
             val yPred = predict(house.area, params)
             val e = error(yPred, house.price)
             p + gradients(house.area, e, data.size)

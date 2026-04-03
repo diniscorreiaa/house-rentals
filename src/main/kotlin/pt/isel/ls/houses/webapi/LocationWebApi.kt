@@ -5,21 +5,15 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
-import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
-import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
-import pt.isel.ls.houses.exceptions.WrongSeparatorDate
-import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
 import pt.isel.ls.houses.webapi.dtos.CreateLocationOut
 import pt.isel.ls.houses.webapi.dtos.GetLocationOut
-import kotlin.uuid.ExperimentalUuidApi
 
-class LocationWebApi(private val locationServices: LocationServices)  {
+class LocationWebApi(private val locationServices: LocationServices) {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createLocation(request: Request): Response {
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
         val token = getToken(request)

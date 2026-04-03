@@ -5,23 +5,26 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
-import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
-import pt.isel.ls.houses.repository.DataRepository
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
 import pt.isel.ls.houses.webapi.dtos.CreateHouseOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
-import kotlin.uuid.ExperimentalUuidApi
 
 class HouseWebApi(private val houseServices: HouseServices) {
 
-    @OptIn(ExperimentalUuidApi::class)
     fun createHouse(request: Request): Response {
         val house = Json.decodeFromString<CreateHouseIn>(request.bodyString())
         val token = getToken(request)
-        val newHouse = houseServices.createHouse(house.title, house.location, house.areaSqMt, house.pricePerNight, house.description, token)
+        val newHouse = houseServices.createHouse(
+            house.title,
+            house.location,
+            house.areaSqMt,
+            house.pricePerNight,
+            house.description,
+            token
+        )
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateHouseOut(newHouse.hid)))
@@ -36,7 +39,17 @@ class HouseWebApi(private val houseServices: HouseServices) {
         val house = houseServices.getHouse(houseId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GetHouseOut(house.title, house.location, house.area, house.price, house.description)))
+            .body(
+                Json.encodeToString(
+                    GetHouseOut(
+                        house.title,
+                        house.location,
+                        house.area,
+                        house.price,
+                        house.description
+                    )
+                )
+            )
     }
 
     // TODO: verificar se é possível remover o parâmetro não usado request
@@ -45,6 +58,14 @@ class HouseWebApi(private val houseServices: HouseServices) {
         val houses = houseServices.getHouses(paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(houses.map { GetHouseOut(it.title, it.location, it.area, it.price, it.description) }))
+            .body(Json.encodeToString(houses.map {
+                GetHouseOut(
+                    it.title,
+                    it.location,
+                    it.area,
+                    it.price,
+                    it.description
+                )
+            }))
     }
 }

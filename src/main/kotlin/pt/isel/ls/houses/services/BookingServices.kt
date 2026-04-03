@@ -8,16 +8,12 @@ import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseIsNotAvailable
 import pt.isel.ls.houses.exceptions.InvalidDate
 import pt.isel.ls.houses.exceptions.Unauthorized
-import pt.isel.ls.houses.repository.BookingRepository
 import pt.isel.ls.houses.repository.DataRepository
-import pt.isel.ls.houses.repository.HouseRepository
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class BookingServices(
     private val data: DataRepository
 ) {
-    @OptIn(ExperimentalUuidApi::class)
     fun createBooking(hid: Int, startDate: LocalDate, endDate: LocalDate, token: Uuid): Booking {
         val user = data.getUserByToken(token) ?: throw Unauthorized()
 

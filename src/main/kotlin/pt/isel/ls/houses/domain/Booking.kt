@@ -1,7 +1,7 @@
 package pt.isel.ls.houses.domain
 
-import kotlinx.serialization.Serializable
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class Booking(

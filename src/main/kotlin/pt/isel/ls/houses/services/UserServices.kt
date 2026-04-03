@@ -4,7 +4,6 @@ import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
 import pt.isel.ls.houses.repository.DataRepository
-import pt.isel.ls.houses.repository.UserRepository
 
 class UserServices(
     private val data: DataRepository
