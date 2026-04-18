@@ -11,7 +11,7 @@ import kotlin.uuid.Uuid
 
 class DataMem : DataRepository {
     override val user = UserDataMem()
-    private val location = LocationDataMem()
+    override val location = LocationDataMem()
     private val house = HouseDataMem()
     private val booking = BookingDataMem(house)
 
@@ -51,16 +51,4 @@ class DataMem : DataRepository {
 
     override fun getHouses(limit: Int?, skip: Int?): List<House> = house.getHouses(limit, skip)
 
-    override fun createLocation(
-        name: String,
-        type: LocationType,
-        parentId: Int?
-    ): Location = location.createLocation(name, type, parentId)
-
-    override fun getLocation(lid: Int): Location? = location.getLocation(lid)
-
-    override fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> =
-        location.getChildLocations(lid, limit, skip)
-
-    override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
 }

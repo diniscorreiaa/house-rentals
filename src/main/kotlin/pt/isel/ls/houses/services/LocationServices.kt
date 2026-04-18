@@ -5,13 +5,13 @@ import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.LocationAlreadyExists
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
-import pt.isel.ls.houses.repository.DataRepository
+import pt.isel.ls.houses.repository.LocationRepository
 import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 class LocationServices(
     private val userData: UserRepository,
-    private val data: DataRepository
+    private val locationData: LocationRepository
 ) {
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
         userData.getUserByToken(token) ?: throw Unauthorized()
@@ -26,18 +26,18 @@ class LocationServices(
             }
         }
 
-        return data.createLocation(name, type, parentId)
+        return locationData.createLocation(name, type, parentId)
     }
 
-    fun getLocation(lid: Int) = data.getLocation(lid) ?: throw LocationDoesNotExist()
+    fun getLocation(lid: Int) = locationData.getLocation(lid) ?: throw LocationDoesNotExist()
 
     fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> {
-        if (data.getLocation(lid) == null) throw LocationDoesNotExist()
-        return data.getChildLocations(lid, limit, skip)
+        if (locationData.getLocation(lid) == null) throw LocationDoesNotExist()
+        return locationData.getChildLocations(lid, limit, skip)
     }
 
     fun getHierarchy(lid: Int): List<Location> {
-        if (data.getLocation(lid) == null) throw LocationDoesNotExist()
-        return data.getHierarchy(lid)
+        if (locationData.getLocation(lid) == null) throw LocationDoesNotExist()
+        return locationData.getHierarchy(lid)
     }
 }

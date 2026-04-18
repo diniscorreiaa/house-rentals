@@ -5,11 +5,13 @@ import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.DataRepository
+import pt.isel.ls.houses.repository.LocationRepository
 import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 class HouseServices(
     private val userData: UserRepository,
+    private val locationData: LocationRepository,
     private val data: DataRepository
 ) {
     fun createHouse(
@@ -23,7 +25,7 @@ class HouseServices(
         userData.getUserByToken(token) ?: throw Unauthorized()
 
 
-        if (data.getLocation(location) == null) throw LocationDoesNotExist()
+        if (locationData.getLocation(location) == null) throw LocationDoesNotExist()
 
         return data.createHouse(title, location, areaSqMt, pricePerNight, description)
     }
