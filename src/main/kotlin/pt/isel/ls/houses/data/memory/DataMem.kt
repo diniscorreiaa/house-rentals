@@ -12,7 +12,7 @@ import kotlin.uuid.Uuid
 class DataMem : DataRepository {
     override val user = UserDataMem()
     override val location = LocationDataMem()
-    private val house = HouseDataMem()
+    override val house = HouseDataMem()
     private val booking = BookingDataMem(house)
 
     override fun createBooking(
@@ -38,17 +38,4 @@ class DataMem : DataRepository {
         limit: Int?,
         skip: Int?,
     ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
-
-    override fun createHouse(
-        title: String,
-        location: Int,
-        areaSqMt: Double,
-        pricePerNight: Double,
-        description: String
-    ): House = house.createHouse(title, location, areaSqMt, pricePerNight, description)
-
-    override fun getHouse(hid: Int): House? = house.getHouse(hid)
-
-    override fun getHouses(limit: Int?, skip: Int?): List<House> = house.getHouses(limit, skip)
-
 }
