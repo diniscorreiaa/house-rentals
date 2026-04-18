@@ -14,7 +14,7 @@ class DataPostgresSQL : DataRepository {
 
     private val dataSource = PGSimpleDataSource().apply { setUrl(System.getenv("JDBC_DATABASE_URL")) }
 
-    private val user = UserDataPostgresql(dataSource)
+    override val user = UserDataPostgresql(dataSource)
     private val location = LocationDataPostgresql(dataSource)
     private val house = HouseDataPostgresql(dataSource)
     private val booking = BookingDataPostgresql(dataSource)
@@ -67,13 +67,4 @@ class DataPostgresSQL : DataRepository {
         location.getChildLocations(lid, limit, skip)
 
     override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
-
-    override fun createUser(name: String, email: String) = user.createUser(name, email)
-
-    override fun getUser(uid: Int): User? = user.getUser(uid)
-
-    override fun getUserByEmail(email: String): User? = user.getUserByEmail(email)
-
-    override fun getUserByToken(token: Uuid): User? = user.getUserByToken(token)
-
 }

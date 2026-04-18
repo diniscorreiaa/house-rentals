@@ -10,7 +10,7 @@ import pt.isel.ls.houses.repository.DataRepository
 import kotlin.uuid.Uuid
 
 class DataMem : DataRepository {
-    private val user = UserDataMem()
+    override val user = UserDataMem()
     private val location = LocationDataMem()
     private val house = HouseDataMem()
     private val booking = BookingDataMem(house)
@@ -63,13 +63,4 @@ class DataMem : DataRepository {
         location.getChildLocations(lid, limit, skip)
 
     override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
-
-    override fun createUser(name: String, email: String): User = user.createUser(name, email)
-
-    override fun getUser(uid: Int): User? = user.getUser(uid)
-
-    override fun getUserByEmail(email: String): User? = user.getUserByEmail(email)
-
-    override fun getUserByToken(token: Uuid): User? = user.getUserByToken(token)
-
 }

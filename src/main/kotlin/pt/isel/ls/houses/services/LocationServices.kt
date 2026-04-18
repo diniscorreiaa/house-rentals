@@ -6,13 +6,15 @@ import pt.isel.ls.houses.exceptions.LocationAlreadyExists
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.DataRepository
+import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 class LocationServices(
+    private val userData: UserRepository,
     private val data: DataRepository
 ) {
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
-        data.getUserByToken(token) ?: throw Unauthorized()
+        userData.getUserByToken(token) ?: throw Unauthorized()
 
         if (parentId != null) {
             getLocation(parentId)
