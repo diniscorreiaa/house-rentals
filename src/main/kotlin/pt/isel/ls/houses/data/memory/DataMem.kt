@@ -13,29 +13,5 @@ class DataMem : DataRepository {
     override val user = UserDataMem()
     override val location = LocationDataMem()
     override val house = HouseDataMem()
-    private val booking = BookingDataMem(house)
-
-    override fun createBooking(
-        hid: Int,
-        userId: Int,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ): Booking = booking.createBooking(hid, userId, startDate, endDate)
-
-    override fun getBooking(bid: Int): Booking? = booking.getBooking(bid)
-
-    override fun getBookings(
-        hid: Int,
-        startDate: LocalDate,
-        endDate: LocalDate,
-        limit: Int?,
-        skip: Int?,
-    ): List<Booking> = booking.getBookings(hid, startDate, endDate, limit, skip)
-
-    override fun getAvailableHouses(
-        startDate: LocalDate,
-        endDate: LocalDate,
-        limit: Int?,
-        skip: Int?,
-    ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
+    override val booking = BookingDataMem(house)
 }

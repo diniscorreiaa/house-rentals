@@ -17,29 +17,5 @@ class DataPostgresSQL : DataRepository {
     override val user = UserDataPostgresql(dataSource)
     override val location = LocationDataPostgresql(dataSource)
     override val house = HouseDataPostgresql(dataSource)
-    private val booking = BookingDataPostgresql(dataSource)
-
-    override fun createBooking(
-        hid: Int,
-        userId: Int,
-        startDate: LocalDate,
-        endDate: LocalDate
-    ) = booking.createBooking(hid, userId, startDate, endDate)
-
-    override fun getBooking(bid: Int): Booking? = booking.getBooking(bid)
-
-    override fun getBookings(
-        hid: Int,
-        startDate: LocalDate,
-        endDate: LocalDate,
-        limit: Int?,
-        skip: Int?,
-    ): List<Booking> = booking.getBookings(hid, startDate, endDate, limit, skip)
-
-    override fun getAvailableHouses(
-        startDate: LocalDate,
-        endDate: LocalDate,
-        limit: Int?,
-        skip: Int?,
-    ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
+    override val booking = BookingDataPostgresql(dataSource)
 }

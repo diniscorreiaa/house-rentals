@@ -6,5 +6,5 @@ class Services(data: DataRepository) {
     val users = UserServices(data.user)
     val location = LocationServices(data.user, data.location)
     val houses = HouseServices(data.user, data.location, data.house)
-    val booking = BookingServices(data.user, data.house, data)
+    val booking = BookingServices(data.user, data.house, data.booking)
 }
