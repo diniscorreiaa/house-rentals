@@ -64,6 +64,8 @@ class DataMem : DataRepository {
 
     override fun getHierarchy(lid: Int): List<Location> = location.getHierarchy(lid)
 
+    override fun getAllLocations(): List<Location> = location.getAllLocations()
+
     override fun createUser(name: String, email: String): User = user.createUser(name, email)
 
     override fun getUser(uid: Int): User? = user.getUser(uid)
