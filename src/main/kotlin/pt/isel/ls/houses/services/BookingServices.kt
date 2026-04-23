@@ -39,4 +39,10 @@ class BookingServices(
         if (startDate >= endDate) throw InvalidDate()
         return data.getAvailableHouses(startDate, endDate, limit, skip)
     }
+
+    fun usersBooking(uid: Int): List<Booking> = data.usersBooking(uid)
+
+    fun deleteBooking(bid: Int): Boolean = data.deleteBooking(bid)
+
+    fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? = data.updateBooking(bid, startDate, endDate)
 }
