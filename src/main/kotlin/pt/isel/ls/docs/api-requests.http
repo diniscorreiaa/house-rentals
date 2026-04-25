@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 7f91ad68-6d5f-4f4f-9d7d-5b3481022a45
+@token = ccc201d5-6d7c-4b4f-869a-cbb273e3ac4f
 
 // User Management
 
@@ -30,6 +30,10 @@ Content-Type: {{accept-content}}
     "name": "dummier",
     "email": "dummy@example.com"
 }
+
+### Get user
+GET {{api}}/users/
+# COLOCAR ERRO 405 EM JSON
 
 ### Get user
 GET {{api}}/users/1
@@ -308,3 +312,65 @@ GET {{api}}/houses/available?startDate=2025-12-04
 
 ### Get available houses for date with paging
 GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06&limit=1&skip=1
+
+### Get bookings of user 1
+GET {{api}}/users/1/bookings
+
+### Get bookings of user 2
+GET {{api}}/users/2/bookings
+
+### Get bookings of non existent user (404)
+GET {{api}}/users/999999/bookings
+
+### Get bookings of invalid id (400)
+GET {{api}}/users/abca/bookings
+
+### Update booking 1
+PUT {{api}}/bookings/1
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking 2
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking without authentication
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking passing wrong date format
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-5-01",
+    "endDate": "2026-5-05"
+}
+
+### Delete booking without authentication
+DELETE {{api}}/bookings/1
+
+### Delete booking 1
+DELETE {{api}}/bookings/1
+Authorization: {{token}}
+
+### Delete booking 2
+DELETE {{api}}/bookings/2
+Authorization: {{token}}
