@@ -40,9 +40,34 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         limit: Int?,
         skip: Int?
     ): List<House> {
-        val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate }.map { it.houseId }
-        val houses = houseDataMem.getHouses(null, null).filter { it.hid !in occupiedHIds }
-        if (limit != null) return houses.subList(skip ?: 0, (skip ?: 0) + limit)
-        return houses
+         val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate}.map { it.houseId }
+         val houses = houseDataMem.getHouses(null, null).filter { it.hid !in occupiedHIds }
+         if (limit != null) return houses.subList(skip ?: 0, (skip ?: 0) + limit)
+         return houses
+     }
+
+    override fun usersBooking(uid: Int): List<Booking> {
+        return bookings.filter { it.userId == uid }
+    }
+
+    override fun deleteBooking(bid: Int): Boolean {
+        val booking = bookings.find { it.bid == bid }
+        return if (booking != null) {
+            bookings.remove(booking)
+            true
+        } else {
+            false
+        }
+    }
+
+    override fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? {
+        val booking = bookings.find { it.bid == bid }
+        return if (booking != null) {
+            val updatedBooking = booking.copy(startDate = startDate, endDate = endDate)
+            bookings[bookings.indexOf(booking)] = updatedBooking
+            updatedBooking
+        } else {
+            throw IllegalArgumentException("Booking with id $bid not found")
+        }
     }
 }

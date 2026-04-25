@@ -39,6 +39,16 @@ class DataMem : DataRepository {
         skip: Int?,
     ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
 
+    override fun usersBooking(uid: Int): List<Booking> = booking.usersBooking(uid)
+
+    override fun deleteBooking(bid: Int): Boolean = booking.deleteBooking(bid)
+
+    override fun updateBooking(
+        bid: Int,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Booking? = booking.updateBooking(bid, startDate, endDate)
+
     override fun createHouse(
         title: String,
         location: Int,

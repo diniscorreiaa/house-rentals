@@ -8,6 +8,7 @@ import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseIsNotAvailable
 import pt.isel.ls.houses.exceptions.InvalidDate
 import pt.isel.ls.houses.exceptions.Unauthorized
+import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.repository.DataRepository
 import kotlin.uuid.Uuid
 
@@ -40,5 +41,21 @@ class BookingServices(
     fun getAvailableHouses(startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<House> {
         if (startDate >= endDate) throw InvalidDate()
         return data.getAvailableHouses(startDate, endDate, limit, skip)
+    }
+
+    fun usersBooking(uid: Int): List<Booking>{
+        if(data.getUser(uid) == null) throw UserDoesNotExist()
+        return data.usersBooking(uid)
+    }
+
+    fun deleteBooking(bid: Int): Boolean{
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
+        return data.deleteBooking(bid)
+    }
+
+    fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? {
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
+        if (startDate >= endDate) throw InvalidDate()
+        return data.updateBooking(bid, startDate, endDate)
     }
 }
