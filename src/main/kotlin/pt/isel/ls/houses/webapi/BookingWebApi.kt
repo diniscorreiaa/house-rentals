@@ -17,6 +17,8 @@ import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
 import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
+import pt.isel.ls.houses.webapi.dtos.UpdateBookingIn
+import pt.isel.ls.houses.webapi.dtos.UpdateBookingOut
 import java.time.format.DateTimeParseException
 
 const val INTERVAL_DELIMITER = ':'
@@ -115,28 +117,25 @@ class BookingWebApi(private val bookingServices: BookingServices) {
     fun updateBooking(request: Request): Response {
         val token = getToken(request)
 
+        val dates = Json.decodeFromString<UpdateBookingIn>(request.bodyString())
+        val startDate = dates.startDate
+        val endDate = dates.endDate
+
         val bookingId = request.path("bid").let {
             it ?: throw RequiredPathParamNotFound("bid")
             it.toIntOrNull() ?: throw InvalidIdentifier("bid")
         }
-
-        val interval = request.query("date-interval").let { intervalStr ->
-            intervalStr ?: throw RequiredQueryParamNotFound("date-interval")
-            intervalStr.intervalToDates() ?: throw WrongSeparatorDate(intervalStr)
-        }
-        val startDate = interval.startDate
-        val endDate = interval.endDate
 
         val updatedBooking = bookingServices.updateBooking(bookingId, startDate, endDate, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(
                 Json.encodeToString(
-                GetBookingOut(
-                    updatedBooking.startDate,
-                    updatedBooking.endDate,
-                    updatedBooking.userId,
-                    updatedBooking.houseId
+                    UpdateBookingOut(
+                        updatedBooking.startDate,
+                        updatedBooking.endDate,
+                        updatedBooking.userId,
+                        updatedBooking.houseId
                     )
                 )
             )
