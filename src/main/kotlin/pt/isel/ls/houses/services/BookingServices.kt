@@ -54,6 +54,7 @@ class BookingServices(
     }
 
     fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? {
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
         if (startDate >= endDate) throw InvalidDate()
         return data.updateBooking(bid, startDate, endDate)
     }
