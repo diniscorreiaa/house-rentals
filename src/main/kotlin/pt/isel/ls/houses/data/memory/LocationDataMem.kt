@@ -56,4 +56,6 @@ class LocationDataMem : LocationRepository {
         }
     }
 
+    // Used for verifying if a Location already exists in the services layer
+    override fun getAllLocations(): List<Location> = locations.values.flatten()
 }

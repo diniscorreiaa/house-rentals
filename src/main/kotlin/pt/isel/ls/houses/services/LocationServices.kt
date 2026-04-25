@@ -14,15 +14,9 @@ class LocationServices(
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
         data.getUserByToken(token) ?: throw Unauthorized()
 
-        if (parentId != null) {
-            getLocation(parentId)
-
-            // TODO: We are only making sure that locations WITH parentIds are not duplicate. those without
-            //  parentId (countries) can still be duplicate. Data layer will need changes to support this functionality
-            getChildLocations(parentId, null, null).forEach {
-                if (it.name.equals(name, ignoreCase = true)) throw LocationAlreadyExists()
-            }
-        }
+        // If location already exists then we don't want to create it again
+        if (data.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
+            throw LocationAlreadyExists()
 
         return data.createLocation(name, type, parentId)
     }

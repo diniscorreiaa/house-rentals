@@ -7,11 +7,11 @@ open class HttpException(val status: Status, override val message: String) : Thr
 
 class Unauthorized : HttpException(Status.UNAUTHORIZED, "Invalid auth token")
 
-class UserEmailAlreadyExists : HttpException(Status.BAD_REQUEST, "User email already exists")
+class UserEmailAlreadyExists : HttpException(Status.CONFLICT, "User email already exists")
 class UserDoesNotExist : HttpException(Status.NOT_FOUND, "User does not exist")
 
 class LocationDoesNotExist : HttpException(Status.NOT_FOUND, "Location does not exist")
-class LocationAlreadyExists : HttpException(Status.BAD_REQUEST, "Location already exists")
+class LocationAlreadyExists : HttpException(Status.CONFLICT, "Location already exists")
 
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
 class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")

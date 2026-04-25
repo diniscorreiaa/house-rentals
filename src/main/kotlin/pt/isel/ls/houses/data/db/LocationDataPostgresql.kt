@@ -122,4 +122,27 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource) : LocationRepos
             return hierarchy.reversed() // Retornar hierarquia a começar na raiz
         }
     }
+
+    // Função para fins internos, não precisa de paging
+    override fun getAllLocations(): List<Location> {
+        dataSource.connection.use {
+            var query = "SELECT * FROM LOCATION"
+
+            val st = it.prepareStatement(query)
+
+            val rs = st.executeQuery()
+            val locations = mutableListOf<Location>()
+            while (rs.next()) {
+                locations.add(
+                    Location(
+                        rs.getInt("IdLocation"),
+                        rs.getString("LocationName"),
+                        LocationType.valueOf(rs.getString("Type")),
+                        rs.getInt("ParentLocation").let { value -> if (value == 0) null else value }
+                    )
+                )
+            }
+            return locations
+        }
+    }
 }
