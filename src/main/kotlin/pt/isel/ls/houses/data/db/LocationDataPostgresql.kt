@@ -7,19 +7,23 @@ import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.LocationRepository
 import java.sql.Types
 
-class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationRepository {
+class LocationDataPostgresql(val dataSource: PGSimpleDataSource) : LocationRepository {
     override fun createLocation(
         name: String,
         type: LocationType,
         parentId: Int?
     ): Location {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO LOCATION (\"LocationName\", \"Type\", \"ParentLocation\") VALUES (?, ?::loc_type, ?) RETURNING \"IdLocation\"") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
+            val st =
+                it.prepareStatement("INSERT INTO LOCATION (\"LocationName\", \"Type\", \"ParentLocation\") VALUES (?, ?::loc_type, ?) RETURNING \"IdLocation\"") // Cast explícito (sem ele a comparação não funciona): https://www.gotoquiz.com/web-coding/programming/java-programming/convert-between-java-enums-and-postgresql-enums/
 
             st.setString(1, name)
             st.setString(2, type.toString())
             if (parentId != null) st.setInt(3, parentId)
-            else st.setNull(3, Types.INTEGER) // https://developer.android.com/reference/java/sql/PreparedStatement#setNull(int,%20int,%20java.lang.String):~:text=second%20is%202%2C%20...-,sqlType,int%3A%20a%20value%20from%20java.sql.Types,-typeName
+            else st.setNull(
+                3,
+                Types.INTEGER
+            ) // https://developer.android.com/reference/java/sql/PreparedStatement#setNull(int,%20int,%20java.lang.String):~:text=second%20is%202%2C%20...-,sqlType,int%3A%20a%20value%20from%20java.sql.Types,-typeName
 
             val rs = st.executeQuery()
             if (!rs.next()) throw InternalError() // TODO: Throws nesta camada?
@@ -82,8 +86,9 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
 
     override fun getHierarchy(lid: Int): List<Location> {
         dataSource.connection.use {
-            val st = it.prepareStatement( // https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE
-                """
+            val st =
+                it.prepareStatement( // https://www.postgresql.org/docs/current/queries-with.html#QUERIES-WITH-RECURSIVE
+                    """
                     WITH RECURSIVE HIERARCHY AS (
                         SELECT * 
                         FROM LOCATION
@@ -96,7 +101,8 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource): LocationReposi
                         INNER JOIN HIERARCHY AS H ON L."IdLocation" = H."ParentLocation"
                     )
                     SELECT * FROM HIERARCHY
-                """)
+                """
+                )
 
             st.setInt(1, lid)
 

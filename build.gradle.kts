@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.serialization") version "2.3.0"
@@ -8,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(group = "org.postgresql", name = "postgresql", version = "42.+")
+    implementation("org.postgresql:postgresql:42.+")
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     //implementation("org.slf4j:slf4j-simple:2.0.9") // for logging
@@ -25,3 +27,11 @@ tasks.register<Copy>("copyRuntimeDependencies") {
     into("build/libs")
     from(configurations.runtimeClasspath)
 }
+
+// So that we don't have to spam our code with @OptIn(ExperimentalUuidApi::class)
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-module
+// https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.uuid/-experimental-uuid-api/
+tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+    compilerOptions.optIn.add("kotlin.uuid.ExperimentalUuidApi")
+}
+

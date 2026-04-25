@@ -46,9 +46,11 @@ class LocationDataMem : LocationRepository {
 
         val list = mutableListOf(loc)
 
-        var parentId = loc.parentLocation!!     // assuming that since it's not LocationType.COUNTRY, it must have a parentId
+        var parentId =
+            loc.parentLocation!!     // assuming that since it's not LocationType.COUNTRY, it must have a parentId
         while (true) {
-            val parent = getLocation(parentId)!!    // assuming that there's always a parent location until LocationType.COUNTRY
+            val parent =
+                getLocation(parentId)!!    // assuming that there's always a parent location until LocationType.COUNTRY
             list.addFirst(parent)
             parentId = parent.parentLocation ?: return list
         }

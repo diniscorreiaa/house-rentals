@@ -1,11 +1,10 @@
 package pt.isel.ls.houses.domain
 
 import kotlinx.serialization.Serializable
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Serializable
-data class User @OptIn(ExperimentalUuidApi::class) constructor(
+data class User(
     val uid: Int,
     val name: String,
     val email: String,

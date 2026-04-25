@@ -1,13 +1,16 @@
+// https://kotlinlang.org/docs/opt-in-requirements.html#opt-in-a-file
+@file:OptIn(ExperimentalUuidApi::class)
+
 package pt.isel.ls.services
 
 import org.junit.Assert.assertNotEquals
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
 import pt.isel.ls.houses.services.UserServices
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class UserServicesTests {
@@ -34,13 +37,12 @@ class UserServicesTests {
         assertEquals(1, user.uid)
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     @Test
     fun `createUser generates unique tokens for each user`() {
         val services = newServices()
 
         val user1 = services.createUser(name = "Dummy", email = "dummy@email.com")
-        val user2 = services.createUser(name = "Dummy2",   email = "dummy2@email.com")
+        val user2 = services.createUser(name = "Dummy2", email = "dummy2@email.com")
 
         assertNotEquals(user1.token, user2.token)
     }

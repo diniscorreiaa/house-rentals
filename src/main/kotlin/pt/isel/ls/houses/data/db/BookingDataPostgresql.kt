@@ -10,7 +10,7 @@ import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.BookingRepository
 import java.sql.Date
 
-class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingRepository {
+class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingRepository {
     override fun createBooking(
         hid: Int,
         userId: Int,
@@ -18,7 +18,8 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
         endDate: LocalDate
     ): Booking {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO BOOKING (\"StartDate\", \"EndDate\", \"IdUser\", \"IdHouse\") VALUES (?, ?, ?, ?) RETURNING \"IdBooking\"")
+            val st =
+                it.prepareStatement("INSERT INTO BOOKING (\"StartDate\", \"EndDate\", \"IdUser\", \"IdHouse\") VALUES (?, ?, ?, ?) RETURNING \"IdBooking\"")
 
             st.setDate(1, Date.valueOf(startDate.toJavaLocalDate())) // TODO: Provavelmente isto terá de ser melhorado
             st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
@@ -50,7 +51,7 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource): BookingReposito
             return Booking(
                 bid,
                 rs.getDate("StartDate").toLocalDate().toKotlinLocalDate(),
-                 rs.getDate("EndDate").toLocalDate().toKotlinLocalDate(),
+                rs.getDate("EndDate").toLocalDate().toKotlinLocalDate(),
                 rs.getInt("IdUser"),
                 rs.getInt("IdHouse")
             )
