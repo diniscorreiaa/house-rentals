@@ -6,6 +6,7 @@ import kotlinx.datetime.toKotlinLocalDate
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.BookingRepository
 import java.sql.Date
@@ -141,6 +142,71 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
             }
 
             return houses
+        }
+    }
+
+    override fun userBookings(uid: Int): List<Booking> {
+        dataSource.connection.use {
+            var query = "SELECT * FROM BOOKING WHERE \"IdUser\" = ? ORDER BY \"StartDate\""
+
+            val st = it.prepareStatement(query)
+
+            st.setInt(1, uid)
+
+            val rs = st.executeQuery()
+
+            val bookings = mutableListOf<Booking>()
+
+            while (rs.next()) {
+                bookings.add(
+                    Booking(
+                        rs.getInt("IdBooking"),
+                        rs.getDate("StartDate").toLocalDate().toKotlinLocalDate(),
+                        rs.getDate("EndDate").toLocalDate().toKotlinLocalDate(),
+                        uid,
+                        rs.getInt("IdHouse"),
+                    )
+                )
+            }
+
+            return bookings
+        }
+    }
+
+    override fun deleteBooking(bid: Int) {
+        dataSource.connection.use {
+            val st =
+                it.prepareStatement("DELETE FROM BOOKING WHERE \"IdBooking\" = ? RETURNING \"IdBooking\"")
+
+            st.setInt(1, bid)
+
+            val rs = st.executeQuery()
+            if (!rs.next()) throw InternalError()
+        }
+    }
+
+    override fun updateBooking(
+        bid: Int,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Booking {
+        dataSource.connection.use {
+            val st =
+                it.prepareStatement("UPDATE BOOKING SET \"StartDate\" = ?, \"EndDate\" = ? WHERE \"IdBooking\" = ? RETURNING \"IdUser\", \"IdHouse\"")
+
+            st.setDate(1, Date.valueOf(startDate.toJavaLocalDate())) // TODO: Provavelmente isto terá de ser melhorado
+            st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
+
+            val rs = st.executeQuery()
+            if (!rs.next()) throw InternalError()
+
+            return Booking(
+                bid,
+                startDate,
+                endDate,
+                rs.getInt("IdUser"),
+                rs.getInt("IdHouse"),
+            )
         }
     }
 }
