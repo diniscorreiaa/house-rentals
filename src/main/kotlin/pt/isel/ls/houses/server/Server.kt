@@ -6,7 +6,6 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
-import pt.isel.ls.houses.data.db.DataPostgresSQL
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
@@ -43,7 +42,7 @@ fun main() {
     //val data = DataPostgresSQL()
     val data = DataMem()
     val services = Services(data)
-    val webApi = WebApi(services, data)
+    val webApi = WebApi(services)
 
     val userRoutes = routes(
         "users" bind POST to webApi.user::createUser,

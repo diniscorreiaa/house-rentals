@@ -5,7 +5,7 @@ import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.HouseRepository
 
-class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
+class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository {
     override fun createHouse(
         title: String,
         location: Int,
@@ -14,7 +14,8 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
         description: String
     ): House {
         dataSource.connection.use {
-            val st = it.prepareStatement("INSERT INTO HOUSE (\"Title\", \"Location\", \"Area\", \"Price\", \"Description\") VALUES (?, ?, ?, ?, ?) RETURNING \"IdHouse\"")
+            val st =
+                it.prepareStatement("INSERT INTO HOUSE (\"Title\", \"Location\", \"Area\", \"Price\", \"Description\") VALUES (?, ?, ?, ?, ?) RETURNING \"IdHouse\"")
 
             st.setString(1, title)
             st.setInt(2, location)
@@ -43,7 +44,7 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource): HouseRepository {
                 rs.getDouble("Area"),
                 rs.getDouble("Price"),
                 rs.getString("Description")
-                )
+            )
         }
     }
 

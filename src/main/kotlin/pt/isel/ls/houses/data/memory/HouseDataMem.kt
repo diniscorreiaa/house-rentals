@@ -3,7 +3,7 @@ package pt.isel.ls.houses.data.memory
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.repository.HouseRepository
 
-class HouseDataMem: HouseRepository {
+class HouseDataMem : HouseRepository {
     private val houses = mutableListOf<House>()
     private var id = 1
 
@@ -21,5 +21,6 @@ class HouseDataMem: HouseRepository {
 
     override fun getHouse(hid: Int): House? = houses.find { it.hid == hid }
 
-    override fun getHouses(limit: Int?, skip: Int?): List<House> = if (limit == null ) houses else houses.subList(skip ?: 0, (skip ?: 0) + limit)
+    override fun getHouses(limit: Int?, skip: Int?): List<House> =
+        if (limit == null) houses else houses.subList(skip ?: 0, (skip ?: 0) + limit)
 }
