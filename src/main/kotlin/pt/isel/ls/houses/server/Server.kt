@@ -2,10 +2,13 @@ package pt.isel.ls.houses.server
 
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
+import org.http4k.core.Method.DELETE
+import org.http4k.core.Method.PUT
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import pt.isel.ls.houses.data.db.DataPostgresSQL
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
@@ -39,14 +42,15 @@ get /houses/available?{startDate}&{endDate} (paging)
 const val SERVER_PORT = 8000
 
 fun main() {
-    //val data = DataPostgresSQL()
-    val data = DataMem()
+    val data = DataPostgresSQL()
+    // val data = DataMem()
     val services = Services(data)
     val webApi = WebApi(services)
 
     val userRoutes = routes(
         "users" bind POST to webApi.user::createUser,
-        "users/{uid}" bind GET to webApi.user::getUser
+        "users/{uid}" bind GET to webApi.user::getUser,
+        "users/{uid}/bookings" bind GET to webApi.user::userBookings
     )
 
     val locationRoutes = routes(
@@ -67,6 +71,8 @@ fun main() {
         "bookings" bind GET to webApi.booking::getBookings,
         "bookings/{bid}" bind GET to webApi.booking::getBooking,
         "houses/available" bind GET to webApi.booking::getAvailableHouses,
+        "bookings/{bid}" bind DELETE to webApi.booking::deleteBooking,
+        "bookings/{bid}" bind PUT to webApi.booking::updateBooking
     )
 
     // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}

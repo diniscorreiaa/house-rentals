@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
@@ -97,6 +98,44 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                     it.description
                 )
             }))
+    }
+
+    fun deleteBooking(request: Request): Response {
+        val bookindId = request.path("bid").let {
+            it ?: throw RequiredPathParamNotFound("bid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("bid")
+        }
+        bookingServices.deleteBooking(bookindId)
+        return Response(NO_CONTENT)
+            .header("content-type", "application/json")
+    }
+
+    fun updateBooking(request: Request): Response {
+        val bookingId = request.path("bid").let {
+            it ?: throw RequiredPathParamNotFound("bid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("bid")
+        }
+
+        val interval = request.query("date-interval").let { intervalStr ->
+            intervalStr ?: throw RequiredQueryParamNotFound("date-interval")
+            intervalStr.intervalToDates() ?: throw WrongSeparatorDate(intervalStr)
+        }
+        val startDate = interval.startDate
+        val endDate = interval.endDate
+
+        val updatedBooking = bookingServices.updateBooking(bookingId, startDate, endDate)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                GetBookingOut(
+                    updatedBooking.startDate,
+                    updatedBooking.endDate,
+                    updatedBooking.userId,
+                    updatedBooking.houseId
+                    )
+                )
+            )
     }
 }
 
