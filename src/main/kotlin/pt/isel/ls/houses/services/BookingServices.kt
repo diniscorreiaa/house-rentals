@@ -43,9 +43,15 @@ class BookingServices(
         return data.getAvailableHouses(startDate, endDate, limit, skip)
     }
 
-    fun usersBooking(uid: Int) = data.usersBooking(uid) ?: throw UserDoesNotExist()
+    fun usersBooking(uid: Int): List<Booking>{
+        if(data.getUser(uid) == null) throw UserDoesNotExist()
+        return data.usersBooking(uid)
+    }
 
-    fun deleteBooking(bid: Int) = data.deleteBooking(bid) ?: throw BookingDoesNotExist()
+    fun deleteBooking(bid: Int): Boolean{
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
+        return data.deleteBooking(bid)
+    }
 
     fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? {
         if (startDate >= endDate) throw InvalidDate()
