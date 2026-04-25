@@ -24,8 +24,8 @@ const val INTERVAL_DELIMITER = ':'
 class BookingWebApi(private val bookingServices: BookingServices) {
 
     fun createBooking(request: Request): Response {
-        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
         val token = getToken(request)
+        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
 
         val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate, token)
         return Response(OK)
@@ -101,16 +101,20 @@ class BookingWebApi(private val bookingServices: BookingServices) {
     }
 
     fun deleteBooking(request: Request): Response {
+        val token = getToken(request)
+
         val bookindId = request.path("bid").let {
             it ?: throw RequiredPathParamNotFound("bid")
             it.toIntOrNull() ?: throw InvalidIdentifier("bid")
         }
-        bookingServices.deleteBooking(bookindId)
+        bookingServices.deleteBooking(bookindId, token)
         return Response(NO_CONTENT)
             .header("content-type", "application/json")
     }
 
     fun updateBooking(request: Request): Response {
+        val token = getToken(request)
+
         val bookingId = request.path("bid").let {
             it ?: throw RequiredPathParamNotFound("bid")
             it.toIntOrNull() ?: throw InvalidIdentifier("bid")
@@ -123,7 +127,7 @@ class BookingWebApi(private val bookingServices: BookingServices) {
         val startDate = interval.startDate
         val endDate = interval.endDate
 
-        val updatedBooking = bookingServices.updateBooking(bookingId, startDate, endDate)
+        val updatedBooking = bookingServices.updateBooking(bookingId, startDate, endDate, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(
