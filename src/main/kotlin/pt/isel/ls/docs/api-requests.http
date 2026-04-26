@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = ccc201d5-6d7c-4b4f-869a-cbb273e3ac4f
+@token = 096d0fa6-96ce-4f0e-9fb3-249131f120b5
 
 // User Management
 
@@ -56,6 +56,39 @@ Authorization: {{token}}
     "name": "Portugal",
     "type": "COUNTRY",
     "parentId": null
+}
+
+### Create repeated location (409)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Portugal",
+    "type": "COUNTRY",
+    "parentId": null
+}
+
+### Create country location with parentId (400)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Brasil",
+    "type": "COUNTRY",
+    "parentId": 1
+}
+
+### Create location with non existing parentId (409)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Lisboa",
+    "type": "DISTRICT",
+    "parentId": 9999
 }
 
 ### CREATE LOCATION
@@ -254,7 +287,7 @@ Authorization: {{token}}
 
 {
     "hid": 2,
-    "startDate": "2025-12-07",
+    "startDate": "2025-1-07",
     "endDate": "2025-12-11"
 }
 
@@ -345,7 +378,7 @@ Authorization: {{token}}
     "endDate": "2026-05-05"
 }
 
-### Update booking without authentication
+### Update booking without authentication (401)
 PUT {{api}}/bookings/2
 Content-Type: {{accept-content}}
 

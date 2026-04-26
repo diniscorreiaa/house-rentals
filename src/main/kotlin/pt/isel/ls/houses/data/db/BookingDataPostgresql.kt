@@ -196,6 +196,7 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
 
             st.setDate(1, Date.valueOf(startDate.toJavaLocalDate())) // TODO: Provavelmente isto terá de ser melhorado
             st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
+            st.setInt(3, bid)
 
             val rs = st.executeQuery()
             if (!rs.next()) throw InternalError()
