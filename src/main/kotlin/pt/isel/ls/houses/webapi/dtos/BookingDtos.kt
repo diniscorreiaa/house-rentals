@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateBookingIn(val hid: Int, val startDate: LocalDate, val endDate: LocalDate)
 
+@Serializable
 data class UpdateBookingIn(val startDate: LocalDate, val endDate: LocalDate)
 
 /////////// Output ///////////
@@ -21,6 +22,7 @@ data class GetBookingOut(
     val hid: Int
 ) // TODO: Faz sentido o client receber uid e hid?
 
+@Serializable
 data class UpdateBookingOut(
     val startDate: LocalDate,
     val endDate: LocalDate,
