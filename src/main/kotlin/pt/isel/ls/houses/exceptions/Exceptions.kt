@@ -16,6 +16,8 @@ class LocationParentDoesNotExist : HttpException(Status.NOT_FOUND, "Location is 
 class LocationMustHaveParent : HttpException(Status.BAD_REQUEST, "Location does not have a parent location")
 class LocationCountryMustNotHaveParent: HttpException(Status.BAD_REQUEST, "Location is a country and must not have a parent location")
 
+class LocationTypeDoesNotExist : HttpException(Status.BAD_REQUEST, "Location type does not exist, valid types: COUNTRY, REGION, DISTRICT, MUNICIPALITY, LOCALITY")
+
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
 class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")
 
