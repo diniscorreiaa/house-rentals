@@ -29,7 +29,7 @@ class RequiredPathParamNotFound(pathParamName: String) :
     HttpException(Status.BAD_REQUEST, "Did not find required path parameter $pathParamName")
 
 class WrongFormatDate(date: String) :
-    HttpException(Status.BAD_REQUEST, "Invalid date: $date\nPlease use the format yy-mm-dd")
+    HttpException(Status.BAD_REQUEST, "Invalid date: $date - Please use the format yy-mm-dd")
 
 class WrongSeparatorDate(interval: String) : HttpException(
     Status.BAD_REQUEST,

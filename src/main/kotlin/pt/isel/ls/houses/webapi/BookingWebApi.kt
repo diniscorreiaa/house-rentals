@@ -27,9 +27,12 @@ class BookingWebApi(private val bookingServices: BookingServices) {
 
     fun createBooking(request: Request): Response {
         val token = getToken(request)
-        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
 
-        val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate, token)
+        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
+        val startDate = parseDateOrNull(booking.startDate) ?: throw WrongFormatDate(booking.startDate)
+        val endDate = parseDateOrNull(booking.endDate) ?: throw WrongFormatDate(booking.endDate)
+
+        val newBooking = bookingServices.createBooking(booking.hid, startDate, endDate, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))
@@ -118,8 +121,8 @@ class BookingWebApi(private val bookingServices: BookingServices) {
         val token = getToken(request)
 
         val dates = Json.decodeFromString<UpdateBookingIn>(request.bodyString())
-        val startDate = dates.startDate
-        val endDate = dates.endDate
+        val startDate = parseDateOrNull(dates.startDate) ?: throw WrongFormatDate(dates.startDate)
+        val endDate = parseDateOrNull(dates.endDate) ?: throw WrongFormatDate(dates.endDate)
 
         val bookingId = request.path("bid").let {
             it ?: throw RequiredPathParamNotFound("bid")
@@ -158,6 +161,8 @@ private fun parseDateOrNull(date: String): LocalDate? {
     return try {
         LocalDate.parse(date)
     } catch (_: DateTimeParseException) {
+        null
+    } catch (_: IllegalArgumentException) {
         null
     }
 }

@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 096d0fa6-96ce-4f0e-9fb3-249131f120b5
+@token = 7d227892-074a-4b11-9310-6e3de3440aef
 
 // User Management
 
@@ -80,7 +80,7 @@ Authorization: {{token}}
     "parentId": 1
 }
 
-### Create location with non existing parentId (409)
+### Create location with non existing parentId (404)
 POST {{api}}/locations
 Content-Type: {{accept-content}}
 Authorization: {{token}}
@@ -287,8 +287,19 @@ Authorization: {{token}}
 
 {
     "hid": 2,
-    "startDate": "2025-1-07",
+    "startDate": "2025-12-07",
     "endDate": "2025-12-11"
+}
+
+### Create booking with wrong date format
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "hid": 1,
+    "startDate": "2026-1-01",
+    "endDate": "2026-1-03"
 }
 
 ### Create booking without passing hid (400)
@@ -376,6 +387,16 @@ Authorization: {{token}}
 {
     "startDate": "2026-05-01",
     "endDate": "2026-05-05"
+}
+
+### Update booking with wrong date format
+PUT {{api}}/bookings/1
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-5-1",
+    "endDate": "2026-5-5"
 }
 
 ### Update booking without authentication (401)
