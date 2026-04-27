@@ -1,3 +1,5 @@
+import {getSomeDetails} from "./dsl-functions";
+
 export const API_BASE_URL = "http://localhost:8000/"
 
 function getHome(mainContent) {
@@ -32,77 +34,12 @@ function getHouses(mainContent) {
 }
 
 function getHouseDetails(hid, mainContent) {
-    fetch(API_BASE_URL + hid)
-        .then(res => res.json())
-        .then(house => {
-            const ulHouse = document.createElement("ul")
-
-            const liTitle = document.createElement("li")
-            const textTitle = document.createTextNode(house.title)
-            liTitle.appendChild(textTitle)
-
-            const liLocation = document.createElement("li")
-            const textLocation = document.createTextNode(house.location)
-            liLocation.appendChild(textLocation)
-
-            const liArea = document.createElement("li")
-            const textArea = document.createTextNode(house.areaSqMt)
-            liArea.appendChild(textArea)
-
-            const liPrice = document.createElement("li")
-            const textPrice = document.createTextNode(house.pricePerNight)
-            liPrice.appendChild(textPrice)
-
-            const liDescription = document.createElement("li")
-            const textDescription = document.createTextNode(house.description)
-            liDescription.appendChild(textDescription)
-
-
-            ulHouse.appendChild(liTitle)
-            ulHouse.appendChild(liLocation)
-            ulHouse.appendChild(liArea)
-            ulHouse.appendChild(liPrice)
-            ulHouse.appendChild(liDescription)
-
-            mainContent.replaceChildren(ulHouse)
-        })
+    getSomeDetails(hid, mainContent, "title", "location", "areaSqMt", "pricePerNight", "description")
 }
 
-function getLocationDetails(hid, mainContent) {
-    fetch(API_BASE_URL + hid)
-        .then(res => res.json())
-        .then(house => {
-            const ulHouse = document.createElement("ul")
-
-            const liTitle = document.createElement("li")
-            const textTitle = document.createTextNode(house.title)
-            liTitle.appendChild(textTitle)
-
-            const liLocation = document.createElement("li")
-            const textLocation = document.createTextNode(house.location)
-            liLocation.appendChild(textLocation)
-
-            const liArea = document.createElement("li")
-            const textArea = document.createTextNode(house.areaSqMt)
-            liArea.appendChild(textArea)
-
-            const liPrice = document.createElement("li")
-            const textPrice = document.createTextNode(house.pricePerNight)
-            liPrice.appendChild(textPrice)
-
-            const liDescription = document.createElement("li")
-            const textDescription = document.createTextNode(house.description)
-            liDescription.appendChild(textDescription)
-
-
-            ulHouse.appendChild(liTitle)
-            ulHouse.appendChild(liLocation)
-            ulHouse.appendChild(liArea)
-            ulHouse.appendChild(liPrice)
-            ulHouse.appendChild(liDescription)
-
-            mainContent.replaceChildren(ulHouse)
-        })
+function getLocationDetails(lid, mainContent) {
+    getSomeDetails(lid, mainContent, "name", "type")
+    // TODO: Incluir hierarquia?
 }
 
 
