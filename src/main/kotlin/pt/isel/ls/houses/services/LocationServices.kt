@@ -20,14 +20,14 @@ class LocationServices(
         userData.getUserByToken(token) ?: throw Unauthorized()
 
         // If location already exists then we don't want to create it again
-        if (data.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
+        if (locationData.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
             throw LocationAlreadyExists()
 
         if (type != LocationType.COUNTRY && parentId == null) throw LocationMustHaveParent()
 
         if (type == LocationType.COUNTRY && parentId != null) throw LocationCountryMustNotHaveParent()
 
-        if (parentId != null && data.getLocation(parentId) == null) throw LocationParentDoesNotExist()
+        if (parentId != null && locationData.getLocation(parentId) == null) throw LocationParentDoesNotExist()
 
         return locationData.createLocation(name, type, parentId)
     }

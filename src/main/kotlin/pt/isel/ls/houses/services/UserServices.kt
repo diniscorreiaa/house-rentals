@@ -4,10 +4,12 @@ import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
+import pt.isel.ls.houses.repository.BookingRepository
 import pt.isel.ls.houses.repository.UserRepository
 
 class UserServices(
-    private val userData: UserRepository
+    private val userData: UserRepository,
+    private val bookingData: BookingRepository
 ) {
     fun createUser(name: String, email: String): User {
         if (userData.getUserByEmail(email) != null) throw UserEmailAlreadyExists()
@@ -22,8 +24,8 @@ class UserServices(
     }
 
     fun userBookings(uid: Int): List<Booking>{
-        if(data.getUser(uid) == null) throw UserDoesNotExist()
-        return data.userBookings(uid)
+        if(userData.getUser(uid) == null) throw UserDoesNotExist()
+        return bookingData.userBookings(uid)
     }
 }
 
