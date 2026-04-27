@@ -43,6 +43,16 @@ class DataPostgresSQL : DataRepository {
         skip: Int?,
     ): List<House> = booking.getAvailableHouses(startDate, endDate, limit, skip)
 
+    override fun userBookings(uid: Int): List<Booking> = booking.userBookings(uid)
+
+    override fun deleteBooking(bid: Int) = booking.deleteBooking(bid)
+
+    override fun updateBooking(
+        bid: Int,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Booking = booking.updateBooking(bid, startDate, endDate)
+
     override fun createHouse(
         title: String,
         location: Int,

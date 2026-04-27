@@ -12,6 +12,11 @@ class UserDoesNotExist : HttpException(Status.NOT_FOUND, "User does not exist")
 
 class LocationDoesNotExist : HttpException(Status.NOT_FOUND, "Location does not exist")
 class LocationAlreadyExists : HttpException(Status.CONFLICT, "Location already exists")
+class LocationParentDoesNotExist : HttpException(Status.NOT_FOUND, "Location is not a country and must have an existing parent location")
+class LocationMustHaveParent : HttpException(Status.BAD_REQUEST, "Location does not have a parent location")
+class LocationCountryMustNotHaveParent: HttpException(Status.BAD_REQUEST, "Location is a country and must not have a parent location")
+
+class LocationTypeDoesNotExist : HttpException(Status.BAD_REQUEST, "Location type does not exist, valid types: COUNTRY, REGION, DISTRICT, MUNICIPALITY, LOCALITY")
 
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
 class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")
@@ -26,7 +31,7 @@ class RequiredPathParamNotFound(pathParamName: String) :
     HttpException(Status.BAD_REQUEST, "Did not find required path parameter $pathParamName")
 
 class WrongFormatDate(date: String) :
-    HttpException(Status.BAD_REQUEST, "Invalid date: $date\nPlease use the format yy-mm-dd")
+    HttpException(Status.BAD_REQUEST, "Invalid date: $date - Please use the format yy-mm-dd")
 
 class WrongSeparatorDate(interval: String) : HttpException(
     Status.BAD_REQUEST,

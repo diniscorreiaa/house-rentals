@@ -5,8 +5,10 @@ import kotlinx.serialization.Serializable
 
 /////////// Input ///////////
 @Serializable
-data class CreateBookingIn(val hid: Int, val startDate: LocalDate, val endDate: LocalDate)
+data class CreateBookingIn(val hid: Int, val startDate: String, val endDate: String) // Usa-se string para receber as datas de forma a validar se a data vem no formato válido, se a data viesse com o formato inválido ia ser lançado logo uma exceção se usássemos o tipo LocalDate.
 
+@Serializable
+data class UpdateBookingIn(val startDate: String, val endDate: String)
 
 /////////// Output ///////////
 @Serializable
@@ -19,3 +21,11 @@ data class GetBookingOut(
     val uid: Int,
     val hid: Int
 ) // TODO: Faz sentido o client receber uid e hid?
+
+@Serializable
+data class UpdateBookingOut(
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val uid: Int,
+    val hid: Int
+)

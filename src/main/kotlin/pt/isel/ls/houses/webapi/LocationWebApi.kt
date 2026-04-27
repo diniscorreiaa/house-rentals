@@ -5,7 +5,9 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
+import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
+import pt.isel.ls.houses.exceptions.LocationTypeDoesNotExist
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.webapi.dtos.CreateLocationIn
@@ -16,8 +18,13 @@ class LocationWebApi(private val locationServices: LocationServices) {
 
     fun createLocation(request: Request): Response {
         val location = Json.decodeFromString<CreateLocationIn>(request.bodyString())
+        val type = try {
+            LocationType.valueOf(location.type.uppercase())
+        } catch (e: IllegalArgumentException) {
+            throw LocationTypeDoesNotExist()
+        }
         val token = getToken(request)
-        val newLocation = locationServices.createLocation(location.name, location.type, location.parentId, token)
+        val newLocation = locationServices.createLocation(location.name, type, location.parentId, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateLocationOut(newLocation.lid)))

@@ -3,6 +3,7 @@ package pt.isel.ls.houses.data.memory
 import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.repository.BookingRepository
 
 class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository {
@@ -46,28 +47,19 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
          return houses
      }
 
-    override fun usersBooking(uid: Int): List<Booking> {
+    override fun userBookings(uid: Int): List<Booking> {
         return bookings.filter { it.userId == uid }
     }
 
-    override fun deleteBooking(bid: Int): Boolean {
-        val booking = bookings.find { it.bid == bid }
-        return if (booking != null) {
-            bookings.remove(booking)
-            true
-        } else {
-            false
-        }
+    override fun deleteBooking(bid: Int) {
+        val booking = bookings.find { it.bid == bid } ?: throw BookingDoesNotExist()
+        bookings.remove(booking)
     }
 
-    override fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking? {
-        val booking = bookings.find { it.bid == bid }
-        return if (booking != null) {
-            val updatedBooking = booking.copy(startDate = startDate, endDate = endDate)
-            bookings[bookings.indexOf(booking)] = updatedBooking
-            updatedBooking
-        } else {
-            throw IllegalArgumentException("Booking with id $bid not found")
-        }
+    override fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking {
+        val booking = bookings.find { it.bid == bid } ?: throw BookingDoesNotExist()
+        val updatedBooking = booking.copy(startDate = startDate, endDate = endDate)
+        bookings[bookings.indexOf(booking)] = updatedBooking
+        return updatedBooking
     }
 }
