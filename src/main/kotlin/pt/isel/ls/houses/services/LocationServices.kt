@@ -8,37 +8,39 @@ import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.LocationMustHaveParent
 import pt.isel.ls.houses.exceptions.LocationParentDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
-import pt.isel.ls.houses.repository.DataRepository
+import pt.isel.ls.houses.repository.LocationRepository
+import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 class LocationServices(
-    private val data: DataRepository
+    private val userData: UserRepository,
+    private val locationData: LocationRepository
 ) {
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
-        data.getUserByToken(token) ?: throw Unauthorized()
+        userData.getUserByToken(token) ?: throw Unauthorized()
 
         // If location already exists then we don't want to create it again
-        if (data.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
+        if (locationData.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
             throw LocationAlreadyExists()
 
         if (type != LocationType.COUNTRY && parentId == null) throw LocationMustHaveParent()
 
         if (type == LocationType.COUNTRY && parentId != null) throw LocationCountryMustNotHaveParent()
 
-        if (parentId != null && data.getLocation(parentId) == null) throw LocationParentDoesNotExist()
+        if (parentId != null && locationData.getLocation(parentId) == null) throw LocationParentDoesNotExist()
 
-        return data.createLocation(name, type, parentId)
+        return locationData.createLocation(name, type, parentId)
     }
 
-    fun getLocation(lid: Int) = data.getLocation(lid) ?: throw LocationDoesNotExist()
+    fun getLocation(lid: Int) = locationData.getLocation(lid) ?: throw LocationDoesNotExist()
 
     fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location> {
-        if (data.getLocation(lid) == null) throw LocationDoesNotExist()
-        return data.getChildLocations(lid, limit, skip)
+        if (locationData.getLocation(lid) == null) throw LocationDoesNotExist()
+        return locationData.getChildLocations(lid, limit, skip)
     }
 
     fun getHierarchy(lid: Int): List<Location> {
-        if (data.getLocation(lid) == null) throw LocationDoesNotExist()
-        return data.getHierarchy(lid)
+        if (locationData.getLocation(lid) == null) throw LocationDoesNotExist()
+        return locationData.getHierarchy(lid)
     }
 }

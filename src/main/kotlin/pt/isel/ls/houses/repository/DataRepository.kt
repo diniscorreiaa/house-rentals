@@ -1,3 +1,9 @@
 package pt.isel.ls.houses.repository
 
-interface DataRepository : BookingRepository, HouseRepository, LocationRepository, UserRepository
+interface DataRepository
+{
+    val user: UserRepository
+    val location: LocationRepository
+    val house: HouseRepository
+    val booking: BookingRepository
+}

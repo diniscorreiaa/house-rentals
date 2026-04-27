@@ -4,11 +4,15 @@ import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
-import pt.isel.ls.houses.repository.DataRepository
+import pt.isel.ls.houses.repository.HouseRepository
+import pt.isel.ls.houses.repository.LocationRepository
+import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 class HouseServices(
-    private val data: DataRepository
+    private val userData: UserRepository,
+    private val locationData: LocationRepository,
+    private val houseData: HouseRepository
 ) {
     fun createHouse(
         title: String,
@@ -18,15 +22,15 @@ class HouseServices(
         description: String,
         token: Uuid
     ): House {
-        data.getUserByToken(token) ?: throw Unauthorized()
+        userData.getUserByToken(token) ?: throw Unauthorized()
 
 
-        if (data.getLocation(location) == null) throw LocationDoesNotExist()
+        if (locationData.getLocation(location) == null) throw LocationDoesNotExist()
 
-        return data.createHouse(title, location, areaSqMt, pricePerNight, description)
+        return houseData.createHouse(title, location, areaSqMt, pricePerNight, description)
     }
 
-    fun getHouse(hid: Int) = data.getHouse(hid) ?: throw HouseDoesNotExist()
+    fun getHouse(hid: Int) = houseData.getHouse(hid) ?: throw HouseDoesNotExist()
 
-    fun getHouses(limit: Int?, skip: Int?) = data.getHouses(limit, skip)
+    fun getHouses(limit: Int?, skip: Int?) = houseData.getHouses(limit, skip)
 }

@@ -3,8 +3,8 @@ package pt.isel.ls.houses.services
 import pt.isel.ls.houses.repository.DataRepository
 
 class Services(data: DataRepository) {
-    val users = UserServices(data)
-    val location = LocationServices(data)
-    val houses = HouseServices(data)
-    val booking = BookingServices(data)
+    val users = UserServices(data.user, data.booking)
+    val location = LocationServices(data.user, data.location)
+    val houses = HouseServices(data.user, data.location, data.house)
+    val booking = BookingServices(data.user, data.house, data.booking)
 }
