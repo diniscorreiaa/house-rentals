@@ -19,6 +19,7 @@ data class CreateHouseOut(val hid: Int)
 
 @Serializable
 data class GetHouseOut(
+    val hid: Int,
     val title: String,
     val location: Int,
     val areaSqMt: Double,
