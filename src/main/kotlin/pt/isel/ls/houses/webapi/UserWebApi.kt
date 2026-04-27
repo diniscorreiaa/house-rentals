@@ -44,6 +44,6 @@ class UserWebApi(private val userServices: UserServices) {
         val bookings = userServices.userBookings(userId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(bookings.map { GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
+            .body(Json.encodeToString(bookings.map { GetBookingOut(it.bid, it.startDate, it.endDate, it.userId, it.houseId) }))
     }
 }

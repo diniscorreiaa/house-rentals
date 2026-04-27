@@ -16,11 +16,12 @@ data class CreateBookingOut(val bid: Int) // TODO: Não está explicito no enunc
 
 @Serializable
 data class GetBookingOut(
+    val bid: Int,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val uid: Int,
     val hid: Int
-) // TODO: Faz sentido o client receber uid e hid?
+)
 
 @Serializable
 data class UpdateBookingOut(

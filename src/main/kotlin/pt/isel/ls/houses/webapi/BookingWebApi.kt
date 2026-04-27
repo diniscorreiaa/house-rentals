@@ -49,6 +49,7 @@ class BookingWebApi(private val bookingServices: BookingServices) {
             .body(
                 Json.encodeToString(
                     GetBookingOut(
+                        booking.bid,
                         booking.startDate,
                         booking.endDate,
                         booking.userId,
@@ -76,7 +77,7 @@ class BookingWebApi(private val bookingServices: BookingServices) {
 
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(bookings.map { GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
+            .body(Json.encodeToString(bookings.map { GetBookingOut(it.bid, it.startDate, it.endDate, it.userId, it.houseId) }))
     }
 
     fun getAvailableHouses(request: Request): Response {
@@ -96,6 +97,7 @@ class BookingWebApi(private val bookingServices: BookingServices) {
             .header("content-type", "application/json")
             .body(Json.encodeToString(available.map {
                 GetHouseOut(
+                    it.hid,
                     it.title,
                     it.location,
                     it.area,
