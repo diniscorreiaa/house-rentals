@@ -1,19 +1,39 @@
 import API_BASE_URL from "./handlers";
 
+export function getAll(mainContent, lastUri) {
+    fetch(API_BASE_URL + "houses")
+        .then(res => res.json())
+        .then(houses => {
+                const div = document.createElement("div")
+                const h1 = h1("All Houses")
+                div.appendChild(h1)
+
+                houses.forEach(house => {
+                    const p = document.createElement("p")
+                    const a = a("#houses/" + house.hid, "Details")
+                    p.appendChild(a)
+                    div.appendChild(p)
+                })
+                mainContent.replaceChildren(div)
+            }
+        )
+}
+
 export function getSomeDetails(id, mainContent, ...propNames) {
     fetch(API_BASE_URL + id)
         .then(res => res.json())
         .then(data => {
-            const ulData = document.createElement("ul")
+            const listItems = []
             propNames.forEach(propName => {
-                const li = document.createElement("li")
-                const text = document.createTextNode(data[propName])
-                li.appendChild(text)
-                ulData.appendChild(li)
+                listItems.push(li(data[propName]))
             })
+            const ulData = ul(listItems)
             mainContent.replaceChildren(ulData)
         })
 }
+
+/////////////////////////////////////////////////////
+
 export const ul = (elementsInside) => elementWithElementsInside("ul", elementsInside)
 export const ol = (elementsInside) => elementWithElementsInside("ol", elementsInside)
 
@@ -21,6 +41,12 @@ export const div = (elementsInside) => elementWithElementsInside("div", elements
 
 export const li = (text) => elementWithText("li", text)
 export const p = (text) => elementWithText("p", text)
+
+export const a = (href, text) => {
+    const elm = elementWithText("a", text)
+    elm.href = href
+    return elm
+}
 
 // TODO: Make the creation of these dynamic
 export const h1 = (text) => elementWithText("h1", text)
@@ -38,7 +64,7 @@ function elementWithText(elementName, text){
 }
 
 function elementWithElementsInside(elementName, elementsInside){
-    const element = document.createElement(elementName)
-    elementsInside.forEach(element => element.appendChild(element))
-    return element
+    const creatorElement = document.createElement(elementName)
+    elementsInside.forEach(element => creatorElement.appendChild(element))
+    return creatorElement
 }
