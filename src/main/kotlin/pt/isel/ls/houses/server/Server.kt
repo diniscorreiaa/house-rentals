@@ -4,8 +4,10 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Method.DELETE
 import org.http4k.core.Method.PUT
+import org.http4k.routing.ResourceLoader
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import pt.isel.ls.houses.data.db.DataPostgresSQL
@@ -77,7 +79,7 @@ fun main() {
 
     // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}
     routes(
-        userRoutes, locationRoutes, bookingRoutes, houseRoutes,
+        singlePageApp(ResourceLoader.Directory("static-content")), userRoutes, locationRoutes, bookingRoutes, houseRoutes,
     ).withFilter(filter).asServer(Jetty(SERVER_PORT)).start().also {
         println("Started server on port $SERVER_PORT")
     }
