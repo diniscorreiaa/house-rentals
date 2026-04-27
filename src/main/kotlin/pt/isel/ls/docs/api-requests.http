@@ -1,6 +1,6 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 7f91ad68-6d5f-4f4f-9d7d-5b3481022a45
+@token = 7d227892-074a-4b11-9310-6e3de3440aef
 
 // User Management
 
@@ -32,6 +32,10 @@ Content-Type: {{accept-content}}
 }
 
 ### Get user
+GET {{api}}/users/
+# COLOCAR ERRO 405 EM JSON
+
+### Get user
 GET {{api}}/users/1
 
 ### 404, user doesn't exist
@@ -52,6 +56,39 @@ Authorization: {{token}}
     "name": "Portugal",
     "type": "COUNTRY",
     "parentId": null
+}
+
+### Create repeated location (409)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Portugal",
+    "type": "COUNTRY",
+    "parentId": null
+}
+
+### Create country location with parentId (400)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Brasil",
+    "type": "COUNTRY",
+    "parentId": 1
+}
+
+### Create location with non existing parentId (404)
+POST {{api}}/locations
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "name": "Lisboa",
+    "type": "DISTRICT",
+    "parentId": 9999
 }
 
 ### CREATE LOCATION
@@ -254,6 +291,17 @@ Authorization: {{token}}
     "endDate": "2025-12-11"
 }
 
+### Create booking with wrong date format
+POST {{api}}/bookings
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "hid": 1,
+    "startDate": "2026-1-01",
+    "endDate": "2026-1-03"
+}
+
 ### Create booking without passing hid (400)
 POST {{api}}/bookings
 Content-Type: {{accept-content}}
@@ -308,3 +356,75 @@ GET {{api}}/houses/available?startDate=2025-12-04
 
 ### Get available houses for date with paging
 GET {{api}}/houses/available?startDate=2025-12-04&endDate=2025-12-06&limit=1&skip=1
+
+### Get bookings of user 1
+GET {{api}}/users/1/bookings
+
+### Get bookings of user 2
+GET {{api}}/users/2/bookings
+
+### Get bookings of non existent user (404)
+GET {{api}}/users/999999/bookings
+
+### Get bookings of invalid id (400)
+GET {{api}}/users/abca/bookings
+
+### Update booking 1
+PUT {{api}}/bookings/1
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking 2
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking with wrong date format
+PUT {{api}}/bookings/1
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-5-1",
+    "endDate": "2026-5-5"
+}
+
+### Update booking without authentication (401)
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+
+{
+    "startDate": "2026-05-01",
+    "endDate": "2026-05-05"
+}
+
+### Update booking passing wrong date format
+PUT {{api}}/bookings/2
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "startDate": "2026-5-01",
+    "endDate": "2026-5-05"
+}
+
+### Delete booking without authentication
+DELETE {{api}}/bookings/1
+
+### Delete booking 1
+DELETE {{api}}/bookings/1
+Authorization: {{token}}
+
+### Delete booking 2
+DELETE {{api}}/bookings/2
+Authorization: {{token}}

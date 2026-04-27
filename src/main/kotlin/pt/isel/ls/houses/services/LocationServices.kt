@@ -3,7 +3,10 @@ package pt.isel.ls.houses.services
 import pt.isel.ls.houses.domain.Location
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.LocationAlreadyExists
+import pt.isel.ls.houses.exceptions.LocationCountryMustNotHaveParent
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
+import pt.isel.ls.houses.exceptions.LocationMustHaveParent
+import pt.isel.ls.houses.exceptions.LocationParentDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.LocationRepository
 import pt.isel.ls.houses.repository.UserRepository
@@ -16,15 +19,15 @@ class LocationServices(
     fun createLocation(name: String, type: LocationType, parentId: Int?, token: Uuid): Location {
         userData.getUserByToken(token) ?: throw Unauthorized()
 
-        if (parentId != null) {
-            getLocation(parentId)
+        // If location already exists then we don't want to create it again
+        if (data.getAllLocations().find { it == Location(0, name, type, parentId) } != null )
+            throw LocationAlreadyExists()
 
-            // TODO: We are only making sure that locations WITH parentIds are not duplicate. those without
-            //  parentId (countries) can still be duplicate. Data layer will need changes to support this functionality
-            getChildLocations(parentId, null, null).forEach {
-                if (it.name.equals(name, ignoreCase = true)) throw LocationAlreadyExists()
-            }
-        }
+        if (type != LocationType.COUNTRY && parentId == null) throw LocationMustHaveParent()
+
+        if (type == LocationType.COUNTRY && parentId != null) throw LocationCountryMustNotHaveParent()
+
+        if (parentId != null && data.getLocation(parentId) == null) throw LocationParentDoesNotExist()
 
         return locationData.createLocation(name, type, parentId)
     }

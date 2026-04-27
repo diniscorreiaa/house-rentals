@@ -1,5 +1,6 @@
 package pt.isel.ls.houses.services
 
+import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
@@ -18,6 +19,11 @@ class UserServices(
     fun getUser(uid: Int): User {
         val user = userData.getUser(uid) ?: throw UserDoesNotExist()
         return user
+    }
+
+    fun userBookings(uid: Int): List<Booking>{
+        if(data.getUser(uid) == null) throw UserDoesNotExist()
+        return data.userBookings(uid)
     }
 }
 

@@ -45,4 +45,19 @@ class BookingServices(
         if (startDate >= endDate) throw InvalidDate()
         return bookingData.getAvailableHouses(startDate, endDate, limit, skip)
     }
+
+    fun deleteBooking(bid: Int, token: Uuid) {
+        data.getUserByToken(token) ?: throw Unauthorized()
+
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
+        data.deleteBooking(bid)
+    }
+
+    fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate, token: Uuid): Booking {
+        data.getUserByToken(token) ?: throw Unauthorized()
+
+        if (data.getBooking(bid) == null) throw BookingDoesNotExist()
+        if (startDate >= endDate) throw InvalidDate()
+        return data.updateBooking(bid, startDate, endDate)
+    }
 }

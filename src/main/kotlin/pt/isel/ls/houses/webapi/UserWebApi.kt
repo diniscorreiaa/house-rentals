@@ -10,6 +10,7 @@ import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.services.UserServices
 import pt.isel.ls.houses.webapi.dtos.CreateUserIn
 import pt.isel.ls.houses.webapi.dtos.CreateUserOut
+import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetUserOut
 
 class UserWebApi(private val userServices: UserServices) {
@@ -32,5 +33,17 @@ class UserWebApi(private val userServices: UserServices) {
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(GetUserOut(getUser.uid, getUser.name, getUser.email)))
+    }
+
+    fun userBookings(request: Request): Response {
+        val userId = request.path("uid").let {
+            it ?: throw RequiredPathParamNotFound("uid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("uid")
+        }
+
+        val bookings = userServices.userBookings(userId)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(bookings.map { GetBookingOut(it.startDate, it.endDate, it.userId, it.houseId) }))
     }
 }

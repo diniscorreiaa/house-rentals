@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
@@ -16,6 +17,8 @@ import pt.isel.ls.houses.webapi.dtos.CreateBookingIn
 import pt.isel.ls.houses.webapi.dtos.CreateBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
+import pt.isel.ls.houses.webapi.dtos.UpdateBookingIn
+import pt.isel.ls.houses.webapi.dtos.UpdateBookingOut
 import java.time.format.DateTimeParseException
 
 const val INTERVAL_DELIMITER = ':'
@@ -23,10 +26,13 @@ const val INTERVAL_DELIMITER = ':'
 class BookingWebApi(private val bookingServices: BookingServices) {
 
     fun createBooking(request: Request): Response {
-        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
         val token = getToken(request)
 
-        val newBooking = bookingServices.createBooking(booking.hid, booking.startDate, booking.endDate, token)
+        val booking = Json.decodeFromString<CreateBookingIn>(request.bodyString())
+        val startDate = parseDateOrNull(booking.startDate) ?: throw WrongFormatDate(booking.startDate)
+        val endDate = parseDateOrNull(booking.endDate) ?: throw WrongFormatDate(booking.endDate)
+
+        val newBooking = bookingServices.createBooking(booking.hid, startDate, endDate, token)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateBookingOut(newBooking.bid)))
@@ -98,6 +104,45 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                 )
             }))
     }
+
+    fun deleteBooking(request: Request): Response {
+        val token = getToken(request)
+
+        val bookindId = request.path("bid").let {
+            it ?: throw RequiredPathParamNotFound("bid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("bid")
+        }
+        bookingServices.deleteBooking(bookindId, token)
+        return Response(NO_CONTENT)
+            .header("content-type", "application/json")
+    }
+
+    fun updateBooking(request: Request): Response {
+        val token = getToken(request)
+
+        val dates = Json.decodeFromString<UpdateBookingIn>(request.bodyString())
+        val startDate = parseDateOrNull(dates.startDate) ?: throw WrongFormatDate(dates.startDate)
+        val endDate = parseDateOrNull(dates.endDate) ?: throw WrongFormatDate(dates.endDate)
+
+        val bookingId = request.path("bid").let {
+            it ?: throw RequiredPathParamNotFound("bid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("bid")
+        }
+
+        val updatedBooking = bookingServices.updateBooking(bookingId, startDate, endDate, token)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    UpdateBookingOut(
+                        updatedBooking.startDate,
+                        updatedBooking.endDate,
+                        updatedBooking.userId,
+                        updatedBooking.houseId
+                    )
+                )
+            )
+    }
 }
 
 private class Interval(val startDate: LocalDate, val endDate: LocalDate)
@@ -116,6 +161,8 @@ private fun parseDateOrNull(date: String): LocalDate? {
     return try {
         LocalDate.parse(date)
     } catch (_: DateTimeParseException) {
+        null
+    } catch (_: IllegalArgumentException) {
         null
     }
 }
