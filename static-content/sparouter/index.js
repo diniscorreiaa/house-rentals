@@ -11,8 +11,8 @@ function loadHandler(){
     router.addRouteHandler("location-detail", handlers.getLocationDetails)
     router.addRouteHandler("bookings", handlers.getBookings)
 
-    router.addRouteHandler("user-details", handlers.getBookings)
-    router.addRouteHandler("booking-details", handlers.getBookings)
+    router.addRouteHandler("user-details", handlers.getUserDetails)
+    router.addRouteHandler("booking-details", handlers.getBookingDetails)
 
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
