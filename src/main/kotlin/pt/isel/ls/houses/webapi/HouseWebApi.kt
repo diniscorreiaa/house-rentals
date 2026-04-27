@@ -42,6 +42,7 @@ class HouseWebApi(private val houseServices: HouseServices) {
             .body(
                 Json.encodeToString(
                     GetHouseOut(
+                        house.hid,
                         house.title,
                         house.location,
                         house.area,
@@ -60,6 +61,7 @@ class HouseWebApi(private val houseServices: HouseServices) {
             .header("content-type", "application/json")
             .body(Json.encodeToString(houses.map {
                 GetHouseOut(
+                    it.hid,
                     it.title,
                     it.location,
                     it.area,
