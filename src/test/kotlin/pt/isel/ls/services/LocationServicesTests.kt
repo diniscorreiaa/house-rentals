@@ -6,6 +6,7 @@ package pt.isel.ls.services
 import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
+import pt.isel.ls.houses.exceptions.LocationParentDoesNotExist
 import pt.isel.ls.houses.services.LocationServices
 import pt.isel.ls.houses.services.UserServices
 import kotlin.test.Test
@@ -15,9 +16,9 @@ import kotlin.uuid.ExperimentalUuidApi
 
 class LocationServicesTests {
     private val data = DataMem()
-    private fun newServices() = LocationServices(data)
+    private fun newServices() = LocationServices(data.user, data.location)
 
-    private val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+    private val token = UserServices(data.user, data.booking).createUser("dummy", "dummy@example.com").token
 
     @Test
     fun `createLocation without parent persists`() {
@@ -31,10 +32,10 @@ class LocationServicesTests {
     }
 
     @Test
-    fun `createLocation with non existing parent throws LocationDoesNotExist Exception`() {
+    fun `createLocation with non existing parent throws LocationParentDoesNotExist Exception`() {
         val services = newServices()
 
-        assertFailsWith<LocationDoesNotExist> {
+        assertFailsWith<LocationParentDoesNotExist> {
             services.createLocation(name = "Lisbon", type = LocationType.DISTRICT, parentId = 99, token)
         }
     }
@@ -49,7 +50,6 @@ class LocationServicesTests {
             services.createLocation(name = "Region2", type = LocationType.REGION, parentId = country.lid, token)
 
         val children = services.getChildLocations(country.lid, null, null)
-        println(children)
 
         assertEquals(listOf(region1, region2), children)
     }
@@ -71,7 +71,7 @@ class LocationServicesTests {
         val district =
             services.createLocation(name = "District", type = LocationType.DISTRICT, parentId = region.lid, token)
 
-        assertEquals(listOf(region), services.getHierarchy(district.lid))
+        assertEquals(listOf(country, region, district), services.getHierarchy(district.lid))
     }
 
     @Test

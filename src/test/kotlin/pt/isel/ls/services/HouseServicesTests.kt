@@ -16,13 +16,19 @@ import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class HouseServicesTests {
+    private fun locationServices(data: DataMem) = LocationServices(data.user, data.location)
+
+    private fun houseServices(data: DataMem) = HouseServices(data.user, data.location, data.house)
+
+    private fun userServices(data: DataMem) = UserServices(data.user, data.booking)
+
     @Test
     fun `createHouse with existing location is created successfully`() {
         val data = DataMem()
-        val locations = LocationServices(data)
-        val houses = HouseServices(data)
+        val locations = locationServices(data)
+        val houses = houseServices(data)
 
-        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        val token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 
@@ -48,9 +54,9 @@ class HouseServicesTests {
     @Test
     fun `createHouse for non existing location throws LocationDoesNotExist Exception`() {
         val data = DataMem()
-        val houses = HouseServices(data)
+        val houses = houseServices(data)
 
-        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        val token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         assertFailsWith<LocationDoesNotExist> {
             houses.createHouse(
@@ -67,10 +73,10 @@ class HouseServicesTests {
     @Test
     fun `getHouse for unknown id throws HouseDoesNotExist Exception`() {
         val data = DataMem()
-        val locations = LocationServices(data)
-        val houses = HouseServices(data)
+        val locations = locationServices(data)
+        val houses = houseServices(data)
 
-        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        val token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
         houses.createHouse(
@@ -90,10 +96,10 @@ class HouseServicesTests {
     @Test
     fun `getHouses returns all created houses`() {
         val data = DataMem()
-        val locations = LocationServices(data)
-        val houses = HouseServices(data)
+        val locations = locationServices(data)
+        val houses = houseServices(data)
 
-        val token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        val token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
 
