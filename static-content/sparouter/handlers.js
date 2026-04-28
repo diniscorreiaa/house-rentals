@@ -1,4 +1,4 @@
-import {getSomeDetails} from "./dsl-functions";
+import {getSomeDetails, h1, div, a, p} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
