@@ -33,8 +33,8 @@ function getHouses(mainContent) { // TODO: Implement paging
         )
 }
 
-function getHouseDetails(hid, mainContent) {
-    getSomeDetails(hid, mainContent, "title", "location", "areaSqMt", "pricePerNight", "description")
+function getHouseDetails( mainContent) {
+    getSomeDetails(mainContent, "title", "location", "areaSqMt", "pricePerNight", "description")
 }
 
 function getLocationDetails(lid, mainContent) {
