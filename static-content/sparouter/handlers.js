@@ -23,10 +23,14 @@ function getHouseDetails(mainContent) {
     const divChildren = []
     fetchData(undefined, (house) => {
         fetchData(`locations/${house.location}`, (loc) => {
-            const ulData = ul([li(`Location: ${loc.name}`), a(`locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt}`), li(`Price: ${house.pricePerNight}`)])
-            fetchData(`bookings?hid=${house.hid}&date-interval=1900-01-01:2100-02-02`, (bookingsForHouse) => {
-                    bookingsForHouse.forEach(booking => {
-                        const link = a("#bookings/" + booking.bid, "Booking Details")
+            const ulData = ul([li(`Location: ${loc.name}`), a(`#locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
+            const currDate = new Date()
+            const nextYearDate = new Date()
+            nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
+            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}`
+            fetchData(bookingsUri, (bookingsForHouse) => {
+                    bookingsForHouse.forEach( _ => {
+                        const link = a(`#${bookingsUri}`, "See bookings for this house")
                         const bookingParagraph = p("")
                         bookingParagraph.appendChild(link)
                         divChildren.push(bookingParagraph)
@@ -38,13 +42,23 @@ function getHouseDetails(mainContent) {
     })
 }
 
+/*
 function getLocationDetails(mainContent) {
     getSomeDetails(mainContent, "name", "type")
     // TODO: Incluir hierarquia?
 }
+*/
 
 function getFullLocation(mainContent) {
-
+    fetchData(undefined, (locations) => {
+        const listLoc = []
+        locations.forEach((location) => {
+            listLoc.push(location.name + `(${location.type})`)
+        })
+        const title = h1(`Full location of ${locations[locations.length - 1].name}`)
+        const content = div([title, p(listLoc.join(" -> "))])
+        mainContent.replaceChildren(content)
+    })
 }
 
 function getUserDetails(uid, mainContent) {
@@ -68,7 +82,27 @@ function getBookings(mainContent) { // TODO: Implement paging
 }
 
 function getBookingDetails(bid, mainContent) {
-    getSomeDetails(bid, mainContent, "bid", "startDate", "endDate", "uid", "hid")
+    //TODO: In progress
+    const divChildren = []
+    fetchData(undefined, booking => {
+        fetchData(`locations/${house.location}`, (loc) => {
+            const ulData = ul([li(`Location: ${loc.name}`), a(`locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt}`), li(`Price: ${house.pricePerNight}`)])
+            fetchData(`bookings?hid=${house.hid}&date-interval=1900-01-01:2100-02-02`, (bookingsForHouse) => {
+                    bookingsForHouse.forEach(booking => {
+                        const link = a("#bookings/" + booking.bid, "Booking Details")
+                        const bookingParagraph = p("")
+                        bookingParagraph.appendChild(link)
+                        divChildren.push(bookingParagraph)
+                    })
+                    mainContent.replaceChildren(h1(booking.title), ulData, p(house.description), div(divChildren))
+                }
+            )
+        })
+    })
+}
+
+function getFormatedDate(date) {
+    return date.toISOString().split("T")[0]
 }
 
 
@@ -76,10 +110,11 @@ export const handlers = {
     getHome,
     getHouses,
     getHouseDetails,
-    getLocationDetails,
+    //getLocationDetails,
     getUserDetails,
     getBookings,
-    getBookingDetails
+    getBookingDetails,
+    getFullLocation
 }
 
 export default handlers

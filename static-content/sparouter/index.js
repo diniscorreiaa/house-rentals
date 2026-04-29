@@ -8,7 +8,7 @@ function loadHandler(){
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)
     router.addRouteHandler("houses/*", handlers.getHouseDetails)
-    router.addRouteHandler("location/*", handlers.getLocationDetails)
+    router.addRouteHandler("location/*/full", handlers.getFullLocation)
     router.addRouteHandler("bookings", handlers.getBookings)
     router.addRouteHandler("users/*", handlers.getUserDetails)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
