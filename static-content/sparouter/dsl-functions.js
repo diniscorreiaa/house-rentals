@@ -1,4 +1,11 @@
-import API_BASE_URL from "./handlers";
+import { API_BASE_URL } from "./handlers.js";
+
+
+export function fetchData(path = currentPath(), execute) {
+    fetch(API_BASE_URL + path)
+        .then(res => res.json())
+        .then(data => execute(data))
+}
 
 export function getAll(mainContent, lastUri) {
     fetch(API_BASE_URL + "houses")
@@ -19,18 +26,20 @@ export function getAll(mainContent, lastUri) {
         )
 }
 
-export function getSomeDetails(id, mainContent, ...propNames) {
-    fetch(API_BASE_URL + id)
+export function getSomeDetails(mainContent, ...propNames) {
+    fetch(API_BASE_URL + currentPath())
         .then(res => res.json())
         .then(data => {
             const listItems = []
             propNames.forEach(propName => {
-                listItems.push(li(data[propName]))
+                listItems.push(li(`${propName}: ${data[propName]}`))
             })
             const ulData = ul(listItems)
             mainContent.replaceChildren(ulData)
         })
 }
+
+const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
 
@@ -60,7 +69,8 @@ export const h6 = (text) => elementWithText("h6", text)
 function elementWithText(elementName, text){
     const element = document.createElement(elementName)
     const insideNode = document.createTextNode(text)
-    return element.appendChild(insideNode)
+    element.appendChild(insideNode)
+    return element
 }
 
 function elementWithElementsInside(elementName, elementsInside){

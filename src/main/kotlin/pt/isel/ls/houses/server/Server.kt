@@ -79,7 +79,7 @@ fun main() {
 
     // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}
     routes(
-        singlePageApp(ResourceLoader.Directory("static-content")), userRoutes, locationRoutes, bookingRoutes, houseRoutes,
+        userRoutes, locationRoutes, bookingRoutes, houseRoutes, singlePageApp(ResourceLoader.Directory("static-content"))
     ).withFilter(filter).asServer(Jetty(SERVER_PORT)).start().also {
         println("Started server on port $SERVER_PORT")
     }
