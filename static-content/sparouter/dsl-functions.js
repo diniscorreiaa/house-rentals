@@ -1,5 +1,12 @@
 import { API_BASE_URL } from "./handlers.js";
 
+
+export function fetchData(path = currentPath(), execute) {
+    fetch(API_BASE_URL + path)
+        .then(res => res.json())
+        .then(data => execute(data))
+}
+
 export function getAll(mainContent, lastUri) {
     fetch(API_BASE_URL + "houses")
         .then(res => res.json())
