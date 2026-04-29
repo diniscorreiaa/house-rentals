@@ -20,11 +20,20 @@ function getHouses(mainContent) { // TODO: Implement paging
 }
 
 function getHouseDetails(mainContent) {
-    //getSomeDetails(mainContent, "title", "location", "areaSqMt", "pricePerNight", "description")
+    const divChildren = []
     fetchData(undefined, (house) => {
         fetchData(`locations/${house.location}`, (loc) => {
-            const ulData = ul([h1(house.title), li(`Location: ${loc.name}`), a(`locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt}`), li(`Price: ${house.pricePerNight}`), p(house.description)])
-            mainContent.replaceChildren(ulData)
+            const ulData = ul([li(`Location: ${loc.name}`), a(`locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt}`), li(`Price: ${house.pricePerNight}`)])
+            fetchData(`bookings?hid=${house.hid}&date-interval=1900-01-01:2100-02-02`, (bookingsForHouse) => {
+                    bookingsForHouse.forEach(booking => {
+                        const link = a("#bookings/" + booking.bid, "Booking Details")
+                        const bookingParagraph = p("")
+                        bookingParagraph.appendChild(link)
+                        divChildren.push(bookingParagraph)
+                    })
+                    mainContent.replaceChildren(h1(house.title), ulData, p(house.description), div(divChildren))
+                }
+            )
         })
     })
 }

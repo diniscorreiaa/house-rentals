@@ -13,7 +13,7 @@ function loadHandler(){
     router.addRouteHandler("bookings", handlers.getBookings)
 
     router.addRouteHandler("user-details", handlers.getUserDetails)
-    router.addRouteHandler("booking-details", handlers.getBookingDetails)
+    router.addRouteHandler("bookings/1", handlers.getBookingDetails) // TODO: This is temporary, was just to test one booking
 
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
