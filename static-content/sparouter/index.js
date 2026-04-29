@@ -9,7 +9,7 @@ function loadHandler(){
     router.addRouteHandler("houses", handlers.getHouses)
     router.addRouteHandler("houses/1", handlers.getHouseDetails)    // TODO: This is temporary, was just to test one house
     router.addRouteHandler("house-details", handlers.getHouseDetails)
-    router.addRouteHandler("location-detail", handlers.getLocationDetails)
+    router.addRouteHandler("locations/4/full", handlers.getFullLocation)
     router.addRouteHandler("bookings", handlers.getBookings)
 
     router.addRouteHandler("user-details", handlers.getUserDetails)
