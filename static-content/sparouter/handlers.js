@@ -3,32 +3,19 @@ import {getSomeDetails, h1, div, a, p, fetchData, li, ul} from "./dsl-functions.
 export const API_BASE_URL = "http://localhost:8000/"
 
 function getHome(mainContent) {
-    const h1 = document.createElement("h1")
-    const text = document.createTextNode("House Rentals HOME")
-    h1.appendChild(text)
-    mainContent.replaceChildren(h1)
+    mainContent.replaceChildren(h1("House Rentals HOME"))
 }
 
 function getHouses(mainContent) { // TODO: Implement paging
     fetchData("houses", (houses) => {
-            const div = document.createElement("div")
-            const h1 = document.createElement("h1")
-            const text = document.createTextNode("All Houses")
-            h1.appendChild(text)
-            div.appendChild(h1)
-
+            const divChildren = [h1("All Houses")]
             houses.forEach(house => {
-                const p = document.createElement("p")
-                const pText = document.createTextNode(house.title)
-                p.appendChild(pText)
-                const a = document.createElement("a")
-                const aText = document.createTextNode("Details")
-                a.appendChild(aText)
-                a.href = "#houses/" + house.hid
-                p.appendChild(a)
-                div.appendChild(p)
+                const link = a("#houses/" + house.hid, "Details")
+                const houseTitle = p(house.title)
+                houseTitle.appendChild(link)
+                divChildren.push(houseTitle)
             })
-            mainContent.replaceChildren(div)
+            mainContent.replaceChildren(div(divChildren))
     })
 }
 
@@ -59,22 +46,14 @@ function getBookings(mainContent) { // TODO: Implement paging
     fetch(API_BASE_URL + "bookings")
         .then(res => res.json())
         .then(bookings => {
-                const div = document.createElement("div")
-                const h1 = document.createElement("h1")
-                const text = document.createTextNode("Bookings")
-                h1.appendChild(text)
-                div.appendChild(h1)
-
+                const divChildren = []
+                divChildren.push(h1("Bookings"))
                 bookings.forEach(booking => {
-                    const p = document.createElement("p")
-                    const a = document.createElement("a")
-                    const aText = document.createTextNode("Details")
-                    a.appendChild(aText)
-                    a.href = "#bookings/" + booking.bid
-                    p.appendChild(a)
-                    div.appendChild(p)
+                    const link = link("")
+                    link.appendChild(a("#bookings/" + booking.bid, "Details"))
+                    divChildren.push(link)
                 })
-                mainContent.replaceChildren(div)
+                mainContent.replaceChildren(div(divChildren))
             }
         )
 }
