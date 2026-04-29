@@ -25,11 +25,19 @@ import kotlin.uuid.Uuid
 class BookingServicesTests {
     lateinit var token: Uuid
 
-    private fun createHouse(data: DataMem): Int {
-        val locations = LocationServices(data)
-        val houses = HouseServices(data)
+    private fun bookingServices(data: DataMem) = BookingServices(data.user, data.house, data.booking)
 
-        token = UserServices(data).createUser("dummy", "dummy@example.com").token
+    private fun locationServices(data: DataMem) = LocationServices(data.user, data.location)
+
+    private fun houseServices(data: DataMem) = HouseServices(data.user, data.location, data.house)
+
+    private fun userServices(data: DataMem) = UserServices(data.user, data.booking)
+
+    private fun createHouse(data: DataMem): Int {
+        val locations = locationServices(data)
+        val houses = houseServices(data)
+
+        token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
         return houses.createHouse(
@@ -45,7 +53,7 @@ class BookingServicesTests {
     @Test
     fun `createBooking is successful`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
         val hid = createHouse(data)
         val start = LocalDate(2025, 6, 1)
         val end = LocalDate(2025, 6, 7)
@@ -67,7 +75,7 @@ class BookingServicesTests {
     @Test
     fun `createBooking with start after end throws InvalidDate Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
         val hid = createHouse(data)
 
         assertFailsWith<InvalidDate> {
@@ -83,9 +91,9 @@ class BookingServicesTests {
     @Test
     fun `createBooking for unknown house throws HouseDoesNotExist Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
 
-        token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        token = userServices(data).createUser("dummy", "dummy@example.com").token
 
         assertFailsWith<HouseDoesNotExist> {
             bookingServices.createBooking(
@@ -100,7 +108,7 @@ class BookingServicesTests {
     @Test
     fun `createBooking on occupied interval throws HouseIsNotAvailable Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
         val hid = createHouse(data)
         val start = LocalDate(2025, 8, 1)
         val end = LocalDate(2025, 8, 5)
@@ -116,7 +124,7 @@ class BookingServicesTests {
     @Test
     fun `getBooking for unknown id throws BookingDoesNotExist Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
 
         assertFailsWith<BookingDoesNotExist> {
             bookingServices.getBooking(bid = 10)
@@ -126,7 +134,7 @@ class BookingServicesTests {
     @Test
     fun `getBookings with invalid interval throws InvalidDate`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
         val hid = createHouse(data)
 
         assertFailsWith<InvalidDate> {
@@ -143,7 +151,7 @@ class BookingServicesTests {
     @Test
     fun `getBookings for unknown house throws HouseDoesNotExist Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
 
         assertFailsWith<HouseDoesNotExist> {
             bookingServices.getBookings(
@@ -159,7 +167,7 @@ class BookingServicesTests {
     @Test
     fun `getBookings returns bookings within interval`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
         val hid = createHouse(data)
 
 
@@ -190,7 +198,7 @@ class BookingServicesTests {
     @Test
     fun `getAvailableHouses with invalid interval throws InvalidDate Exception`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
+        val bookingServices = bookingServices(data)
 
         assertFailsWith<InvalidDate> {
             bookingServices.getAvailableHouses(
@@ -205,12 +213,12 @@ class BookingServicesTests {
     @Test
     fun `getAvailableHouses returns houses with non overlapping bookings`() {
         val data = DataMem()
-        val bookingServices = BookingServices(data)
-        val houses = HouseServices(data)
+        val bookingServices = bookingServices(data)
+        val houses = houseServices(data)
 
-        token = UserServices(data).createUser("dummy", "dummy@example.com").token
+        token = userServices(data).createUser("dummy", "dummy@example.com").token
 
-        val locId = LocationServices(data).createLocation(
+        val locId = locationServices(data).createLocation(
             name = "Portugal",
             type = LocationType.COUNTRY,
             parentId = null,
