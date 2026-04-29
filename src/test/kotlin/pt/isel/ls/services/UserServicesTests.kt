@@ -14,7 +14,10 @@ import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class UserServicesTests {
-    private fun newServices() = UserServices(DataMem())
+    private fun newServices(): UserServices {
+        val data = DataMem()
+        return UserServices(data.user, data.booking)
+    }
 
     @Test
     fun `createUser returns user with correct name and email`() {
