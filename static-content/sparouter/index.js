@@ -7,14 +7,11 @@ window.addEventListener('hashchange', hashChangeHandler)
 function loadHandler(){
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)
-    router.addRouteHandler("houses/1", handlers.getHouseDetails)    // TODO: This is temporary, was just to test one house
-    router.addRouteHandler("house-details", handlers.getHouseDetails)
-    router.addRouteHandler("location-detail", handlers.getLocationDetails)
+    router.addRouteHandler("houses/*", handlers.getHouseDetails)
+    router.addRouteHandler("location/*", handlers.getLocationDetails)
     router.addRouteHandler("bookings", handlers.getBookings)
-
-    router.addRouteHandler("user-details", handlers.getUserDetails)
-    router.addRouteHandler("bookings/1", handlers.getBookingDetails) // TODO: This is temporary, was just to test one booking
-
+    router.addRouteHandler("users/*", handlers.getUserDetails)
+    router.addRouteHandler("bookings/*", handlers.getBookingDetails)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 
