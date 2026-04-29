@@ -20,24 +20,14 @@ function getHouses(mainContent) { // TODO: Implement paging
 }
 
 function getHouseDetails(mainContent) {
-    const divChildren = []
     fetchData(undefined, (house) => {
         fetchData(`locations/${house.location}`, (loc) => {
             const ulData = ul([li(`Location: ${loc.name}`), a(`#locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
             const currDate = new Date()
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}`
-            fetchData(bookingsUri, (bookingsForHouse) => {
-                    bookingsForHouse.forEach( _ => {
-                        const link = a(`#${bookingsUri}`, "See bookings for this house")
-                        const bookingParagraph = p("")
-                        bookingParagraph.appendChild(link)
-                        divChildren.push(bookingParagraph)
-                    })
-                    mainContent.replaceChildren(h1(house.title), ulData, p(house.description), div(divChildren))
-                }
-            )
+            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` // Estão visíveis bookings até 1 ano a partir da data atual
+            mainContent.replaceChildren(div([h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house")]))
         })
     })
 }
