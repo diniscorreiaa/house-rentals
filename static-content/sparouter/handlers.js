@@ -1,4 +1,4 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -16,17 +16,21 @@ function getHouses(mainContent) {
     const queryPrams = new URLSearchParams(currentPath().split("?")[1])
     housesCurrentSkip = parseInt(queryPrams.get("skip"))
     fetchData(undefined, (houses) => {
-            const divChildren = [h1("All Houses")]
-            houses.forEach(house => {
-                const link = a("#houses/" + house.hid, "Details")
-                const houseTitle = p(house.title)
-                houseTitle.appendChild(link)
-                divChildren.push(houseTitle)
-            })
-            mainContent.replaceChildren(div(divChildren),
-                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip-housesLimit}`, "Previous"),
-                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip+housesLimit}`, "Next")
-            )
+        const divChildren = [h1("All Houses")]
+        houses.forEach(house => {
+            const link = a("#houses/" + house.hid, "Details")
+            const houseTitle = p(house.title)
+            houseTitle.appendChild(link)
+            divChildren.push(houseTitle)
+        })
+
+        const prevButton = button("Previous", housesCurrentSkip === 0, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}` })
+        const nextButton = button("Next", houses.length < housesLimit, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}` })
+
+        mainContent.replaceChildren(...divChildren,
+            prevButton,
+            nextButton
+        )
     })
 }
 

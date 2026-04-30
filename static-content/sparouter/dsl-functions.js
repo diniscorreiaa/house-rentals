@@ -78,3 +78,11 @@ function elementWithElementsInside(elementName, elementsInside){
     elementsInside.forEach(element => creatorElement.appendChild(element))
     return creatorElement
 }
+
+export function button(text, disabled, onClick) {
+    const button = document.createElement("button")
+    button.textContent = text
+    button.disabled = disabled
+    button.onclick = onClick
+    return button
+}
