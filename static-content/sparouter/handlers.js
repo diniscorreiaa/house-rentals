@@ -2,11 +2,15 @@ import {h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions
 
 export const API_BASE_URL = "http://localhost:8000/"
 
+export const housesLimit = 2
+let housesCurrentSkip = 0
 function getHome(mainContent) {
     mainContent.replaceChildren(h1("House Rentals HOME"))
 }
 
-function getHouses(mainContent) { // TODO: Implement paging
+function getHouses(mainContent) {
+    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
+    housesCurrentSkip = parseInt(queryPrams.get("skip"))
     fetchData(undefined, (houses) => {
             const divChildren = [h1("All Houses")]
             houses.forEach(house => {
@@ -15,7 +19,10 @@ function getHouses(mainContent) { // TODO: Implement paging
                 houseTitle.appendChild(link)
                 divChildren.push(houseTitle)
             })
-            mainContent.replaceChildren(div(divChildren))
+            mainContent.replaceChildren(div(divChildren),
+                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip-housesLimit}`, "Previous"),
+                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip+housesLimit}`, "Next")
+            )
     })
 }
 
