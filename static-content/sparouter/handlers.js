@@ -78,7 +78,9 @@ function getBookingDetails(mainContent) {
             fetchData(`houses/${booking.hid}`, (house) => {
                 const claimed = li(`Claimed by: ${user.name}`)
                 claimed.appendChild(a(`#users/${user.uid}`, "Check user profile"))
-                const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, li(`House: ${house.title}`)])
+                const houseTitle = li(`House: ${house.title}`)
+                houseTitle.appendChild(a(`#houses/${booking.hid}`, "Go to house"))
+                const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, houseTitle])
                 mainContent.replaceChildren(div([h1("Booking details"), ulData]))
             })
         })
