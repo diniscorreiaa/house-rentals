@@ -1,4 +1,4 @@
-import {getSomeDetails, h1, div, a, p, fetchData, li, ul} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -7,7 +7,7 @@ function getHome(mainContent) {
 }
 
 function getHouses(mainContent) { // TODO: Implement paging
-    fetchData("houses", (houses) => {
+    fetchData(undefined, (houses) => {
             const divChildren = [h1("All Houses")]
             houses.forEach(house => {
                 const link = a("#houses/" + house.hid, "Details")
@@ -20,24 +20,14 @@ function getHouses(mainContent) { // TODO: Implement paging
 }
 
 function getHouseDetails(mainContent) {
-    const divChildren = []
     fetchData(undefined, (house) => {
         fetchData(`locations/${house.location}`, (loc) => {
             const ulData = ul([li(`Location: ${loc.name}`), a(`#locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
             const currDate = new Date()
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}`
-            fetchData(bookingsUri, (bookingsForHouse) => {
-                    bookingsForHouse.forEach( _ => {
-                        const link = a(`#${bookingsUri}`, "See bookings for this house")
-                        const bookingParagraph = p("")
-                        bookingParagraph.appendChild(link)
-                        divChildren.push(bookingParagraph)
-                    })
-                    mainContent.replaceChildren(h1(house.title), ulData, p(house.description), div(divChildren))
-                }
-            )
+            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` // Estão visíveis bookings até 1 ano a partir da data atual
+            mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
         })
     })
 }
@@ -61,42 +51,38 @@ function getFullLocation(mainContent) {
     })
 }
 
-function getUserDetails(uid, mainContent) {
-    getSomeDetails(uid, mainContent, "name", "email")
+function getUserDetails(mainContent) {
+    fetchData(undefined, (user => {
+        mainContent.replaceChildren(h1(`${user.name}'s Profile`), ul([li(`Name: ${user.name}`), li(`Email: ${user.email}`)]))
+    }))
 }
 
 function getBookings(mainContent) { // TODO: Implement paging
-    fetch(API_BASE_URL + "bookings")
-        .then(res => res.json())
-        .then(bookings => {
-                const divChildren = []
-                divChildren.push(h1("Bookings"))
-                bookings.forEach(booking => {
-                    const link = link("")
-                    link.appendChild(a("#bookings/" + booking.bid, "Details"))
-                    divChildren.push(link)
-                })
-                mainContent.replaceChildren(div(divChildren))
-            }
-        )
+    fetchData(undefined, (bookings) => {
+        const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
+        fetchData(`houses/${params.get("hid")}`, (house) => {
+            const items = []
+            bookings.forEach(booking => {
+                const item = li(`${booking.startDate} until ${booking.endDate}`)
+                item.appendChild(a("#bookings/" + booking.bid, "Details"))
+                items.push(item)
+            })
+            mainContent.replaceChildren(h1(`Bookings for ${house.title}`), ol(items))
+        })
+    })
 }
 
-function getBookingDetails(bid, mainContent) {
-    //TODO: In progress
-    const divChildren = []
+function getBookingDetails(mainContent) {
     fetchData(undefined, booking => {
-        fetchData(`locations/${house.location}`, (loc) => {
-            const ulData = ul([li(`Location: ${loc.name}`), a(`locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt}`), li(`Price: ${house.pricePerNight}`)])
-            fetchData(`bookings?hid=${house.hid}&date-interval=1900-01-01:2100-02-02`, (bookingsForHouse) => {
-                    bookingsForHouse.forEach(booking => {
-                        const link = a("#bookings/" + booking.bid, "Booking Details")
-                        const bookingParagraph = p("")
-                        bookingParagraph.appendChild(link)
-                        divChildren.push(bookingParagraph)
-                    })
-                    mainContent.replaceChildren(h1(booking.title), ulData, p(house.description), div(divChildren))
-                }
-            )
+        fetchData(`users/${booking.uid}`, (user) => {
+            fetchData(`houses/${booking.hid}`, (house) => {
+                const claimed = li(`Claimed by: ${user.name}`)
+                claimed.appendChild(a(`#users/${user.uid}`, "Check user profile"))
+                const houseTitle = li(`House: ${house.title}`)
+                houseTitle.appendChild(a(`#houses/${booking.hid}`, "Go to house"))
+                const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, houseTitle])
+                mainContent.replaceChildren(h1("Booking details"), ulData)
+            })
         })
     })
 }

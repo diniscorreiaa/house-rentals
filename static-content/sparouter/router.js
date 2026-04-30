@@ -10,7 +10,7 @@ function addDefaultNotFoundRouteHandler(notFoundRH) {
 
 // TODO: refactor for readability and do tests to ensure every edge case is working
 function getRouteHandler(path){
-    const queryStart = path.indexOf((it) => it === "?")
+    const queryStart = path.indexOf("?")
     if (queryStart !== -1)
         path = path.slice(0, queryStart)
     const receivedPathSplit = path.split("/")

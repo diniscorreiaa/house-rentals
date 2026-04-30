@@ -39,7 +39,7 @@ export function getSomeDetails(mainContent, ...propNames) {
         })
 }
 
-const currentPath = () => window.location.hash.replace("#","")
+export const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
 
