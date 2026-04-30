@@ -26,8 +26,7 @@ function getRouteHandler(path){
         const receivedPathPart = receivedPathSplit[i]
 
         for (let j = 0; j < possibleRoutes.length; j++) {
-            const templatePath = possibleRoutes[j].pathTemplate.split("?")[0]
-            const storedPathPart = templatePath.split("/")[i]
+            const storedPathPart = possibleRoutes[j].pathTemplate.split("/")[i]
             if (storedPathPart === "*") continue
             else if (receivedPathPart !== storedPathPart) validRoutes[j] = false
         }

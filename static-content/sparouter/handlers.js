@@ -1,4 +1,4 @@
-import {getSomeDetails, h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -27,7 +27,7 @@ function getHouseDetails(mainContent) {
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
             const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` // Estão visíveis bookings até 1 ano a partir da data atual
-            mainContent.replaceChildren(div([h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house")]))
+            mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
         })
     })
 }
@@ -53,7 +53,7 @@ function getFullLocation(mainContent) {
 
 function getUserDetails(mainContent) {
     fetchData(undefined, (user => {
-        mainContent.replaceChildren(div([h1(`${user.name}'s Profile`), ul([li(`Name: ${user.name}`), li(`Email: ${user.email}`)])]))
+        mainContent.replaceChildren(h1(`${user.name}'s Profile`), ul([li(`Name: ${user.name}`), li(`Email: ${user.email}`)]))
     }))
 }
 
@@ -67,7 +67,7 @@ function getBookings(mainContent) { // TODO: Implement paging
                 item.appendChild(a("#bookings/" + booking.bid, "Details"))
                 items.push(item)
             })
-            mainContent.replaceChildren(div([h1(`Bookings for ${house.title}`), ol(items)]))
+            mainContent.replaceChildren(h1(`Bookings for ${house.title}`), ol(items))
         })
     })
 }
@@ -81,7 +81,7 @@ function getBookingDetails(mainContent) {
                 const houseTitle = li(`House: ${house.title}`)
                 houseTitle.appendChild(a(`#houses/${booking.hid}`, "Go to house"))
                 const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, houseTitle])
-                mainContent.replaceChildren(div([h1("Booking details"), ulData]))
+                mainContent.replaceChildren(h1("Booking details"), ulData)
             })
         })
     })

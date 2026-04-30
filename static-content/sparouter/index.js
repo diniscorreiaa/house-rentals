@@ -9,7 +9,7 @@ function loadHandler(){
     router.addRouteHandler("houses", handlers.getHouses)
     router.addRouteHandler("houses/*", handlers.getHouseDetails)
     router.addRouteHandler("locations/*/full", handlers.getFullLocation)
-    router.addRouteHandler("bookings?hid=*&date-interval=*:*", handlers.getBookings)
+    router.addRouteHandler("bookings", handlers.getBookings)
     router.addRouteHandler("users/*", handlers.getUserDetails)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
 
