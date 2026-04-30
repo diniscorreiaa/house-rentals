@@ -1,4 +1,4 @@
-import {getSomeDetails, h1, div, a, p, fetchData, li, ul} from "./dsl-functions.js";
+import {getSomeDetails, h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -7,7 +7,7 @@ function getHome(mainContent) {
 }
 
 function getHouses(mainContent) { // TODO: Implement paging
-    fetchData("houses", (houses) => {
+    fetchData(undefined, (houses) => {
             const divChildren = [h1("All Houses")]
             houses.forEach(house => {
                 const link = a("#houses/" + house.hid, "Details")
@@ -56,19 +56,18 @@ function getUserDetails(uid, mainContent) {
 }
 
 function getBookings(mainContent) { // TODO: Implement paging
-    fetch(API_BASE_URL + "bookings")
-        .then(res => res.json())
-        .then(bookings => {
-                const divChildren = []
-                divChildren.push(h1("Bookings"))
-                bookings.forEach(booking => {
-                    const link = link("")
-                    link.appendChild(a("#bookings/" + booking.bid, "Details"))
-                    divChildren.push(link)
-                })
-                mainContent.replaceChildren(div(divChildren))
-            }
-        )
+    fetchData(undefined, (bookings) => {
+        const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
+        fetchData(`houses/${params.get("hid")}`, (house) => {
+            const items = []
+            bookings.forEach(booking => {
+                const item = li(`${booking.startDate} until ${booking.endDate}`)
+                item.appendChild(a("#bookings/" + booking.bid, "Details"))
+                items.push(item)
+            })
+            mainContent.replaceChildren(div([h1(`Bookings for ${house.title}`), ol(items)]))
+        })
+    })
 }
 
 function getBookingDetails(bid, mainContent) {
