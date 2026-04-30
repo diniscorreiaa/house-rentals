@@ -1,10 +1,12 @@
 import router from "./router.js";
-import handlers from "./handlers.js";
+import handlers, {housesLimit} from "./handlers.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
 
 function loadHandler(){
+    document.getElementById("housesLink").href += `?limit=${housesLimit}&skip=0`
+
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)
     router.addRouteHandler("houses/*", handlers.getHouseDetails)
