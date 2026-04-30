@@ -51,8 +51,10 @@ function getFullLocation(mainContent) {
     })
 }
 
-function getUserDetails(uid, mainContent) {
-    getSomeDetails(uid, mainContent, "name", "email")
+function getUserDetails(mainContent) {
+    fetchData(undefined, (user => {
+        mainContent.replaceChildren(div([h1(`${user.name}'s Profile`), ul([li(`Name: ${user.name}`), li(`Email: ${user.email}`)])]))
+    }))
 }
 
 function getBookings(mainContent) { // TODO: Implement paging
