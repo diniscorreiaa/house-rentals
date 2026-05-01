@@ -19,23 +19,37 @@ function getHouses(mainContent) {
     housesCurrentSkip = parseInt(queryPrams.get("skip"))
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses")]
-        houses.forEach(house => {
-            const link = a("#houses/" + house.hid, "Details")
-            const houseTitle = p(house.title)
-            houseTitle.appendChild(link)
-            divChildren.push(houseTitle)
-        })
+        if (houses.length !== 0) {
+            houses.forEach(house => {
+                const link = a("#houses/" + house.hid, "Details")
+                const houseTitle = p(house.title)
+                houseTitle.appendChild(link)
+                divChildren.push(houseTitle)
+            })
 
-        const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => { window.location.hash = `houses?limit=${newLimit}&skip=0`; housesLimit = newLimit }) // É necessário dar reset ao skip para garantir alinhamento
+            const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => {
+                window.location.hash = `houses?limit=${newLimit}&skip=0`;
+                housesLimit = newLimit
+            }) // É necessário dar reset ao skip para garantir alinhamento
 
-        const prevButton = button("Previous", housesCurrentSkip === 0, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}` })
-        const nextButton = button("Next", houses.length < housesLimit, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}` })
+            const prevButton = button("Previous", housesCurrentSkip === 0, () => {
+                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+            })
+            const nextButton = button("Next", houses.length < housesLimit, () => {
+                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+            })
 
-        mainContent.replaceChildren(...divChildren,
-            limitSelector,
-            prevButton,
-            nextButton
-        )
+            mainContent.replaceChildren(...divChildren,
+                limitSelector,
+                prevButton,
+                nextButton
+            )
+        }
+        else {
+            divChildren.push(p("No houses to show"))
+            divChildren.push(a("#home", "Return to home page"))
+            mainContent.replaceChildren(...divChildren)
+        }
     })
 }
 
@@ -83,26 +97,42 @@ function getBookings(mainContent) {
     fetchData(undefined, (bookings) => {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
-            const items = []
-            bookings.forEach(booking => {
-                const item = li(`${booking.startDate} until ${booking.endDate}`)
-                item.appendChild(a("#bookings/" + booking.bid, "Details"))
-                items.push(item)
-            })
+            if (bookings.length !== 0) {
+                const items = []
+                bookings.forEach(booking => {
+                    const item = li(`${booking.startDate} until ${booking.endDate}`)
+                    item.appendChild(a("#bookings/" + booking.bid, "Details"))
+                    items.push(item)
+                })
 
-            const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
+                const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
 
-            const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => { window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`; bookingsLimit = newLimit }) // É necessário dar reset ao skip para garantir alinhamento
+                const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => {
+                    window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`;
+                    bookingsLimit = newLimit
+                }) // É necessário dar reset ao skip para garantir alinhamento
 
-            const prevButton = button("Previous", bookingsCurrentSkip === 0, () => { window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}` })
-            const nextButton = button("Next", bookings.length < bookingsLimit, () => { window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}` })
+                const prevButton = button("Previous", bookingsCurrentSkip === 0, () => {
+                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                })
+                const nextButton = button("Next", bookings.length < bookingsLimit, () => {
+                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+                })
 
-            mainContent.replaceChildren(
-                h1(`Bookings for ${house.title}`), ol(items),
-                limitSelector,
-                prevButton,
-                nextButton
-            )
+                mainContent.replaceChildren(
+                    h1(`Bookings for ${house.title}`), ol(items),
+                    limitSelector,
+                    prevButton,
+                    nextButton
+                )
+            }
+            else {
+                mainContent.replaceChildren(
+                    h1(`Bookings for ${house.title}`),
+                    p("No bookings to show"),
+                    a("#home", "Return to home page")
+                )
+            }
         })
     })
 }
