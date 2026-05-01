@@ -20,7 +20,7 @@ class LocationTypeDoesNotExist : HttpException(Status.BAD_REQUEST, "Location typ
 
 class HouseDoesNotExist : HttpException(Status.NOT_FOUND, "House does not exist")
 class HouseIsNotAvailable : HttpException(Status.CONFLICT, "House is not available")
-class HouseLocationMustBeMunicipality : HttpException(Status.BAD_REQUEST, "House must have a municipality location")
+class HouseLocationMustBeLocality : HttpException(Status.BAD_REQUEST, "House must have a locality location")
 
 class BookingDoesNotExist : HttpException(Status.NOT_FOUND, "Booking does not exist")
 
