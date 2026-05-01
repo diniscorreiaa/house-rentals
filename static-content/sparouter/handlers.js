@@ -1,12 +1,14 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
-export const housesLimit = 2
+export let housesLimit = 2
 let housesCurrentSkip = 0
 
-const bookingsLimit = 2
-let bookingCurrentSkip = 0
+let bookingsLimit = 2
+let bookingsCurrentSkip = 0
+
+const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
     mainContent.replaceChildren(h1("House Rentals HOME"))
@@ -16,17 +18,38 @@ function getHouses(mainContent) {
     const queryPrams = new URLSearchParams(currentPath().split("?")[1])
     housesCurrentSkip = parseInt(queryPrams.get("skip"))
     fetchData(undefined, (houses) => {
-            const divChildren = [h1("All Houses")]
+        const divChildren = [h1("All Houses")]
+        if (houses.length !== 0) {
             houses.forEach(house => {
                 const link = a("#houses/" + house.hid, "Details")
                 const houseTitle = p(house.title)
                 houseTitle.appendChild(link)
                 divChildren.push(houseTitle)
             })
-            mainContent.replaceChildren(div(divChildren),
-                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip-housesLimit}`, "Previous"),
-                a(`#houses?limit=${housesLimit}&skip=${housesCurrentSkip+housesLimit}`, "Next")
+
+            const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => {
+                window.location.hash = `houses?limit=${newLimit}&skip=0`;
+                housesLimit = newLimit
+            }) // É necessário dar reset ao skip para garantir alinhamento
+
+            const prevButton = button("Previous", housesCurrentSkip === 0, () => {
+                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+            })
+            const nextButton = button("Next", houses.length < housesLimit, () => {
+                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+            })
+
+            mainContent.replaceChildren(...divChildren,
+                limitSelector,
+                prevButton,
+                nextButton
             )
+        }
+        else {
+            divChildren.push(p("No houses to show"))
+            divChildren.push(a("#home", "Return to home page"))
+            mainContent.replaceChildren(...divChildren)
+        }
     })
 }
 
@@ -37,7 +60,7 @@ function getHouseDetails(mainContent) {
             const currDate = new Date()
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
+            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
             mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
         })
     })
@@ -69,22 +92,47 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    bookingCurrentSkip = parseInt(queryPrams.get("skip"))
+    const queryParams = new URLSearchParams(currentPath().split("?")[1])
+    bookingsCurrentSkip = parseInt(queryParams.get("skip"))
     fetchData(undefined, (bookings) => {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
-            const items = []
-            bookings.forEach(booking => {
-                const item = li(`${booking.startDate} until ${booking.endDate}`)
-                item.appendChild(a("#bookings/" + booking.bid, "Details"))
-                items.push(item)
-            })
-            mainContent.replaceChildren(
-                h1(`Bookings for ${house.title}`), ol(items),
-                a(`#bookings?hid=${queryPrams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingCurrentSkip-bookingsLimit}`, "Previous"),
-                a(`#bookings?hid=${queryPrams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingCurrentSkip+bookingsLimit}`, "Next")
-            )
+            if (bookings.length !== 0) {
+                const items = []
+                bookings.forEach(booking => {
+                    const item = li(`${booking.startDate} until ${booking.endDate}`)
+                    item.appendChild(a("#bookings/" + booking.bid, "Details"))
+                    items.push(item)
+                })
+
+                const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
+
+                const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => {
+                    window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`;
+                    bookingsLimit = newLimit
+                }) // É necessário dar reset ao skip para garantir alinhamento
+
+                const prevButton = button("Previous", bookingsCurrentSkip === 0, () => {
+                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                })
+                const nextButton = button("Next", bookings.length < bookingsLimit, () => {
+                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+                })
+
+                mainContent.replaceChildren(
+                    h1(`Bookings for ${house.title}`), ol(items),
+                    limitSelector,
+                    prevButton,
+                    nextButton
+                )
+            }
+            else {
+                mainContent.replaceChildren(
+                    h1(`Bookings for ${house.title}`),
+                    p("No bookings to show"),
+                    a("#home", "Return to home page")
+                )
+            }
         })
     })
 }

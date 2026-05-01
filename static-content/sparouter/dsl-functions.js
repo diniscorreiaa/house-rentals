@@ -78,3 +78,25 @@ function elementWithElementsInside(elementName, elementsInside){
     elementsInside.forEach(element => creatorElement.appendChild(element))
     return creatorElement
 }
+
+export function button(text, disabled, onClick) {
+    const button = elementWithText("button", text)
+    button.disabled = disabled
+    button.onclick = onClick
+    return button
+}
+
+export function selector(label, currentLimit, values, onChange) {
+    const optElems = []
+    values.forEach(value => {
+        const option = elementWithText("option", String(value)) //document.createElement("option")
+        option.value = value
+        option.selected = currentLimit === value
+        optElems.push(option)
+    })
+    const labelElement = elementWithText("label", label)
+    const select = elementWithElementsInside("select", optElems)
+    select.onchange = () => { onChange(parseInt(select.value)) }
+    labelElement.appendChild(select)
+    return labelElement
+}

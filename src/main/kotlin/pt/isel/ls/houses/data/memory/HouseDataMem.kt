@@ -21,6 +21,12 @@ class HouseDataMem : HouseRepository {
 
     override fun getHouse(hid: Int): House? = houses.find { it.hid == hid }
 
-    override fun getHouses(limit: Int?, skip: Int?): List<House> =
-        if (limit == null) houses else houses.subList(skip ?: 0, (skip ?: 0) + limit)
+    override fun getHouses(limit: Int?, skip: Int?): List<House> {
+        if (limit == null || houses.isEmpty()) return houses
+        else {
+            var lastHouseIdx = (skip ?: 0) + limit
+            if (lastHouseIdx > houses.size) lastHouseIdx = houses.size
+            return houses.subList(skip ?: 0, lastHouseIdx)
+        }
+    }
 }

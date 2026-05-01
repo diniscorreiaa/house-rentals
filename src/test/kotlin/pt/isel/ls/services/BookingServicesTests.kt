@@ -33,13 +33,20 @@ class BookingServicesTests {
 
     private fun userServices(data: DataMem) = UserServices(data.user, data.booking)
 
+    private fun createParentLocations(locationServices: LocationServices) {
+        locationServices.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
+        locationServices.createLocation(name = "Lisboa", type = LocationType.DISTRICT, parentId = 1, token)
+        locationServices.createLocation(name = "Oeiras", type = LocationType.MUNICIPALITY, parentId = 2, token)
+    }
+
     private fun createHouse(data: DataMem): Int {
         val locations = locationServices(data)
         val houses = houseServices(data)
 
         token = userServices(data).createUser("dummy", "dummy@example.com").token
 
-        val loc = locations.createLocation(name = "Portugal", type = LocationType.COUNTRY, parentId = null, token)
+        createParentLocations(locationServices(data))
+        val loc = locations.createLocation(name = "Paço de Arcos", type = LocationType.LOCALITY, parentId = 3, token)
         return houses.createHouse(
             title = "Beach House",
             location = loc.lid,
@@ -216,12 +223,14 @@ class BookingServicesTests {
         val bookingServices = bookingServices(data)
         val houses = houseServices(data)
 
+
         token = userServices(data).createUser("dummy", "dummy@example.com").token
 
+        createParentLocations(locationServices(data))
         val locId = locationServices(data).createLocation(
-            name = "Portugal",
-            type = LocationType.COUNTRY,
-            parentId = null,
+            name = "Paço de Arcos",
+            type = LocationType.LOCALITY,
+            parentId = 3,
             token
         ).lid
         val busyHouse = houses.createHouse("Busy", locId, 80.0, 70.0, "Booked inside interval", token)

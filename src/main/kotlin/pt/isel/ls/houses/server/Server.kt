@@ -44,8 +44,8 @@ get /houses/available?{startDate}&{endDate} (paging)
 const val SERVER_PORT = 8000
 
 fun main() {
-    val data = DataPostgresSQL()
-    // val data = DataMem()
+    //val data = DataPostgresSQL()
+    val data = DataMem()
     val services = Services(data)
     val webApi = WebApi(services)
 

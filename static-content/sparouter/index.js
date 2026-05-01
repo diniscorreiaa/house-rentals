@@ -5,7 +5,7 @@ window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
 
 function loadHandler(){
-    document.getElementById("housesLink").href += `?limit=${housesLimit}&skip=0`
+    document.getElementById("housesLink").onclick = (ev) => { ev.preventDefault() ;window.location.hash = `houses?limit=${housesLimit}&skip=0`} // https://knowledge.evinced.com/system-validations/anchor-without-href
 
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)

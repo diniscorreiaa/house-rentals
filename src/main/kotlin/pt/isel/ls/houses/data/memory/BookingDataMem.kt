@@ -31,8 +31,12 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         skip: Int?,
     ): List<Booking> {
         val bookings = bookings.filter { it.houseId == hid && (it.startDate >= startDate && it.endDate <= endDate) }
-        if (limit != null) return bookings.subList(skip ?: 0, (skip ?: 0) + limit)
-        return bookings
+        if (limit == null || bookings.isEmpty()) return bookings
+        else {
+            var lastHouseIdx = (skip ?: 0) + limit
+            if (lastHouseIdx > bookings.size) lastHouseIdx = bookings.size
+            return bookings.subList(skip ?: 0, lastHouseIdx)
+        }
     }
 
     override fun getAvailableHouses(

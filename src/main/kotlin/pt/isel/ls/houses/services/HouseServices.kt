@@ -1,7 +1,9 @@
 package pt.isel.ls.houses.services
 
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.HouseDoesNotExist
+import pt.isel.ls.houses.exceptions.HouseLocationMustBeLocality
 import pt.isel.ls.houses.exceptions.LocationDoesNotExist
 import pt.isel.ls.houses.exceptions.Unauthorized
 import pt.isel.ls.houses.repository.HouseRepository
@@ -26,6 +28,8 @@ class HouseServices(
 
 
         if (locationData.getLocation(location) == null) throw LocationDoesNotExist()
+
+        if (locationData.getLocation(location)!!.type != LocationType.LOCALITY) throw HouseLocationMustBeLocality()
 
         return houseData.createHouse(title, location, areaSqMt, pricePerNight, description)
     }
