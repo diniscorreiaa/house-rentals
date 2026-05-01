@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.serialization") version "2.3.0"
+
+    application
 }
 
 repositories {
@@ -35,3 +37,8 @@ tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
     compilerOptions.optIn.add("kotlin.uuid.ExperimentalUuidApi")
 }
 
+
+application {
+    // Define the main class for the application.
+    mainClass = "pt.isel.ls.houses.server.ServerKt"
+}
