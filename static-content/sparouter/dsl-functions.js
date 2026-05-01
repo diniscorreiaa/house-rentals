@@ -80,8 +80,7 @@ function elementWithElementsInside(elementName, elementsInside){
 }
 
 export function button(text, disabled, onClick) {
-    const button = document.createElement("button")
-    button.textContent = text
+    const button = elementWithText("button", text)
     button.disabled = disabled
     button.onclick = onClick
     return button
