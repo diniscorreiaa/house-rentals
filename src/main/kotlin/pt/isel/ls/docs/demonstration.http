@@ -160,8 +160,7 @@ Authorization: {{tokenFirstUser}}
   "endDate": "2025-05-16"
 }
 
-
-### ix. Attempt to creating booking that overlaps TODO: NOT WORKING< SOLVE
+### ix. Attempt to creating booking that overlaps
 POST {{api}}/bookings
 Content-Type: application/json
 Authorization: {{tokenFirstUser}}
@@ -181,7 +180,7 @@ GET {{api}}/bookings/1
 ### xii. List houses with pagination, limit=2 and skip=0
 GET {{api}}/houses?limit=2&skip=0
 
-### xii. List houses with pagination, limit=2 and skip=2 TODO resolver amanhã xD
+### xii. List houses with pagination, limit=2 and skip=2
 GET {{api}}/houses?limit=2&skip=2
 
 ### xiii. Remove the first booking
