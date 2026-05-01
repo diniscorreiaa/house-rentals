@@ -1,12 +1,14 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
-export const housesLimit = 2
+export let housesLimit = 2
 let housesCurrentSkip = 0
 
-const bookingsLimit = 2
+let bookingsLimit = 2
 let bookingsCurrentSkip = 0
+
+const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
     mainContent.replaceChildren(h1("House Rentals HOME"))
@@ -24,10 +26,13 @@ function getHouses(mainContent) {
             divChildren.push(houseTitle)
         })
 
+        const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => { window.location.hash = `houses?limit=${newLimit}&skip=0`; housesLimit = newLimit }) // É necessário dar reset ao skip para garantir alinhamento
+
         const prevButton = button("Previous", housesCurrentSkip === 0, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}` })
         const nextButton = button("Next", houses.length < housesLimit, () => { window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}` })
 
         mainContent.replaceChildren(...divChildren,
+            limitSelector,
             prevButton,
             nextButton
         )
@@ -85,15 +90,18 @@ function getBookings(mainContent) {
                 items.push(item)
             })
 
-            const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}&limit=${bookingsLimit}`
+            const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
 
-            const prevButton = button("Previous", bookingsCurrentSkip === 0, () => { window.location.hash = `${baseUri}&skip=${bookingsCurrentSkip - bookingsLimit}` })
-            const nextButton = button("Next", bookings.length < bookingsLimit, () => { window.location.hash = `${baseUri}&skip=${bookingsCurrentSkip + bookingsLimit}` })
+            const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => { window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`; bookingsLimit = newLimit }) // É necessário dar reset ao skip para garantir alinhamento
+
+            const prevButton = button("Previous", bookingsCurrentSkip === 0, () => { window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}` })
+            const nextButton = button("Next", bookings.length < bookingsLimit, () => { window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}` })
 
             mainContent.replaceChildren(
                 h1(`Bookings for ${house.title}`), ol(items),
-                prevButton,//a(`#bookings?hid=${queryParams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip-bookingsLimit}`, "Previous"),
-                nextButton//a(`#bookings?hid=${queryParams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip+bookingsLimit}`, "Next")
+                limitSelector,
+                prevButton,
+                nextButton
             )
         })
     })
