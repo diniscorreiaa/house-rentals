@@ -6,7 +6,7 @@ export const housesLimit = 2
 let housesCurrentSkip = 0
 
 const bookingsLimit = 2
-let bookingCurrentSkip = 0
+let bookingsCurrentSkip = 0
 
 function getHome(mainContent) {
     mainContent.replaceChildren(h1("House Rentals HOME"))
@@ -41,7 +41,7 @@ function getHouseDetails(mainContent) {
             const currDate = new Date()
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
+            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
             mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
         })
     })
@@ -73,8 +73,8 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    bookingCurrentSkip = parseInt(queryPrams.get("skip"))
+    const queryParams = new URLSearchParams(currentPath().split("?")[1])
+    bookingsCurrentSkip = parseInt(queryParams.get("skip"))
     fetchData(undefined, (bookings) => {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
@@ -84,10 +84,16 @@ function getBookings(mainContent) {
                 item.appendChild(a("#bookings/" + booking.bid, "Details"))
                 items.push(item)
             })
+
+            const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}&limit=${bookingsLimit}`
+
+            const prevButton = button("Previous", bookingsCurrentSkip === 0, () => { window.location.hash = `${baseUri}&skip=${bookingsCurrentSkip - bookingsLimit}` })
+            const nextButton = button("Next", bookings.length < bookingsLimit, () => { window.location.hash = `${baseUri}&skip=${bookingsCurrentSkip + bookingsLimit}` })
+
             mainContent.replaceChildren(
                 h1(`Bookings for ${house.title}`), ol(items),
-                a(`#bookings?hid=${queryPrams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingCurrentSkip-bookingsLimit}`, "Previous"),
-                a(`#bookings?hid=${queryPrams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingCurrentSkip+bookingsLimit}`, "Next")
+                prevButton,//a(`#bookings?hid=${queryParams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip-bookingsLimit}`, "Previous"),
+                nextButton//a(`#bookings?hid=${queryParams.get("hid")}&date-interval=${queryPrams.get("date-interval")}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip+bookingsLimit}`, "Next")
             )
         })
     })
