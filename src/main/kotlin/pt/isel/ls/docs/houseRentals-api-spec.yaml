@@ -36,6 +36,19 @@ paths:
       summary: Create a new user.
       description: >
         Returns user identifier and token.
+      requestBody:
+        description: For user creation name and email must be provided.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "António Mendes"
+                email:
+                  type: string
+                  example: "antoniomendes@example.com"
       responses:
         "200":
           description: User creation successful.
@@ -56,16 +69,18 @@ paths:
         "400":
           description: Bad request at user creation.
           content:
-            plain:
+            application/json:
               example:
-                User email already exists
+                uri: "/users"
+                message: "User email already exists"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/users"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /users/{uid}:
@@ -75,6 +90,13 @@ paths:
       summary: Get the details of a user.
       description: >
         Returns user identifier, name and email.
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
       responses:
         "200":
           description: Successful retrieval of user information.
@@ -96,23 +118,89 @@ paths:
         "400":
           description: Bad request retrieving user information.
           content:
-            plain:
+            application/json:
               example:
-                Invalid identifier uid
+                uri: "/users/a!sad"
+                message: "Invalid identifier uid"
 
         "404":
           description: User not found.
           content:
             plain:
               example:
-                User does not exist
+                uri: "/users/99999"
+                message: "User does not exist"
 
         "500":
           description: Internal server error.
           content:
             plain:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/users/1"
+                message: "Internal error, contact the developers to report this situation."
+
+
+  /users/{uid}/bookings:
+    get:
+      tags:
+        - Users
+      summary: Get the bookings of a user.
+      description: >
+        Returns the booking identifier, start date, end date, user identifier and house identifier for every booking.
+      parameters:
+        - in: path
+          name: uid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user
+      responses:
+        "200":
+          description: Successful retrieval of user bookings.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bid:
+                    type: integer
+                    example: 1
+                  startDate:
+                    type: string
+                    example: 2025-12-07
+                  endDate:
+                    type: string
+                    example: 2025-12-11
+                  uid:
+                    type: integer
+                    example: 1
+                  hid:
+                    type: integer
+                    example: 2
+
+        "400":
+          description: Bad request retrieving user bookings.
+          content:
+            application/json:
+              example:
+                uri: "/users/abc/bookings"
+                message: "Invalid identifier uid"
+
+        "404":
+          description: User not found.
+          content:
+            application/json:
+              example:
+                uri: "/users/99999/bookings"
+                message: "User does not exist"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "/users/1/bookings"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /locations:
@@ -124,6 +212,22 @@ paths:
         Returns location identifier.
       security:
         - bearerAuth: [ ]
+      requestBody:
+        description: The user must specify the name, type and parent location of this location.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Lisboa"
+                type:
+                  type: string
+                  example: "DISTRICT"
+                parentId:
+                  type: integer
+                  example: 1
       responses:
         "200":
           description: Location creation successful.
@@ -139,23 +243,26 @@ paths:
         "400":
           description: Bad request at location creation.
           content:
-            plain:
+            application/json:
               example:
-                Field [type] is required, but hasn't been passed.
+                uri: "/locations"
+                message: "Field [type] is required, but hasn't been passed."
 
         "401":
           description: Authentification needed for location creation.
           content:
-            plain:
+            application/json:
               example:
-                Invalid auth token
+                uri: "/locations"
+                message: "Invalid auth token"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/locations"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /locations/{lid}:
@@ -165,6 +272,13 @@ paths:
       summary: Get the details of a location.
       description: >
         Returns location's name and type.
+      parameters:
+        - in: path
+          name: lid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the location
       responses:
         "200":
           description: Successful retrieval of location information.
@@ -183,23 +297,26 @@ paths:
         "400":
           description: Bad request retrieving location information.
           content:
-            plain:
+            application/json:
               example:
-                Invalid identifier lid
+                uri: "/locations/abc"
+                message: "Invalid identifier lid"
 
         "404":
           description: Location not found.
           content:
-            plain:
+            application/json:
               example:
-                Location does not exist
+                uri: "/locations/99999"
+                message: "Location does not exist"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/locations/1"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /locations/{lid}/children:
@@ -209,6 +326,13 @@ paths:
       summary: Get the list of child locations of a given location.
       description: >
         Returns all children locations name and type.
+      parameters:
+        - in: path
+          name: lid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the location
       responses:
         "200":
           description: Successful retrieval of children information.
@@ -237,21 +361,24 @@ paths:
           content:
             plain:
               example:
-                Invalid identifier lid
+                uri: "/locations/abc/children"
+                message: "Invalid identifier lid"
 
         "404":
           description: Location not found.
           content:
-            plain:
+            application/json:
               example:
-                Location does not exist
+                uri: "/locations/99999/children"
+                message: "Location does not exist"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/locations/1/children"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /locations/{lid}/full:
@@ -261,6 +388,13 @@ paths:
       summary: Get the full hierarchical path of a location
       description: >
         Returns the name and type of every location in the hierarchy.
+      parameters:
+        - in: path
+          name: lid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the location
       responses:
         "200":
           description: Successful retrieval of hierarchy information.
@@ -289,23 +423,26 @@ paths:
         "400":
           description: Bad request retrieving hierarchy information.
           content:
-            plain:
+            application/json:
               example:
-                Invalid identifier lid
+                uri: "/locations/abc/full"
+                message: "Invalid identifier lid"
 
         "404":
           description: Location not found.
           content:
-            plain:
+            application/json:
               example:
-                Location does not exist
+                uri: "/locations/99999/full"
+                message: "Location does not exist"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/locations/5/full"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /houses:
@@ -317,6 +454,28 @@ paths:
         Returns house identifier.
       security:
         - bearerAuth: [ ]
+      requestBody:
+        description: The user must specify all important information about this house - title, location, area, price and description.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: "T2 com vista para o rio"
+                location:
+                  type: integer
+                  example: 5
+                areaSqMt:
+                  type: number
+                  example: 80
+                pricePerNight:
+                  type: number
+                  example: 141
+                description:
+                  type: string
+                  example: "Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
       responses:
         "200":
           description: House creation successful.
@@ -332,30 +491,46 @@ paths:
         "400":
           description: Bad request at house creation.
           content:
-            plain:
+            application/json:
               example:
-                Field [pricePerNight] is required, but hasn't been passed
+                uri: "/houses"
+                message: "Field [pricePerNight] is required, but hasn't been passed"
 
         "401":
           description: Authentification needed for house creation.
           content:
-            plain:
+            application/json:
               example:
-                Invalid auth token
+                uri: "/houses"
+                message: "Invalid auth token"
 
         "500":
           description: Internal server error.
           content:
             plain:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/houses"
+                message: "Internal error, contact the developers to report this situation."
 
     get:
       tags:
         - Houses
       summary: Get a list with all houses.
       description: >
-        Returns all houses title, location, area per square meter, price per night and description.
+        Returns all houses identifier, title, location, area per square meter, price per night and description.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: Limits the number of items returned from the server
+        - in: query
+          name: skip
+          schema:
+            type: integer
+          required: false
+          description: Specifies how many items are skipped for the return
       responses:
         "200":
           description: Successful retrieval of houses information.
@@ -366,6 +541,8 @@ paths:
                 items:
                   type: object
                   properties:
+                    hid:
+                      type: integer
                     title:
                       type: string
                     location:
@@ -377,12 +554,14 @@ paths:
                     description:
                       type: string
               example:
-                - title: T2 com vista para o rio
+                - hid: 1
+                  title: T2 com vista para o rio
                   location: 1
                   areaSqMt: 80.0
                   pricePerNight: 141.0
-                  description: Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
-                - title: T3 Moradia independente
+                  description: Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
+                - hid: 2
+                  title: T3 Moradia independente
                   location: 4
                   areaSqMt: 88.0
                   pricePerNight: 300.0
@@ -393,7 +572,8 @@ paths:
           content:
             plain:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/houses"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /houses/{hid}:
@@ -402,7 +582,14 @@ paths:
         - Houses
       summary: Get the detailed information of a house.
       description: >
-        Returns the title, location, area per square meter, price per night and description of the specified house.
+        Returns the identifier, title, location, area per square meter, price per night and description of the specified house.
+      parameters:
+        - in: path
+          name: hid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the house
       responses:
         "200":
           description: Successful retrieval of house information.
@@ -434,21 +621,97 @@ paths:
           content:
             plain:
               example:
-                Invalid identifier hid
+                uri: "/houses/abc"
+                message: "Invalid identifier hid"
 
         "404":
           description: House not found.
           content:
             plain:
               example:
-                House does not exist
+                uri: "/houses/99999"
+                message: "House does not exist"
 
         "500":
           description: Internal server error.
           content:
             plain:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/houses/1"
+                message: "Internal error, contact the developers to report this situation."
+
+
+  /houses/available:
+    get:
+      tags:
+        - Houses
+      summary: Get a list with the available houses for a given period.
+      description: >
+        Returns all houses title, location, area per square meter, price per night and description.
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          required: true
+          description: Start date to check for availability
+        - in: query
+          name: endDate
+          schema:
+           type: string
+          required: true
+          description: End date to check for availability
+      responses:
+        "200":
+          description: Successful retrieval of houses information.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    hid:
+                      type: integer
+                    title:
+                      type: string
+                    location:
+                      type: integer
+                    areaSqMt:
+                      type: number
+                    pricePerNight:
+                      type: number
+                    description:
+                      type: string
+              example:
+                - hid: 1
+                  title: T2 com vista para o rio
+                  location: 1
+                  areaSqMt: 80.0
+                  pricePerNight: 141.0
+                  description: Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
+                - hid: 2
+                  title: T3 Moradia independente
+                  location: 4
+                  areaSqMt: 88.0
+                  pricePerNight: 300.0
+                  description: T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos.
+
+        "400":
+          description: Bad request retrieving houses available..
+          content:
+            application/json:
+              example:
+                uri: "/houses/available"
+                message: "Did not find required query parameter endDate"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "houses/available"
+                message: "Internal error, contact the developers to report this situation."
 
 
   /bookings:
@@ -460,6 +723,22 @@ paths:
         Returns booking identifier.
       security:
         - bearerAuth: [ ]
+      requestBody:
+        description: The user must specify which house and date interval is associated to this booking.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hid:
+                  type: integer
+                  example: 1
+                startDate:
+                  type: string
+                  example: "2026-05-05"
+                endDate:
+                  type: string
+                  example: "2026-05-15"
       responses:
         "200":
           description: Booking creation successful.
@@ -468,44 +747,105 @@ paths:
               schema:
                 type: object
                 properties:
-                  hid:
+                  bid:
                     type: integer
                     example: 1
 
         "400":
           description: Bad request at house creation.
           content:
-            plain:
+            application/json:
               example:
-                Field [hid] is required, but hasn't been passed
+                uri: "/bookings"
+                message: "Field [hid] is required, but hasn't been passed"
 
         "401":
           description: Authentification needed for house creation.
           content:
-            plain:
+            application/json:
               example:
-                Invalid auth token
+                uri: "/bookings"
+                message: "Invalid auth token"
 
         "404":
           description: House not found (when putting non existing hid).
           content:
-            plain:
+            application/json:
               example:
-                House does not exist
+                uri: "/bookings"
+                message: "House does not exist"
 
         "409":
           description: Can't repeat the same exact booking.
           content:
-            plain:
+            application/json:
               example:
-                House is not available
+                uri: "/bookings"
+                message: "House is not available"
 
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
-                Internal error, contact the developers to report this situation.
+                uri: "/bookings"
+                message: "Internal error, contact the developers to report this situation."
+
+
+    get:
+      tags:
+        - Bookings
+      summary: Get a list with all bookings included in the date interval.
+      description: >
+        Returns the booking identifier, start date, end date, user identifier and house identifier for every booking in the interval.
+      parameters:
+        - in: query
+          name: hid
+          schema:
+            type: integer
+          required: true
+          description: House identifier
+        - in: query
+          name: date-interval
+          schema:
+            type: string
+          required: true
+          description: Date interval of the bookings we want to retrieve, first date represents startDate and the second date represents endDate (yyyy-mm-dd)
+      responses:
+        "200":
+          description: Successful retrieval of bookings information.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bid:
+                      type: integer
+                    startDate:
+                      type: string
+                    endDate:
+                      type: string
+                    uid:
+                      type: integer
+                    hid:
+                      type: integer
+              example:
+                - bid: 1
+                  startDate: 2025-12-01
+                  endDate: 2025-12-03
+                  uid: 1
+                  hid: 1
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "/bookings"
+                message: "Internal error, contact the developers to report this situation."
+
 
 
   /bookings/{bid}:
@@ -518,6 +858,111 @@ paths:
       responses:
         "200":
           description: Successful retrieval of booking information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bid:
+                    type: integer
+                    example: 1
+                  startDate:
+                    type: string
+                    example: 2025-12-07
+                  endDate:
+                    type: string
+                    example: 2025-12-11
+                  uid:
+                    type: integer
+                    example: 1
+                  hid:
+                    type: integer
+                    example: 2
+
+        "400":
+          description: Bad request retrieving booking information.
+          content:
+            application/json:
+              example:
+                uri: "/bookings/abc"
+                message: "Invalid identifier bid"
+
+        "404":
+          description: Booking not found.
+          content:
+            application/json:
+              example:
+                uri: "/bookings/99999"
+                message: "Booking does not exist"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "bookings/1"
+                message: "Internal error, contact the developers to report this situation."
+
+    delete:
+      tags:
+        - Bookings
+      summary: Get the detailed information of a booking.
+      description: >
+        Deletes a booking given identifier.
+      security:
+        - bearerAuth: [ ]
+      responses:
+        "204":
+          description: Deleted booking successfully.
+
+        "400":
+          description: Bad request retrieving booking information.
+          content:
+            application/json:
+              example:
+                uri: "/bookings/abc"
+                message: "Invalid identifier bid"
+
+        "404":
+          description: Booking not found.
+          content:
+            application/json:
+              example:
+                uri: "/bookings/99999"
+                message: "Booking does not exist"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "bookings/1"
+                message: "Internal error, contact the developers to report this situation."
+
+    put:
+      tags:
+        - Bookings
+      summary: Update the date interval of a booking.
+      description: >
+        Returns the start date, end date, user identifier and house identifier for a specific booking.
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: The user can only update the start date and end date of a booking.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  example: "2026-05-05"
+                endDate:
+                  type: string
+                  example: "2026-05-15"
+      responses:
+        "200":
+          description: Successful update of booking information.
           content:
             application/json:
               schema:
@@ -539,113 +984,23 @@ paths:
         "400":
           description: Bad request retrieving booking information.
           content:
-            plain:
+            application/json:
               example:
-                Invalid identifier bid
+                uri: "/bookings/abc"
+                message: "Invalid identifier bid"
 
         "404":
           description: Booking not found.
           content:
-            plain:
+            application/json:
               example:
-                Booking does not exist
+                uri: "/bookings/99999"
+                message: "Booking does not exist"
 
         "500":
           description: Internal server error.
-          content:
-            plain:
-              example:
-                Internal error, contact the developers to report this situation.
-
-
-  /bookings?{hid}&{date-interval}:
-    get:
-      tags:
-        - Bookings
-      summary: Get a list with all bookings included in the date interval.
-      description: >
-        Returns the start date, end date, user identifier and house identifier for every booking in the interval.
-      responses:
-        "200":
-          description: Successful retrieval of bookings information.
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    startDate:
-                      type: string
-                    endDate:
-                      type: string
-                    uid:
-                      type: integer
-                    hid:
-                      type: integer
               example:
-                - startDate: 2025-12-01
-                  endDate: 2025-12-03
-                  uid: 1
-                  hid: 1
-
-        "500":
-          description: Internal server error.
-          content:
-            plain:
-              example:
-                Internal error, contact the developers to report this situation.
-
-
-  /houses/available?{startDate}&{endDate}:
-    get:
-      tags:
-        - Houses
-      summary: Get a list with the available houses for a given period.
-      description: >
-        Returns all houses title, location, area per square meter, price per night and description.
-      responses:
-        "200":
-          description: Successful retrieval of houses information.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    title:
-                      type: string
-                    location:
-                      type: integer
-                    areaSqMt:
-                      type: number
-                    pricePerNight:
-                      type: number
-                    description:
-                      type: string
-              example:
-                - title: T2 com vista para o rio
-                  location: 1
-                  areaSqMt: 80.0
-                  pricePerNight: 141.0
-                  description: Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
-                - title: T3 Moradia independente
-                  location: 4
-                  areaSqMt: 88.0
-                  pricePerNight: 300.0
-                  description: T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos.
-
-        "400":
-          description: Bad request retrieving houses available..
-          content:
-            plain:
-              example:
-                Did not find required query parameter endDate
-
-        "500":
-          description: Internal server error.
-          content:
-            plain:
-              example:
-                Internal error, contact the developers to report this situation.
+                uri: "bookings/1"
+                message: "Internal error, contact the developers to report this situation."
