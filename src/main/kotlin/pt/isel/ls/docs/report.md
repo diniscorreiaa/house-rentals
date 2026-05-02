@@ -172,8 +172,8 @@ This is something we will have to work on in the next phase.
 
 
 ### Single Page Application (SPA)
-We developed a single page application that interacts with our API and dynamically the generates the HTML code without
-reload the page.
+We developed a single page application that interacts with our API and dynamically generates the HTML code without
+reloading the page.
 
 The SPA can be accessed through following the link [http://localhost:8000/](http://localhost:8000/).
 
@@ -197,7 +197,7 @@ and use the ```replaceChildren()``` function change the contents of the website.
 reduce boilerplate.
 
 **router.js**: 
-This is where we have the data structure that holds the routes information, in our case, and array, and functions
+This is where we have the data structure that holds the routes information, in our case, an array, and functions
 that interact with the routes, namely:
 - ```addRouteHandler(pathTemplate, handler)```: Adds a route to the router by specifying the path, _pathTemplate_, and the 
 function which should be executed for that path, _handler_.
@@ -211,7 +211,7 @@ _notFoundRouteHandler_
 
 **handlers.js**: This is where we have the handlers (functions) associated with each route.
 
-**index.js**: The file were we assign functions to events, which is where the execution flow starts.
+**index.js**: The file where we assign functions to events, which is where the execution flow starts.
 
 #### Flow of execution in the SPA
 
