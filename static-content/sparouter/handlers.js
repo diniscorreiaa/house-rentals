@@ -55,13 +55,19 @@ function getHouses(mainContent) {
 
 function getHouseDetails(mainContent) {
     fetchData(undefined, (house) => {
-        fetchData(`locations/${house.location}`, (loc) => {
-            const ulData = ul([li(`Location: ${loc.name}`), a(`#locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
-            const currDate = new Date()
-            const nextYearDate = new Date()
-            nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-            const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-            mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
+        fetchData(`users/${house.owner}`, (owner) => {
+            fetchData(`locations/${house.location}`, (loc) => {
+                const locElem = li(`Location: ${loc.name}`)
+                locElem.appendChild(a(`#locations/${house.location}/full`, "See full location"))
+                const ownerElem = li(`Owner: ${owner.name}`)
+                ownerElem.appendChild(a(`#users/${house.owner}`, "Check user profile"))
+                const ulData = ul([locElem, li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`), ownerElem])
+                const currDate = new Date()
+                const nextYearDate = new Date()
+                nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
+                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
+            })
         })
     })
 }

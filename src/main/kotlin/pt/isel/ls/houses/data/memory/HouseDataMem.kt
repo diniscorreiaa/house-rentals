@@ -12,9 +12,10 @@ class HouseDataMem : HouseRepository {
         location: Int,
         areaSqMt: Double,
         pricePerNight: Double,
-        description: String
+        description: String,
+        owner: Int
     ): House {
-        val house = House(id++, title, location, areaSqMt, pricePerNight, description)
+        val house = House(id++, title, location, areaSqMt, pricePerNight, description, owner)
         houses.add(house)
         return house
     }

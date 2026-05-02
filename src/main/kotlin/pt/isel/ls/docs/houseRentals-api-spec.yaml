@@ -8,7 +8,7 @@ info:
 
 servers:
   - description: Local server for our House Rentals api tests.
-    url: http://localhost:8000/api
+    url: http://localhost:8000/
 
 tags:
   - name: Users
@@ -553,6 +553,8 @@ paths:
                       type: number
                     description:
                       type: string
+                    owner:
+                      type: integer
               example:
                 - hid: 1
                   title: T2 com vista para o rio
@@ -560,12 +562,14 @@ paths:
                   areaSqMt: 80.0
                   pricePerNight: 141.0
                   description: Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
+                  owner: 1
                 - hid: 2
                   title: T3 Moradia independente
                   location: 4
                   areaSqMt: 88.0
                   pricePerNight: 300.0
                   description: T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos.
+                  owner: 2
 
         "500":
           description: Internal server error.
@@ -613,6 +617,9 @@ paths:
                   description:
                     type: string
                     example: Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
+                  owner:
+                    type: integer
+                    example: 1
 
 
 
@@ -683,6 +690,8 @@ paths:
                       type: number
                     description:
                       type: string
+                    owner:
+                      type: integer
               example:
                 - hid: 1
                   title: T2 com vista para o rio
@@ -690,12 +699,14 @@ paths:
                   areaSqMt: 80.0
                   pricePerNight: 141.0
                   description: Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala.
+                  owner: 1
                 - hid: 2
                   title: T3 Moradia independente
                   location: 4
                   areaSqMt: 88.0
                   pricePerNight: 300.0
                   description: T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos.
+                  owner: 2
 
         "400":
           description: Bad request retrieving houses available..
@@ -855,6 +866,13 @@ paths:
       summary: Get the detailed information of a booking.
       description: >
         Returns the start date, end date, user identifier and house identifier for a specific booking.
+      parameters:
+        - in: path
+          name: bid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the booking
       responses:
         "200":
           description: Successful retrieval of booking information.
@@ -906,11 +924,18 @@ paths:
     delete:
       tags:
         - Bookings
-      summary: Get the detailed information of a booking.
+      summary: Delete a specified booking.
       description: >
         Deletes a booking given identifier.
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: bid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the booking
       responses:
         "204":
           description: Deleted booking successfully.
@@ -947,6 +972,13 @@ paths:
         Returns the start date, end date, user identifier and house identifier for a specific booking.
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: bid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the booking
       requestBody:
         description: The user can only update the start date and end date of a booking.
         content:

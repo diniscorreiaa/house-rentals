@@ -10,4 +10,5 @@ data class House(
     val area: Double,
     val price: Double,
     val description: String,
+    val owner: Int
 )
