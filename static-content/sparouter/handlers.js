@@ -56,7 +56,9 @@ function getHouses(mainContent) {
 function getHouseDetails(mainContent) {
     fetchData(undefined, (house) => {
         fetchData(`locations/${house.location}`, (loc) => {
-            const ulData = ul([li(`Location: ${loc.name}`), a(`#locations/${house.location}/full`, "See full location"), li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
+            const locElem = li(`Location: ${loc.name}`)
+            locElem.appendChild(a(`#locations/${house.location}/full`, "See full location"))
+            const ulData = ul([locElem, li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`)])
             const currDate = new Date()
             const nextYearDate = new Date()
             nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
