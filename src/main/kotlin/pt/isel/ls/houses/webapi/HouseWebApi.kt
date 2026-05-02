@@ -47,7 +47,8 @@ class HouseWebApi(private val houseServices: HouseServices) {
                         house.location,
                         house.area,
                         house.price,
-                        house.description
+                        house.description,
+                        house.owner
                     )
                 )
             )
@@ -66,7 +67,8 @@ class HouseWebApi(private val houseServices: HouseServices) {
                     it.location,
                     it.area,
                     it.price,
-                    it.description
+                    it.description,
+                    it.owner
                 )
             }))
     }

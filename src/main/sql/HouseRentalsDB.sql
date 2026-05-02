@@ -32,10 +32,14 @@ CREATE TABLE HOUSE (
     "Area" double precision NOT NULL,
     "Price" double precision NOT NULL,
     "Description" text NOT NULL,
+    "Owner" int NOT NULL,
     CONSTRAINT PK_HOUSE PRIMARY KEY ("IdHouse"),
     CONSTRAINT FK_HOUSE_LOCATION
         FOREIGN KEY ("Location")
-        REFERENCES LOCATION("IdLocation")
+        REFERENCES LOCATION("IdLocation"),
+    CONSTRAINT FK_HOUSE_IDUSER
+        FOREIGN KEY ("Owner")
+        REFERENCES "user"("IdUser")
 );
 
 CREATE TABLE BOOKING (

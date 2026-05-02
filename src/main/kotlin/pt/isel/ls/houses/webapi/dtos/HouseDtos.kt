@@ -24,5 +24,6 @@ data class GetHouseOut(
     val location: Int,
     val areaSqMt: Double,
     val pricePerNight: Double,
-    val description: String
+    val description: String,
+    val owner: Int
 )

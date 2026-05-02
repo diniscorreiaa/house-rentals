@@ -102,7 +102,8 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                     it.location,
                     it.area,
                     it.price,
-                    it.description
+                    it.description,
+                    it.owner
                 )
             }))
     }

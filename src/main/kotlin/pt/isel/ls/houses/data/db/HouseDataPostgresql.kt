@@ -11,21 +11,23 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
         location: Int,
         areaSqMt: Double,
         pricePerNight: Double,
-        description: String
+        description: String,
+        owner: Int
     ): House {
         dataSource.connection.use {
             val st =
-                it.prepareStatement("INSERT INTO HOUSE (\"Title\", \"Location\", \"Area\", \"Price\", \"Description\") VALUES (?, ?, ?, ?, ?) RETURNING \"IdHouse\"")
+                it.prepareStatement("INSERT INTO HOUSE (\"Title\", \"Location\", \"Area\", \"Price\", \"Description\", \"Owner\") VALUES (?, ?, ?, ?, ?, ?) RETURNING \"IdHouse\"")
 
             st.setString(1, title)
             st.setInt(2, location)
             st.setDouble(3, areaSqMt)
             st.setDouble(4, pricePerNight)
             st.setString(5, description)
+            st.setInt(6, owner)
 
             val rs = st.executeQuery()
             if (!rs.next()) throw InternalError() // TODO: Faz sentido lançar erros no dataDB?
-            return House(rs.getInt(1), title, location, areaSqMt, pricePerNight, description)
+            return House(rs.getInt(1), title, location, areaSqMt, pricePerNight, description, owner)
         }
     }
 
@@ -43,7 +45,8 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
                 rs.getInt("Location"),
                 rs.getDouble("Area"),
                 rs.getDouble("Price"),
-                rs.getString("Description")
+                rs.getString("Description"),
+                rs.getInt("Owner")
             )
         }
     }
@@ -72,7 +75,8 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
                         rs.getInt("Location"),
                         rs.getDouble("Area"),
                         rs.getDouble("Price"),
-                        rs.getString("Description")
+                        rs.getString("Description"),
+                        rs.getInt("Owner")
                     )
                 )
             }

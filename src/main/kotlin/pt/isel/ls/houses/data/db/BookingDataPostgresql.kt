@@ -136,7 +136,8 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
                         rs.getInt("Location"),
                         rs.getDouble("Area"),
                         rs.getDouble("Price"),
-                        rs.getString("Description")
+                        rs.getString("Description"),
+                        rs.getInt("Owner")
                     )
                 )
             }

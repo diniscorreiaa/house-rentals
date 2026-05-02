@@ -24,14 +24,14 @@ class HouseServices(
         description: String,
         token: Uuid
     ): House {
-        userData.getUserByToken(token) ?: throw Unauthorized()
+        val user = userData.getUserByToken(token) ?: throw Unauthorized()
 
 
         if (locationData.getLocation(location) == null) throw LocationDoesNotExist()
 
         if (locationData.getLocation(location)!!.type != LocationType.LOCALITY) throw HouseLocationMustBeLocality()
 
-        return houseData.createHouse(title, location, areaSqMt, pricePerNight, description)
+        return houseData.createHouse(title, location, areaSqMt, pricePerNight, description, user.uid)
     }
 
     fun getHouse(hid: Int) = houseData.getHouse(hid) ?: throw HouseDoesNotExist()
