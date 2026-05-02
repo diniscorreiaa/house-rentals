@@ -19,7 +19,7 @@ val filter = Filter { handler ->
         } catch (e: MissingFieldException) { // TODO: this is a hack, we probably should map it to our own errors
             Response(Status.BAD_REQUEST).body(Json.encodeToString(ExceptionsDto(request.uri.path, "Field ${e.missingFields} is required, but hasn't been passed")))
         } catch (e: Exception) {
-            Response(Status.INTERNAL_SERVER_ERROR).body("Internal error, contact the developers to report this situation")
+            Response(Status.INTERNAL_SERVER_ERROR).body(Json.encodeToString(ExceptionsDto(request.uri.path, "Internal error, contact the developers to report this situation")))
         }
     }
     wrapperHandler
