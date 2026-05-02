@@ -154,12 +154,7 @@ This is something we will have to work on in the next phase.
 
 ### Functionality that is not concluded and the identified defects:
 
-- We have to improve our error handling for malformed json payloads. Right now, we only handle one scenario, where a
-  field isn't present, but others are unhandled and result in a 500;
 - We didn't implement price prediction functionality;
-- Our current authentication method breaks the dependency injection, because it requires data to be injected into
-  WebApi;
-- The error responses' payloads are currently given in plain text, instead of in json;
 - Then we have some smaller things, identified by the TODOs in the code.
 
 ### identify improvements to be made on the next phase:
@@ -167,8 +162,6 @@ This is something we will have to work on in the next phase.
 - Fix the defects above;
 - We ought to finish making automated tests for all layers, our testing was mainly done through the .http file, which
   requires manual testing and is time-consuming to test with.
-- Split the data layer into multiple files, just like we did for all the other layers.
-  The data layer is split, but then we merged them all into one data. We'll have to revert this.
 
 
 ### Single Page Application (SPA)
@@ -226,3 +219,26 @@ The function attached to the hashchange handler grabs the values of the current 
 for that route.
 If there is that handler will execute. Most handlers will define links with anchors too, which when clicked will
 trigger the hashchange event again, and keep the page moving forward.
+
+### Decisions we took
+
+#### Pagination in API 
+Although the requirement for phase 1 specified that "All Web API ```GET``` operations that return a sequence should 
+support paging", for the endpoint that gets the full hierarchy of a location, we decided not to implement paging. 
+This is because this endpoint can return:
+- At most 5 locations (when using it on a LOCALITY location that has COUNTRY, REGION, DISTRICT, MUNICIPALITY);
+- A minimum of 1 location when we use it on a country. 
+
+Paging is useful to request the data as it is needed, instead of retrieving all the data at once.
+It's useful when that data can grow indefinitely or when it's large enough to justify it. 
+The get full location endpoint is neither, it returns a sequence of up to only 5 elements, and can't grow beyond that, 
+which is why we decided not to implement pagination.
+
+#### SPA
+The endpoint specified in Phase 1 requirements to get bookings receives 2 parameters, a house Id and a date interval
+used to limit the range of the search. In order to fulfill the date interval constraint set by the previous phase, 
+we opted to only show bookings for the next year, starting from the current day. 
+
+Besides, in a real context a house doesn't remain available eternally, the owner might at some point decide to remove the
+house from the website. For this reason it doesn't make sense to fetch all bookings in an undefined interval or to
+allow bookings to be done many years apart from now at all. 
