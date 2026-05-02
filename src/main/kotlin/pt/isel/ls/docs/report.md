@@ -169,3 +169,60 @@ This is something we will have to work on in the next phase.
   requires manual testing and is time-consuming to test with.
 - Split the data layer into multiple files, just like we did for all the other layers.
   The data layer is split, but then we merged them all into one data. We'll have to revert this.
+
+
+### Single Page Application (SPA)
+We developed a single page application that interacts with our API and dynamically generates the HTML code without
+reloading the page.
+
+The SPA can be accessed through following the link [http://localhost:8000/](http://localhost:8000/).
+
+Our SPA has the following structure:
+- 2526-2-LEIC44D-G02/
+  - ...
+  - static-content/
+    - sparouter/
+      - dsl-functions.js
+      - handlers.js
+      - index.js
+      - router.js
+    - index.html
+
+**index.html**: The one and only HTML file that our server sends. 
+It's the website template. Inside the body tag we have
+a div with an id, _mainContent_. From the JS code, we use ```document.getElementById("mainContent")``` to access this div
+and use the ```replaceChildren()``` function change the contents of the website.
+
+**dsl-functions.js**: This is where we have defined our Domain Specific language (DSL) and some helper functions that help
+reduce boilerplate.
+
+**router.js**: 
+This is where we have the data structure that holds the routes information, in our case, an array, and functions
+that interact with the routes, namely:
+- ```addRouteHandler(pathTemplate, handler)```: Adds a route to the router by specifying the path, _pathTemplate_, and the 
+function which should be executed for that path, _handler_.
+
+- ```addDefaultNotFoundRouteHandler(afdsf)```: Allows overriding the behavior of when the path is not 
+in the router, which by default is set to just throw an exception, which is stored in the _notFoundRouteHandler_ variable.
+
+- ```getRouteHandler(path)```: An algorithm to check if the passed path corresponds to any one of the stored routes. 
+If the correspondence exists, the function returns the handler of that route. If it doesn't it returns 
+_notFoundRouteHandler_
+
+**handlers.js**: This is where we have the handlers (functions) associated with each route.
+
+**index.js**: The file where we assign functions to events, which is where the execution flow starts.
+
+#### Flow of execution in the SPA
+
+In the index.js file, we have attached functions to 2 event handlers:
+- load: triggers when the page is first loaded, or when there's a reload of the page;
+- hashchange: triggers every time the anchor of the page (everything that proceeds the # in the URL) changes;
+
+The function attached to the load event handler adds all the routes, defines the custom behavior for what should be done
+when a route doesn't exist.
+
+The function attached to the hashchange handler grabs the values of the current anchor, and checks if there's a handler
+for that route.
+If there is that handler will execute. Most handlers will define links with anchors too, which when clicked will
+trigger the hashchange event again, and keep the page moving forward.

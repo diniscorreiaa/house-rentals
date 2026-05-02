@@ -1,0 +1,191 @@
+@api = http://localhost:8000/
+
+// Example of how to take data from a response and use it in subsequent requests
+// https://www.jetbrains.com/help/idea/http-response-handling-examples.html#script-var-example
+
+
+### i. Create first user
+POST {{api}}/users
+Content-Type: application/json
+
+{
+  "name": "João Pinto Marques",
+  "email": "joaomarques@example.com"
+}
+> {% client.global.set("tokenFirstUser", response.body.token) %}
+
+### i. Create second user
+POST {{api}}/users
+Content-Type: application/json
+
+{
+  "name": "Maria Rosário",
+  "email": "mariarosario@example.com"
+}
+> {% client.global.set("tokenSecondUser", response.body.token) %}
+
+### ii. User with same name as first user
+
+POST {{api}}/users
+Content-Type: application/json
+
+{
+  "name": "João António Marques",
+  "email": "joaomarques@example.com"
+}
+
+### iii. CREATE LOCATION
+POST {{api}}/locations
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "name": "Portugal",
+  "type": "COUNTRY",
+  "parentId": null
+}
+
+### iii. CREATE LOCATION
+POST {{api}}/locations
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "name": "Lisboa",
+  "type": "DISTRICT",
+  "parentId": 1
+}
+
+### iii. CREATE LOCATION
+POST {{api}}/locations
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "name": "Oeiras",
+  "type": "MUNICIPALITY",
+  "parentId": 2
+}
+
+
+### iii. CREATE LOCATION
+POST {{api}}/locations
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "name": "Paço de Arcos",
+  "type": "LOCALITY",
+  "parentId": 3
+}
+
+### iv. Get child locations of Lisboa
+GET {{api}}/locations/2/children
+
+### v. Create first house
+POST {{api}}/houses
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "title": "T2 com vista para o rio",
+  "location": 4,
+  "areaSqMt": 80,
+  "pricePerNight": 141,
+  "description": "Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
+}
+
+### v. Create second house
+POST {{api}}/houses
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "title": "T1 rés-do-chão",
+  "location": 4,
+  "areaSqMt": 60,
+  "pricePerNight": 73,
+  "description": "Apartamento T1 no rés-do-chão em Paço de Arcos. Com 1 quarto, casa de banho, cozinha e sala. Excelente localização"
+}
+
+### v. Create third house
+POST {{api}}/houses
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "title": "Vivenda com garagem",
+  "location": 4,
+  "areaSqMt": 450,
+  "pricePerNight": 170,
+  "description": "Vivenda grande com garagem. Com 2 quartos duplos, 2 quartos de casal, 3 casa de banho, 1 cozinha e 1 sala."
+}
+
+### vi. List all houses
+GET {{api}}/houses
+
+### vii. Show details of first house
+GET {{api}}/houses/1
+
+### viii. Create first booking for first house with first user
+POST {{api}}/bookings
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "hid": 1,
+  "startDate": "2025-05-10",
+  "endDate": "2025-05-16"
+}
+
+### viii. Create second booking for first house with first user
+POST {{api}}/bookings
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "hid": 1,
+  "startDate": "2025-05-30",
+  "endDate": "2025-06-12"
+}
+
+### ix. Attempt to create booking with an invalid date
+POST {{api}}/bookings
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "hid": 1,
+  "startDate": "2025.05.10",
+  "endDate": "2025-05-16"
+}
+
+### ix. Attempt to creating booking that overlaps
+POST {{api}}/bookings
+Content-Type: application/json
+Authorization: {{tokenFirstUser}}
+
+{
+  "hid": 1,
+  "startDate": "2025-05-14",
+  "endDate": "2025-05-19"
+}
+
+### x. List all bookings for the first house
+GET {{api}}/bookings?hid=1&date-interval=2025-01-01:2026-01-01
+
+### xi. Show the details of the first booking
+GET {{api}}/bookings/1
+
+### xii. List houses with pagination, limit=2 and skip=0
+GET {{api}}/houses?limit=2&skip=0
+
+### xii. List houses with pagination, limit=2 and skip=2
+GET {{api}}/houses?limit=2&skip=2
+
+### xiii. Remove the first booking
+DELETE {{api}}/bookings/1
+Authorization: {{tokenFirstUser}}
+
+### xiv. Attempt to show first booking, now deleted
+GET {{api}}/bookings/1

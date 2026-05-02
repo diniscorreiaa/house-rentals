@@ -1,6 +1,8 @@
 @api = http://localhost:8000/
 @accept-content = application/json
-@token = 7d227892-074a-4b11-9310-6e3de3440aef
+
+// Example of how to take data from a response and use it in subsequent requests
+// https://www.jetbrains.com/help/idea/http-response-handling-examples.html#script-var-example
 
 // User Management
 
@@ -12,6 +14,7 @@ Content-Type: {{accept-content}}
     "name": "22",
     "email": "dummy@example.com"
 }
+> {% client.global.set("token", response.body.token) %}
 
 ### 400, user with this email alread exists
 POST {{api}}/users
@@ -261,7 +264,7 @@ GET {{api}}/houses/1
 GET {{api}}/houses
 
 ### Get houses with paging
-GET {{api}}/houses?limit=1&skip=1
+GET {{api}}/houses?limit=3&skip=-1
 
 ### Get houses with incomplete paging returns all results (ignores query)
 GET {{api}}/houses?skip=1
@@ -276,8 +279,8 @@ Authorization: {{token}}
 
 {
     "hid": 1,
-    "startDate": "2025-12-01",
-    "endDate": "2025-12-03"
+    "startDate": "2027-07-01",
+    "endDate": "2027-08-03"
 }
 
 ### Create booking
@@ -343,7 +346,7 @@ GET {{api}}/bookings/1000
 GET {{api}}/bookings/abc
 
 ### Get bookings for interval
-GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12
+GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2028-12-12
 
 ### Get bookings for interval with paging
 GET {{api}}/bookings?hid=1&date-interval=2025-12-01:2025-12-12&limit=1&skip=0

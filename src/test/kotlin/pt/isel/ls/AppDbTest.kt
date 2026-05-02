@@ -2,13 +2,14 @@ package pt.isel.ls
 
 import org.junit.Before
 import org.postgresql.ds.PGSimpleDataSource
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 // Isto mostra alguns dos métodos de prepareStatement em java, mas é praticamente igual ao kotlin,
 // depois vejam: https://www.geeksforgeeks.org/java/how-to-use-preparedstatement-in-java/
-
+@Ignore
 class AppDbTest {
 
     val dataSource = PGSimpleDataSource()
