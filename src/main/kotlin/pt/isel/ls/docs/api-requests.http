@@ -41,6 +41,9 @@ GET {{api}}/users/
 ### Get user
 GET {{api}}/users/1
 
+### Get user bookings
+GET {{api}}/users/1/bookings
+
 ### 404, user doesn't exist
 GET {{api}}//users/2
 
@@ -217,7 +220,7 @@ Authorization: {{token}}
     "location": 4,
     "areaSqMt": 80,
     "pricePerNight": 141,
-    "description": "Apartemento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
+    "description": "Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
 }
 
 ### Create house
@@ -264,10 +267,13 @@ GET {{api}}/houses/1
 GET {{api}}/houses
 
 ### Get houses with paging
-GET {{api}}/houses?limit=3&skip=-1
+GET {{api}}/houses?limit=1&skip=1
 
 ### Get houses with incomplete paging returns all results (ignores query)
 GET {{api}}/houses?skip=1
+
+### Get available houses
+GET {{api}}/houses/available?startDate=2025-10-10&endDate=2026-05-10
 
 
 // Booking Management
