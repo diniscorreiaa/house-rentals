@@ -5,6 +5,7 @@ import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.repository.BookingRepository
+import java.time.YearMonth
 
 class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository {
     private val bookings = mutableListOf<Booking>()
@@ -65,5 +66,30 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         val updatedBooking = booking.copy(startDate = startDate, endDate = endDate)
         bookings[bookings.indexOf(booking)] = updatedBooking
         return updatedBooking
+    }
+
+    override fun getAvailableDays(
+        hid: Int,
+        month: Int,
+        year: Int
+    ): List<Int> {
+        val monthLength = YearMonth.of(year, month).lengthOfMonth() //to get number of days
+        val monthStart = LocalDate(year, month, 1)
+        val monthEnd = LocalDate(year, month, monthLength)
+
+        val unavailableDays = mutableSetOf<Int>()
+
+        bookings
+            .filter { it.houseId == hid && it.startDate <= monthEnd && it.endDate >= monthStart }
+            .forEach { booking ->
+                val start = if (booking.startDate > monthStart) booking.startDate else monthStart
+                val end = if (booking.endDate < monthEnd) booking.endDate else monthEnd
+
+                for (day in start.dayOfMonth..end.dayOfMonth) {
+                    unavailableDays.add(day)
+                }
+            }
+
+        return (1..monthLength).filter { it !in unavailableDays }
     }
 }

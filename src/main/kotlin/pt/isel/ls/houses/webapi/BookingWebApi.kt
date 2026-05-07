@@ -145,6 +145,29 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                 )
             )
     }
+
+    fun getAvailableDays(request: Request): Response {
+        val houseId = (request.path("hid") ?: request.query("hid")).let {
+            it ?: throw RequiredQueryParamNotFound("hid")
+            it.toIntOrNull() ?: throw InvalidIdentifier("hid")
+        }
+
+        val month = request.query("month").let {
+            it ?: throw RequiredQueryParamNotFound("month")
+            it.toIntOrNull() ?: throw InvalidIdentifier("month")
+        }
+
+        val year = request.query("year").let {
+            it ?: throw RequiredQueryParamNotFound("year")
+            it.toIntOrNull() ?: throw InvalidIdentifier("year")
+        }
+
+        val availableDays = bookingServices.getAvailableDays(houseId, month, year)
+
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(availableDays))
+    }
 }
 
 private class Interval(val startDate: LocalDate, val endDate: LocalDate)
