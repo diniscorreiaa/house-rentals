@@ -2,6 +2,7 @@ package pt.isel.ls.houses.services
 
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.User
+import pt.isel.ls.houses.domain.HouseOwner
 import pt.isel.ls.houses.exceptions.UserDoesNotExist
 import pt.isel.ls.houses.exceptions.UserEmailAlreadyExists
 import pt.isel.ls.houses.repository.BookingRepository
@@ -23,9 +24,10 @@ class UserServices(
         return user
     }
 
-    fun userBookings(uid: Int): List<Booking>{
-        if(userData.getUser(uid) == null) throw UserDoesNotExist()
+    fun userBookings(uid: Int): List<Booking> {
+        if (userData.getUser(uid) == null) throw UserDoesNotExist()
         return bookingData.userBookings(uid)
     }
-}
 
+    fun getUsersWithHouses(): List<HouseOwner> = userData.getHouseOwners()
+}

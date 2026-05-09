@@ -1,6 +1,7 @@
 package pt.isel.ls.houses.data.memory
 
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.repository.HouseRepository
 
 class HouseDataMem : HouseRepository {

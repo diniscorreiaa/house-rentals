@@ -1,11 +1,13 @@
 package pt.isel.ls.houses.data.memory
 
 import pt.isel.ls.houses.domain.User
+import pt.isel.ls.houses.domain.HouseOwner
+import pt.isel.ls.houses.repository.HouseRepository
 import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
 
 
-class UserDataMem : UserRepository {
+class UserDataMem(private val houseData: HouseRepository) : UserRepository {
     private val users = mutableListOf<User>()
     private var id = 1
 
@@ -22,4 +24,17 @@ class UserDataMem : UserRepository {
 
     override fun getUserByToken(token: Uuid): User? = users.find { it.token == token }
 
+    override fun getHouseOwners(): List<HouseOwner> {
+        val housesByOwner = houseData.getHouses(limit = null, skip = null).groupingBy { it.owner }.eachCount()
+
+        return users
+            .filter { housesByOwner.containsKey(it.uid) }
+            .map {
+                HouseOwner(
+                    it.name,
+                    it.email,
+                    housesByOwner[it.uid] ?: 0
+                )
+            }
+    }
 }

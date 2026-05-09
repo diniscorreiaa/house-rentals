@@ -2,6 +2,7 @@ package pt.isel.ls.houses.data.db
 
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.User
+import pt.isel.ls.houses.domain.HouseOwner
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.UserRepository
 import kotlin.uuid.Uuid
@@ -80,6 +81,36 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource) : UserRepository { 
                 rs.getString("Email"),
                 token
             )
+        }
+    }
+
+    override fun getHouseOwners(): List<HouseOwner> {
+        dataSource.connection.use {
+            val st =
+                it.prepareStatement(
+                    """
+                    SELECT u."UserName", u."Email", COUNT(h."IdHouse") AS "TotalHouses"
+                    FROM "user" u
+                    INNER JOIN HOUSE h ON h."Owner" = u."IdUser"
+                    GROUP BY u."IdUser", u."UserName", u."Email"
+                    ORDER BY u."IdUser"
+                    """.trimIndent()
+                )
+
+            val rs = st.executeQuery()
+            val owners = mutableListOf<HouseOwner>()
+
+            while (rs.next()) {
+                owners.add(
+                    HouseOwner(
+                        rs.getString("UserName"),
+                        rs.getString("Email"),
+                        rs.getInt("TotalHouses")
+                    )
+                )
+            }
+
+            return owners
         }
     }
 }

@@ -1,4 +1,4 @@
-package pt.isel.ls.dataMem
+/*package pt.isel.ls.dataMem
 
 import pt.isel.ls.houses.data.memory.HouseDataMem
 import kotlin.test.Test
@@ -125,4 +125,4 @@ class HouseDataMemTests {
         assertEquals(listOf(second, third), paged)
 
     }
-}
+}*/

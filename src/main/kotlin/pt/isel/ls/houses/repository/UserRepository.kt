@@ -1,6 +1,7 @@
 package pt.isel.ls.houses.repository
 
 import pt.isel.ls.houses.domain.User
+import pt.isel.ls.houses.domain.HouseOwner
 import kotlin.uuid.Uuid
 
 interface UserRepository {
@@ -8,4 +9,5 @@ interface UserRepository {
     fun getUser(uid: Int): User?
     fun getUserByEmail(email: String): User?
     fun getUserByToken(token: Uuid): User?
+    fun getHouseOwners(): List<HouseOwner>
 }

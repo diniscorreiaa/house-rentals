@@ -14,10 +14,12 @@ import kotlin.test.assertFailsWith
 import kotlin.uuid.ExperimentalUuidApi
 
 class UserServicesTests {
-    private fun newServices(): UserServices {
+    private fun newServicesAndData(): Pair<UserServices, DataMem> {
         val data = DataMem()
-        return UserServices(data.user, data.booking)
+        return Pair(UserServices(data.user, data.booking), data)
     }
+
+    private fun newServices(): UserServices = newServicesAndData().first
 
     @Test
     fun `createUser returns user with correct name and email`() {
@@ -82,5 +84,29 @@ class UserServicesTests {
 
         assertEquals("Dummy2", fetched.name)
         assertEquals("dummy2@email.com", fetched.email)
+    }
+
+    @Test
+    fun `getUsersWithHouses returns only owners and total houses per owner`() {
+        val (services, data) = newServicesAndData()
+
+        val user1 = services.createUser(name = "Dummy", email = "dummy@email.com")
+        val user2 = services.createUser(name = "Dummy2", email = "dummy2@email.com")
+        services.createUser(name = "Dummy3", email = "dummy3@email.com")
+
+        data.house.createHouse("House 1", 1, 10.0, 20.0, "pretty", user1.uid)
+        data.house.createHouse("House 2", 1, 10.0, 20.0, "beautiful", user1.uid)
+        data.house.createHouse("House 3", 1, 10.0, 20.0, "pretty", user2.uid)
+
+        val owners = services.getUsersWithHouses()
+
+        assertEquals(2, owners.size)
+        assertEquals("Dummy", owners[0].name)
+        assertEquals("dummy@email.com", owners[0].email)
+        assertEquals(2, owners[0].totalHouses)
+
+        assertEquals("Dummy2", owners[1].name)
+        assertEquals("dummy2@email.com", owners[1].email)
+        assertEquals(1, owners[1].totalHouses)
     }
 }

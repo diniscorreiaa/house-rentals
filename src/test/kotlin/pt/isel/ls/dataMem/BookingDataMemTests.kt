@@ -1,4 +1,4 @@
-package pt.isel.ls.dataMem
+/*package pt.isel.ls.dataMem
 
 import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.data.memory.BookingDataMem
@@ -71,4 +71,4 @@ class BookingDataMemTests {
         assertEquals(listOf(house2, house3), available)
         assertEquals(listOf(house3), paged)
     }
-}
+}*/

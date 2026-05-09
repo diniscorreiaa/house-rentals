@@ -12,6 +12,7 @@ import pt.isel.ls.houses.webapi.dtos.CreateUserIn
 import pt.isel.ls.houses.webapi.dtos.CreateUserOut
 import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetUserOut
+import pt.isel.ls.houses.webapi.dtos.GetUsersWithHousesOut
 
 class UserWebApi(private val userServices: UserServices) {
 
@@ -45,5 +46,13 @@ class UserWebApi(private val userServices: UserServices) {
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(bookings.map { GetBookingOut(it.bid, it.startDate, it.endDate, it.userId, it.houseId) }))
+    }
+
+    fun getUsersWithHouses(request: Request): Response {
+        val owners = userServices.getUsersWithHouses()
+
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(owners.map { GetUsersWithHousesOut(it.name, it.email, it.totalHouses) }))
     }
 }

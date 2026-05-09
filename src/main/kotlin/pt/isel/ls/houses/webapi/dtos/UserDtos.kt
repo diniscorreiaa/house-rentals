@@ -17,3 +17,10 @@ data class CreateUserOut(
 
 @Serializable
 data class GetUserOut(val uid: Int, val name: String, val email: String)
+
+@Serializable
+data class GetUsersWithHousesOut(
+    val name: String,
+    val email: String,
+    val totalHouses: Int
+)
