@@ -6,10 +6,12 @@ import kotlinx.datetime.toKotlinLocalDate
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.BookingRepository
 import java.sql.Date
+import kotlin.uuid.Uuid
 
 class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingRepository {
     override fun createBooking(
@@ -209,6 +211,39 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
                 rs.getInt("IdUser"),
                 rs.getInt("IdHouse"),
             )
+        }
+    }
+
+    override fun getUserListWithBookingsInInterval(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<User> {
+        dataSource.connection.use {
+            val sql = """
+                select U."UserName", U."Email"
+                from "user" as U
+                join booking as B ON U."IdUser" = B."IdUser"
+                where B."StartDate" <= '2000-01-01' AND "EndDate" >= '2030-11-11';
+            """.trimIndent()
+            val st = it.prepareStatement(sql)
+            st.setDate(1, Date.valueOf(startDate.toJavaLocalDate()))
+            st.setDate(2, Date.valueOf(endDate.toJavaLocalDate()))
+
+            val rs = st.executeQuery()
+            if (!rs.next()) throw InternalError()
+
+            val users = mutableListOf<User>()
+            while (rs.next()) {
+                users.add(
+                    User(
+                        rs.getInt("IdUser"),
+                        rs.getString("UserName"),
+                        rs.getString("Email"),
+                        Uuid.parse(rs.getString("Token"))
+                    )
+                )
+            }
+            return users
         }
     }
 }

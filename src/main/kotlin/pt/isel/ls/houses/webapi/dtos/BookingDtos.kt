@@ -30,3 +30,10 @@ data class UpdateBookingOut(
     val uid: Int,
     val hid: Int
 )
+
+@Serializable
+data class UserList(
+    val name: String,
+    val email: String,
+    val numberOfBookedDays: Int
+)

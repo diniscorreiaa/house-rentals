@@ -3,6 +3,7 @@ package pt.isel.ls.houses.repository
 import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.User
 
 interface BookingRepository {
     fun createBooking(hid: Int, userId: Int, startDate: LocalDate, endDate: LocalDate): Booking
@@ -12,4 +13,5 @@ interface BookingRepository {
     fun userBookings(uid: Int): List<Booking> // TODO: Faz sentido ter paging?
     fun deleteBooking(bid: Int)
     fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking
+    fun getUserListWithBookingsInInterval(startDate: LocalDate, endDate: LocalDate): List<User>
 }

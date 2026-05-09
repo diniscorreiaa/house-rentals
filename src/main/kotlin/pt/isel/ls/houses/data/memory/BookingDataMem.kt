@@ -3,6 +3,7 @@ package pt.isel.ls.houses.data.memory
 import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.repository.BookingRepository
 
@@ -65,5 +66,12 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         val updatedBooking = booking.copy(startDate = startDate, endDate = endDate)
         bookings[bookings.indexOf(booking)] = updatedBooking
         return updatedBooking
+    }
+
+    override fun getUserListWithBookingsInInterval(
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): List<User> {
+        TODO("Not yet implemented")
     }
 }

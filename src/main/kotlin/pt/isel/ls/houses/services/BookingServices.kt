@@ -3,6 +3,7 @@ package pt.isel.ls.houses.services
 import kotlinx.datetime.LocalDate
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.User
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseIsNotAvailable
@@ -59,5 +60,11 @@ class BookingServices(
         if (bookingData.getBooking(bid) == null) throw BookingDoesNotExist()
         if (startDate >= endDate) throw InvalidDate()
         return bookingData.updateBooking(bid, startDate, endDate)
+    }
+
+    fun getUserListWithBookingsInInterval(startDate: LocalDate, endDate: LocalDate): List<User>{
+        if (startDate >= endDate) throw InvalidDate()
+
+        return bookingData.getUserListWithBookingsInInterval(startDate, endDate)
     }
 }

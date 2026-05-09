@@ -19,6 +19,7 @@ import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 import pt.isel.ls.houses.webapi.dtos.UpdateBookingIn
 import pt.isel.ls.houses.webapi.dtos.UpdateBookingOut
+import pt.isel.ls.houses.webapi.dtos.UserList
 import java.time.format.DateTimeParseException
 
 const val INTERVAL_DELIMITER = ':'
@@ -143,6 +144,29 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                         updatedBooking.userId,
                         updatedBooking.houseId
                     )
+                )
+            )
+    }
+    // /bookings/users?date-interval=
+    fun getUserListWithBookingsInInterval(request: Request): Response {
+        val interval = request.query("date-interval").let { intervalStr ->
+            intervalStr ?: throw RequiredQueryParamNotFound("date-interval")
+            intervalStr.intervalToDates() ?: throw WrongSeparatorDate(intervalStr)
+        }
+
+        val userList = bookingServices.getUserListWithBookingsInInterval(interval.startDate, interval.endDate)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    userList.map {
+                        UserList(
+                            it.name,
+                            it.email,
+                            0
+                        )
+                    }
+
                 )
             )
     }
