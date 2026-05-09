@@ -46,7 +46,7 @@ const val SERVER_PORT = 8000
 fun main() {
     val data = DataPostgresSQL()
 //    val data = DataMem()
-    val services = Services(data)
+    val services = Services(data, data.booking)
     val webApi = WebApi(services)
 
     val userRoutes = routes(
@@ -74,7 +74,8 @@ fun main() {
         "bookings/{bid}" bind GET to webApi.booking::getBooking,
         "houses/available" bind GET to webApi.booking::getAvailableHouses,
         "bookings/{bid}" bind DELETE to webApi.booking::deleteBooking,
-        "bookings/{bid}" bind PUT to webApi.booking::updateBooking
+        "bookings/{bid}" bind PUT to webApi.booking::updateBooking,
+        "houses/reserved" bind GET to webApi.booking::getReservedHouses
     )
 
     // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}

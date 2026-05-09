@@ -27,3 +27,15 @@ data class GetHouseOut(
     val description: String,
     val owner: Int
 )
+
+@Serializable
+data class GetHouseForIntervalOut(
+    val hid: Int,
+    val title: String,
+    val location: Int,
+    val areaSqMt: Double,
+    val pricePerNight: Double,
+    val description: String,
+    val owner: Int,
+    val totalReservedDays: Int
+)

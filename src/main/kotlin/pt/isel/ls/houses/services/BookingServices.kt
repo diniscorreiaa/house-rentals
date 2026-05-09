@@ -1,6 +1,8 @@
 package pt.isel.ls.houses.services
 
 import kotlinx.datetime.LocalDate
+import pt.isel.ls.houses.data.db.BookingDataPostgresql
+import pt.isel.ls.houses.dtos.HouseWithInterval
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.BookingDoesNotExist
@@ -16,7 +18,8 @@ import kotlin.uuid.Uuid
 class BookingServices(
     private val userData: UserRepository,
     private val houseData: HouseRepository,
-    private val bookingData: BookingRepository
+    private val bookingData: BookingRepository,
+    private val bookingDataPostgresql: BookingDataPostgresql // Para nao implementar no datamem
 ) {
     fun createBooking(hid: Int, startDate: LocalDate, endDate: LocalDate, token: Uuid): Booking {
         val user = userData.getUserByToken(token) ?: throw Unauthorized()
@@ -59,5 +62,11 @@ class BookingServices(
         if (bookingData.getBooking(bid) == null) throw BookingDoesNotExist()
         if (startDate >= endDate) throw InvalidDate()
         return bookingData.updateBooking(bid, startDate, endDate)
+    }
+
+    fun getReservedHouses(startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<HouseWithInterval> {
+        if (startDate >= endDate) throw InvalidDate()
+
+        return bookingDataPostgresql.getReservedHouses(startDate, endDate, limit, skip)
     }
 }

@@ -1,12 +1,13 @@
 package pt.isel.ls.houses.data.db
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ls.houses.dtos.HouseWithInterval
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
-import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.BookingRepository
 import java.sql.Date
@@ -209,6 +210,51 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
                 rs.getInt("IdUser"),
                 rs.getInt("IdHouse"),
             )
+        }
+    }
+
+    fun getReservedHouses(startDate: LocalDate, endDate: LocalDate, limit: Int?, skip: Int?): List<HouseWithInterval> {
+        dataSource.connection.use {
+            var query = """
+                SELECT H.*, "StartDate", "EndDate" 
+                FROM HOUSE AS H
+                INNER JOIN BOOKING AS B ON H."IdHouse" = B."IdHouse" AND "StartDate" <= ? AND "EndDate" >= ? 
+                """
+            if (limit != null) query += " ORDER BY H.\"IdHouse\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
+
+            st.setDate(1, Date.valueOf(endDate.toJavaLocalDate()))
+            st.setDate(2, Date.valueOf(startDate.toJavaLocalDate()))
+            if (limit != null) {
+                st.setInt(3, limit)
+                st.setInt(4, skip ?: 0)
+            }
+
+            val rs = st.executeQuery()
+
+            val houses = mutableListOf<HouseWithInterval>()
+
+            while (rs.next()) {
+                val startDate = rs.getDate("StartDate").toLocalDate().toKotlinLocalDate()
+                val endDate = rs.getDate("EndDate").toLocalDate().toKotlinLocalDate()
+                val reservedDays = (endDate - startDate).days + 1 // Incluir o 1o dia
+
+                houses.add(
+                    HouseWithInterval(
+                        rs.getInt("IdHouse"),
+                        rs.getString("Title"),
+                        rs.getInt("Location"),
+                        rs.getDouble("Area"),
+                        rs.getDouble("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Owner"),
+                        reservedDays
+                    )
+                )
+            }
+
+            return houses
         }
     }
 }

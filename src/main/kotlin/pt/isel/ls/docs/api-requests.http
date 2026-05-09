@@ -275,6 +275,9 @@ GET {{api}}/houses?skip=1
 ### Get available houses
 GET {{api}}/houses/available?startDate=2025-10-10&endDate=2026-05-10
 
+### Get reserved houses (aparecem as que não aparecer)
+GET {{api}}/houses/reserved?startDate=2025-10-10&endDate=2026-05-10
+
 
 // Booking Management
 

@@ -7,6 +7,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
+import pt.isel.ls.houses.dtos.HouseWithInterval
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
@@ -145,6 +146,35 @@ class BookingWebApi(private val bookingServices: BookingServices) {
                     )
                 )
             )
+    }
+
+    fun getReservedHouses(request: Request): Response {
+        val startDate = request.query("startDate").let {
+            it ?: throw RequiredQueryParamNotFound("startDate")
+            parseDateOrNull(it) ?: throw WrongFormatDate(it)
+        }
+
+        val endDate = request.query("endDate").let {
+            it ?: throw RequiredQueryParamNotFound("endDate")
+            parseDateOrNull(it) ?: throw WrongFormatDate(it)
+        }
+
+        val paging = getLimitAndSkip(request)
+        val reserved = bookingServices.getReservedHouses(startDate, endDate, paging.limit, paging.skip)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(reserved.map {
+                HouseWithInterval(
+                    it.hid,
+                    it.title,
+                    it.location,
+                    it.area,
+                    it.price,
+                    it.description,
+                    it.owner,
+                    it.reservedDays
+                )
+            }))
     }
 }
 
