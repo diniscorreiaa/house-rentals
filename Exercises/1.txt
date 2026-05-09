@@ -1,0 +1,20 @@
+O comando push é responsável por mandar mudanças duma branch local para uma branch no remote (por exemplo github). Também serve para mandar branches inteiras de um repositório local para um repositório remoto (set-upstream). Por omissão este commando dá push da branch atual (se fizermos só git push sem mais argumentos).
+O comando pull transfere as novas mudanças (commits) do repositório git remoto para o local. Por omissão faz pull da branch atual. Também transfere novas branches do repositório remoto para o local (como um git fetch).
+
+O nosso fluxo de trabalho com git é o seguinte:
+git switch main
+para mudar para o main
+
+git pull
+para receber a versão mais atualizada do main, e assim evitar conflitos e estás a trabalhar em versões antigas do trabalho.
+
+git switch -c [nome-da-branch-com-feature-ou-bug-a-resolver]
+para criar a branch e mudarmo-nos para essa branch
+
+git push --set-upstream origin [nome-da-branch-com-feature-ou-bug-a-resolver]
+para adicionar a branch (neste momento vazia) ao repositório remoto do nosso grupo a branch local que acabamos de criar.
+
+Trabalhamos na branch, fazendo commits, e vamos fazendo git push regularmente para guardar o nosso trabalho atualizado no remote (essencialmente, para ter um backup, caso alguma coisa acontecesse ao repositório local).
+
+Quando acabarmos e achar que está bom, fazemos uma pull request, para receber feedback dos colegas de grupo. Depois do feedback e possíveis alterações damos merge desta branch para o main para juntar assim a feature ou o bug que resolve-mos ao main.
+
