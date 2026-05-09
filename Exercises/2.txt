@@ -1,0 +1,5 @@
+O status code 400 (Bad Request) é usado quando o cliente formulou mal o pedido, seja por mandar os dados no tipo errado (um campo estar à espera de string e receber um número), seja por um campo obrigatório não ter sido incluido na payload, ou o json não ser válido.
+Usamos este status code no trabalho por exemplo quando a data enviada no body do pedido não está no formato correto. Ou a criar uma house e não passar a localização, ou passar uma localização num formato inválida (passar um nome da localização por exemplo, em vez do esperado, que é um id como número).
+
+O status code 404 (Not Found) é utilizado quando o cliente tentou aceder a um recurso que não existe.
+Utilizamo-lo por exemplo quando o cliente faz um GET para uma casa, user, ou booking, que não existe.
