@@ -211,4 +211,12 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
             )
         }
     }
+
+    override fun getAvailableDays(
+        hid: Int,
+        month: Int,
+        year: Int
+    ): List<Int> {
+        TODO("Not yet implemented")
+    }
 }
