@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./handlers.js";
+import {API_BASE_URL} from "./handlers.js";
 
 
 export function fetchData(path = currentPath(), execute) {
@@ -101,7 +101,11 @@ export function selector(label, currentLimit, values, onChange) {
     return labelElement
 }
 
-
+/**
+ * @param {string} elementName
+ * @param {...(string|Array.<HTMLElement>|Object)} args
+ * @returns {HTMLElement}
+ */
 export function element(elementName, ...args) {
     if (!(args.length >= 0 && args.length <= 3)) throw new Error("This function receives from 0 to 3 parameter")
     let element = document.createElement(elementName)
