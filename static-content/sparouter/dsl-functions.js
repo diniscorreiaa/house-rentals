@@ -100,3 +100,36 @@ export function selector(label, currentLimit, values, onChange) {
     labelElement.appendChild(select)
     return labelElement
 }
+
+
+export function element(elementName, ...args) {
+    if (!(args.length >= 0 && args.length <= 3)) throw new Error("This function receives from 0 to 3 parameter")
+    let element = document.createElement(elementName)
+
+    // TODO: make sure there is only one of each arg type
+
+    args.forEach(value => {
+        if (Array.isArray(value)) addNestedElementsToElement(element, value)
+        else if (typeof value === "string") addTextNodeToElement(element, value)
+        else if (typeof value === "object") addPropertiesToElement(element, value)
+        }
+    )
+
+    return element
+}
+
+function addTextNodeToElement(element, text) {
+    const insideNode = document.createTextNode(text)
+    element.appendChild(insideNode)
+}
+
+function addNestedElementsToElement(element, elementsInside) {
+    elementsInside.forEach(nestedElement => element.appendChild(nestedElement))
+}
+
+function addPropertiesToElement(element, props) {
+    for (const [propName, propValue] of Object.entries(props)) {
+        element.setAttribute(propName, propValue)
+
+    }
+}
