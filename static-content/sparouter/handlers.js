@@ -21,7 +21,7 @@ function getHouses(mainContent) {
         const divChildren = [h1("All Houses")]
         if (houses.length !== 0) {
             houses.forEach(house => {
-                const link = a("#houses/" + house.hid, "Details")
+                const link = a("Details", {href: "#houses/" + house.hid})
                 const houseTitle = p(house.title)
                 houseTitle.appendChild(link)
                 divChildren.push(houseTitle)
@@ -47,7 +47,7 @@ function getHouses(mainContent) {
         }
         else {
             divChildren.push(p("No houses to show"))
-            divChildren.push(a("#home", "Return to home page"))
+            divChildren.push(a("Return to home page", {href: "#home"}))
             mainContent.replaceChildren(...divChildren)
         }
     })
@@ -58,15 +58,15 @@ function getHouseDetails(mainContent) {
         fetchData(`users/${house.owner}`, (owner) => {
             fetchData(`locations/${house.location}`, (loc) => {
                 const locElem = li(`Location: ${loc.name}`)
-                locElem.appendChild(a(`#locations/${house.location}/full`, "See full location"))
+                locElem.appendChild(a("See full location", {href: `#locations/${house.location}/full`}))
                 const ownerElem = li(`Owner: ${owner.name}`)
-                ownerElem.appendChild(a(`#users/${house.owner}`, "Check user profile"))
+                ownerElem.appendChild(a("Check user profile", {href: `#users/${house.owner}`}))
                 const ulData = ul([locElem, li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`), ownerElem])
                 const currDate = new Date()
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href:`#${bookingsUri}`}))
             })
         })
     })
@@ -107,7 +107,7 @@ function getBookings(mainContent) {
                 const items = []
                 bookings.forEach(booking => {
                     const item = li(`${booking.startDate} until ${booking.endDate}`)
-                    item.appendChild(a("#bookings/" + booking.bid, "Details"))
+                    item.appendChild(a("Details", {href: "#bookings/" + booking.bid}))
                     items.push(item)
                 })
 
@@ -136,7 +136,7 @@ function getBookings(mainContent) {
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`),
                     p("No bookings to show"),
-                    a("#home", "Return to home page")
+                    a("Return to home page", {href: "#home"})
                 )
             }
         })
@@ -148,9 +148,9 @@ function getBookingDetails(mainContent) {
         fetchData(`users/${booking.uid}`, (user) => {
             fetchData(`houses/${booking.hid}`, (house) => {
                 const claimed = li(`Claimed by: ${user.name}`)
-                claimed.appendChild(a(`#users/${user.uid}`, "Check user profile"))
+                claimed.appendChild(a("Check user profile", {href: `#users/${user.uid}`}))
                 const houseTitle = li(`House: ${house.title}`)
-                houseTitle.appendChild(a(`#houses/${booking.hid}`, "Go to house"))
+                houseTitle.appendChild(a("Go to house", {href: `#houses/${booking.hid}`}))
                 const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, houseTitle])
                 mainContent.replaceChildren(h1("Booking details"), ulData)
             })

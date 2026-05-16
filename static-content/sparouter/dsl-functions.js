@@ -51,12 +51,7 @@ export const div = (...args) => element("div", ...args)
 export const li = (...args) => element("li", ...args)
 export const p = (...args) => element("p", ...args)
 
-// TODO: CHANGE THIS LATER. this one will break existing code
-export const a = (href, text) => {
-    const elm = elementWithText("a", text)
-    elm.href = href
-    return elm
-}
+export const a = (...args) => element("a", ...args)
 
 // TODO: Make the creation of these dynamic
 export const h1 = (...args) => element("h1", ...args)
