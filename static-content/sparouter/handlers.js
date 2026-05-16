@@ -10,8 +10,42 @@ let bookingsCurrentSkip = 0
 
 const limitOptions = [2, 5, 10, 20, 50]
 
-function getHome(mainContent) {
+/*function getHome(mainContent) {
     mainContent.replaceChildren(h1("House Rentals HOME"))
+}*/
+
+function getHome(mainContent) {
+    const form = document.createElement("form")
+
+    const labelTitle = document.createElement("label")
+    const textTitle = document.createTextNode("Search by title")
+    labelTitle.appendChild(textTitle)
+
+    const inputTitle = document.createElement("input")
+    inputTitle.type = "text"
+    inputTitle.id = "idTitle"
+
+    const inputSubmit = document.createElement("input")
+    inputSubmit.type = "submit"
+    inputSubmit.value = "Search"
+
+    form.appendChild(labelTitle)
+    form.appendChild(inputTitle)
+    form.appendChild(inputSubmit)
+
+    form.addEventListener("submit", handleSubmit)
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        const inputTitle = document.querySelector("#idTitle")
+        const params = new URLSearchParams()
+        params.set("limit", housesLimit)
+        params.set("skip", "0")
+        if (inputTitle.value.trim()) params.set("search", inputTitle.value.trim())
+        window.location.hash = `houses?${params.toString()}`
+    }
+
+    mainContent.replaceChildren(h1("House Rentals HOME"), form)
 }
 
 function getHouses(mainContent) {
@@ -157,6 +191,8 @@ function getBookingDetails(mainContent) {
         })
     })
 }
+
+
 
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
