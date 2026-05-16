@@ -43,14 +43,15 @@ export const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
 
-export const ul = (elementsInside) => elementWithElementsInside("ul", elementsInside)
-export const ol = (elementsInside) => elementWithElementsInside("ol", elementsInside)
+export const ul = (...args) => element("ul", ...args)
+export const ol = (...args) => element("ol", ...args)
 
-export const div = (elementsInside) => elementWithElementsInside("div", elementsInside)
+export const div = (...args) => element("div", ...args)
 
-export const li = (text) => elementWithText("li", text)
-export const p = (text) => elementWithText("p", text)
+export const li = (...args) => element("li", ...args)
+export const p = (...args) => element("p", ...args)
 
+// TODO: CHANGE THIS LATER. this one will break existing code
 export const a = (href, text) => {
     const elm = elementWithText("a", text)
     elm.href = href
@@ -58,12 +59,12 @@ export const a = (href, text) => {
 }
 
 // TODO: Make the creation of these dynamic
-export const h1 = (text) => elementWithText("h1", text)
-export const h2 = (text) => elementWithText("h2", text)
-export const h3 = (text) => elementWithText("h3", text)
-export const h4 = (text) => elementWithText("h4", text)
-export const h5 = (text) => elementWithText("h5", text)
-export const h6 = (text) => elementWithText("h6", text)
+export const h1 = (...args) => element("h1", ...args)
+export const h2 = (...args) => element("h2", ...args)
+export const h3 = (...args) => element("h3", ...args)
+export const h4 = (...args) => element("h4", ...args)
+export const h5 = (...args) => element("h5", ...args)
+export const h6 = (...args) => element("h6", ...args)
 
 
 function elementWithText(elementName, text){
