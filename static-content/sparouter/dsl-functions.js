@@ -75,12 +75,7 @@ function elementWithElementsInside(elementName, elementsInside){
     return creatorElement
 }
 
-export function button(text, disabled, onClick) {
-    const button = elementWithText("button", text)
-    button.disabled = disabled
-    button.onclick = onClick
-    return button
-}
+export const button = (...args) => element("button", ...args)
 
 export function selector(label, currentLimit, values, onChange) {
     const optElems = []

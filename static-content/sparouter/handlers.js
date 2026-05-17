@@ -31,11 +31,18 @@ function getHouses(mainContent) {
                 housesLimit = newLimit
             }) // É necessário dar reset ao skip para garantir alinhamento
 
-            const prevButton = button("Previous", housesCurrentSkip === 0, () => {
-                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+            const prevButton = button("Previous", {
+                disabled: housesCurrentSkip === 0,
+                click: () => {
+                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+                }
             })
-            const nextButton = button("Next", houses.length < housesLimit, () => {
-                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+
+            const nextButton = button("Next", {
+                disabled: houses.length < housesLimit,
+                click: () => {
+                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+                }
             })
 
             mainContent.replaceChildren(...divChildren,
@@ -126,11 +133,18 @@ function getBookings(mainContent) {
                     bookingsLimit = newLimit
                 }) // É necessário dar reset ao skip para garantir alinhamento
 
-                const prevButton = button("Previous", bookingsCurrentSkip === 0, () => {
-                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                const prevButton = button("Previous", {
+                    disabled: bookingsCurrentSkip === 0,
+                    click: () => {
+                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                    }
                 })
-                const nextButton = button("Next", bookings.length < bookingsLimit, () => {
-                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+
+                const nextButton = button("Next", {
+                    disabled: bookings.length < bookingsLimit,
+                    click: () => {
+                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+                    }
                 })
 
                 mainContent.replaceChildren(
