@@ -127,9 +127,16 @@ function addNestedElementsToElement(element, elementsInside) {
     elementsInside.forEach(nestedElement => element.appendChild(nestedElement))
 }
 
+// https://stackoverflow.com/questions/9201471/how-to-add-boolean-attribute-using-javascript
 function addPropertiesToElement(element, props) {
     for (const [propName, propValue] of Object.entries(props)) {
-        element.setAttribute(propName, propValue)
-
+        if (typeof propValue === "function")
+            element.addEventListener(propName, propValue)
+        else if(typeof propValue === "boolean"){
+            if (propValue === true)
+                element.setAttribute(propName, propName)
+            else element.removeAttribute(propName)
+        }
+        else element.setAttribute(propName, propValue)
     }
 }
