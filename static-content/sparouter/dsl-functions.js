@@ -7,38 +7,6 @@ export function fetchData(path = currentPath(), execute) {
         .then(data => execute(data))
 }
 
-export function getAll(mainContent, lastUri) {
-    fetch(API_BASE_URL + "houses")
-        .then(res => res.json())
-        .then(houses => {
-                const div = document.createElement("div")
-                const h1 = h1("All Houses")
-                div.appendChild(h1)
-
-                houses.forEach(house => {
-                    const p = document.createElement("p")
-                    const a = a("#houses/" + house.hid, "Details")
-                    p.appendChild(a)
-                    div.appendChild(p)
-                })
-                mainContent.replaceChildren(div)
-            }
-        )
-}
-
-export function getSomeDetails(mainContent, ...propNames) {
-    fetch(API_BASE_URL + currentPath())
-        .then(res => res.json())
-        .then(data => {
-            const listItems = []
-            propNames.forEach(propName => {
-                listItems.push(li(`${propName}: ${data[propName]}`))
-            })
-            const ulData = ul(listItems)
-            mainContent.replaceChildren(ulData)
-        })
-}
-
 export const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
@@ -64,18 +32,6 @@ export const option = (...args) => element("option", ...args)
 export const select = (...args) => element("select", ...args)
 export const label = (...args) => element("label", ...args)
 
-function elementWithText(elementName, text){
-    const element = document.createElement(elementName)
-    const insideNode = document.createTextNode(text)
-    element.appendChild(insideNode)
-    return element
-}
-
-function elementWithElementsInside(elementName, elementsInside){
-    const creatorElement = document.createElement(elementName)
-    elementsInside.forEach(element => creatorElement.appendChild(element))
-    return creatorElement
-}
 
 export const button = (...args) => element("button", ...args)
 
