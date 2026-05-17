@@ -60,7 +60,9 @@ export const h3 = (...args) => element("h3", ...args)
 export const h4 = (...args) => element("h4", ...args)
 export const h5 = (...args) => element("h5", ...args)
 export const h6 = (...args) => element("h6", ...args)
-
+export const option = (...args) => element("option", ...args)
+export const select = (...args) => element("select", ...args)
+export const label = (...args) => element("label", ...args)
 
 function elementWithText(elementName, text){
     const element = document.createElement(elementName)
@@ -77,19 +79,18 @@ function elementWithElementsInside(elementName, elementsInside){
 
 export const button = (...args) => element("button", ...args)
 
-export function selector(label, currentLimit, values, onChange) {
-    const optElems = []
-    values.forEach(value => {
-        const option = elementWithText("option", String(value)) //document.createElement("option")
-        option.value = value
-        option.selected = currentLimit === value
-        optElems.push(option)
-    })
-    const labelElement = elementWithText("label", label)
-    const select = elementWithElementsInside("select", optElems)
-    select.onchange = () => { onChange(parseInt(select.value)) }
-    labelElement.appendChild(select)
-    return labelElement
+// The following link explains why we can get the element to which the element was attached
+// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#the_value_of_this_within_the_handler
+export function selector(labelText, currentLimit, values, onChange) {
+    const optionElements = values.map(value =>
+        option(String(value), {value, selected: currentLimit === value})
+    )
+
+    return label(labelText, [
+        select([...optionElements], {
+            change: (event) => { onChange(parseInt(event.currentTarget.value, 10)) }
+        })
+    ])
 }
 
 /**
