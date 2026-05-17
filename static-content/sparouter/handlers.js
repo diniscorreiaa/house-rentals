@@ -88,8 +88,7 @@ function getLocationDetails(mainContent) {
 
 function getFullLocation(mainContent) {
     fetchData(undefined, (locations) => {
-        const listLoc = []
-        locations.forEach((location) => listLoc.push(location.name + `(${location.type})`))
+        const listLoc = locations.map((location) => location.name + `(${location.type})`)
 
         mainContent.replaceChildren(
             h1(`Full location of ${locations[locations.length - 1].name}`),
@@ -117,13 +116,10 @@ function getBookings(mainContent) {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
             if (bookings.length !== 0) {
-                const items = []
-                bookings.forEach(booking =>
-                    items.push(
-                        li(`${booking.startDate} until ${booking.endDate}`, [
-                            a("Details", {href: "#bookings/" + booking.bid})
-                        ])
-                    )
+                const items = bookings.map(booking =>
+                    li(`${booking.startDate} until ${booking.endDate}`, [
+                        a("Details", {href: "#bookings/" + booking.bid})
+                    ])
                 )
 
                 const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
