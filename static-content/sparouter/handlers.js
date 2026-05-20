@@ -20,23 +20,29 @@ function getHouses(mainContent) {
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses")]
         if (houses.length !== 0) {
-            houses.forEach(house => {
-                const link = a("#houses/" + house.hid, "Details")
-                const houseTitle = p(house.title)
-                houseTitle.appendChild(link)
-                divChildren.push(houseTitle)
-            })
+            houses.forEach(house =>
+                divChildren.push(
+                    p(house.title, [a("Details", {href: "#houses/" + house.hid})])
+                )
+            )
 
             const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => {
                 window.location.hash = `houses?limit=${newLimit}&skip=0`;
                 housesLimit = newLimit
             }) // É necessário dar reset ao skip para garantir alinhamento
 
-            const prevButton = button("Previous", housesCurrentSkip === 0, () => {
-                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+            const prevButton = button("Previous", {
+                disabled: housesCurrentSkip === 0,
+                click: () => {
+                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
+                }
             })
-            const nextButton = button("Next", houses.length < housesLimit, () => {
-                window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+
+            const nextButton = button("Next", {
+                disabled: houses.length < housesLimit,
+                click: () => {
+                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
+                }
             })
 
             mainContent.replaceChildren(...divChildren,
@@ -46,8 +52,7 @@ function getHouses(mainContent) {
             )
         }
         else {
-            divChildren.push(p("No houses to show"))
-            divChildren.push(a("#home", "Return to home page"))
+            divChildren.push(p("No houses to show"), a("Return to home page", {href: "#home"}))
             mainContent.replaceChildren(...divChildren)
         }
     })
@@ -57,16 +62,18 @@ function getHouseDetails(mainContent) {
     fetchData(undefined, (house) => {
         fetchData(`users/${house.owner}`, (owner) => {
             fetchData(`locations/${house.location}`, (loc) => {
-                const locElem = li(`Location: ${loc.name}`)
-                locElem.appendChild(a(`#locations/${house.location}/full`, "See full location"))
-                const ownerElem = li(`Owner: ${owner.name}`)
-                ownerElem.appendChild(a(`#users/${house.owner}`, "Check user profile"))
-                const ulData = ul([locElem, li(`Area: ${house.areaSqMt} m2`), li(`Price: ${house.pricePerNight} euros/night`), ownerElem])
+                const ulData =
+                    ul([
+                        li(`Location: ${loc.name}`, [a("See full location", {href: `#locations/${house.location}/full`})]),
+                        li(`Area: ${house.areaSqMt} m2`),
+                        li(`Price: ${house.pricePerNight} euros/night`),
+                        li(`Owner: ${owner.name}`, [a("Check user profile", {href: `#users/${house.owner}`})])
+                    ])
                 const currDate = new Date()
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a(`#${bookingsUri}`, "See bookings for this house"))
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href:`#${bookingsUri}`}))
             })
         })
     })
@@ -81,20 +88,25 @@ function getLocationDetails(mainContent) {
 
 function getFullLocation(mainContent) {
     fetchData(undefined, (locations) => {
-        const listLoc = []
-        locations.forEach((location) => {
-            listLoc.push(location.name + `(${location.type})`)
-        })
-        const title = h1(`Full location of ${locations[locations.length - 1].name}`)
-        const content = div([title, p(listLoc.join(" -> "))])
-        mainContent.replaceChildren(content)
+        const listLoc = locations.map((location) => location.name + `(${location.type})`)
+
+        mainContent.replaceChildren(
+            h1(`Full location of ${locations[locations.length - 1].name}`),
+            p(listLoc.join(" -> "))
+        )
     })
 }
 
 function getUserDetails(mainContent) {
-    fetchData(undefined, (user => {
-        mainContent.replaceChildren(h1(`${user.name}'s Profile`), ul([li(`Name: ${user.name}`), li(`Email: ${user.email}`)]))
-    }))
+    fetchData(undefined, (user =>
+        mainContent.replaceChildren(
+            h1(`${user.name}'s Profile`),
+            ul([
+                li(`Name: ${user.name}`),
+                li(`Email: ${user.email}`)
+            ])
+        )
+    ))
 }
 
 function getBookings(mainContent) {
@@ -104,12 +116,11 @@ function getBookings(mainContent) {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
             if (bookings.length !== 0) {
-                const items = []
-                bookings.forEach(booking => {
-                    const item = li(`${booking.startDate} until ${booking.endDate}`)
-                    item.appendChild(a("#bookings/" + booking.bid, "Details"))
-                    items.push(item)
-                })
+                const items = bookings.map(booking =>
+                    li(`${booking.startDate} until ${booking.endDate}`, [
+                        a("Details", {href: "#bookings/" + booking.bid})
+                    ])
+                )
 
                 const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
 
@@ -118,11 +129,18 @@ function getBookings(mainContent) {
                     bookingsLimit = newLimit
                 }) // É necessário dar reset ao skip para garantir alinhamento
 
-                const prevButton = button("Previous", bookingsCurrentSkip === 0, () => {
-                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                const prevButton = button("Previous", {
+                    disabled: bookingsCurrentSkip === 0,
+                    click: () => {
+                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
+                    }
                 })
-                const nextButton = button("Next", bookings.length < bookingsLimit, () => {
-                    window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+
+                const nextButton = button("Next", {
+                    disabled: bookings.length < bookingsLimit,
+                    click: () => {
+                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
+                    }
                 })
 
                 mainContent.replaceChildren(
@@ -136,7 +154,7 @@ function getBookings(mainContent) {
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`),
                     p("No bookings to show"),
-                    a("#home", "Return to home page")
+                    a("Return to home page", {href: "#home"})
                 )
             }
         })
@@ -147,12 +165,14 @@ function getBookingDetails(mainContent) {
     fetchData(undefined, booking => {
         fetchData(`users/${booking.uid}`, (user) => {
             fetchData(`houses/${booking.hid}`, (house) => {
-                const claimed = li(`Claimed by: ${user.name}`)
-                claimed.appendChild(a(`#users/${user.uid}`, "Check user profile"))
-                const houseTitle = li(`House: ${house.title}`)
-                houseTitle.appendChild(a(`#houses/${booking.hid}`, "Go to house"))
-                const ulData = ul([li(`Interval: ${booking.startDate} until ${booking.endDate}`), claimed, houseTitle])
-                mainContent.replaceChildren(h1("Booking details"), ulData)
+                mainContent.replaceChildren(
+                    h1("Booking details"),
+                    ul([
+                        li(`Interval: ${booking.startDate} until ${booking.endDate}`),
+                        li(`Claimed by: ${user.name}`, [a("Check user profile", {href: `#users/${user.uid}`})]),
+                        li(`House: ${house.title}`, [a("Go to house", {href: `#houses/${booking.hid}`})])
+                    ])
+                )
             })
         })
     })

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./handlers.js";
+import {API_BASE_URL} from "./handlers.js";
 
 
 export function fetchData(path = currentPath(), execute) {
@@ -7,96 +7,88 @@ export function fetchData(path = currentPath(), execute) {
         .then(data => execute(data))
 }
 
-export function getAll(mainContent, lastUri) {
-    fetch(API_BASE_URL + "houses")
-        .then(res => res.json())
-        .then(houses => {
-                const div = document.createElement("div")
-                const h1 = h1("All Houses")
-                div.appendChild(h1)
-
-                houses.forEach(house => {
-                    const p = document.createElement("p")
-                    const a = a("#houses/" + house.hid, "Details")
-                    p.appendChild(a)
-                    div.appendChild(p)
-                })
-                mainContent.replaceChildren(div)
-            }
-        )
-}
-
-export function getSomeDetails(mainContent, ...propNames) {
-    fetch(API_BASE_URL + currentPath())
-        .then(res => res.json())
-        .then(data => {
-            const listItems = []
-            propNames.forEach(propName => {
-                listItems.push(li(`${propName}: ${data[propName]}`))
-            })
-            const ulData = ul(listItems)
-            mainContent.replaceChildren(ulData)
-        })
-}
-
 export const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
 
-export const ul = (elementsInside) => elementWithElementsInside("ul", elementsInside)
-export const ol = (elementsInside) => elementWithElementsInside("ol", elementsInside)
+export const ul = (...args) => element("ul", ...args)
+export const ol = (...args) => element("ol", ...args)
 
-export const div = (elementsInside) => elementWithElementsInside("div", elementsInside)
+export const div = (...args) => element("div", ...args)
 
-export const li = (text) => elementWithText("li", text)
-export const p = (text) => elementWithText("p", text)
+export const li = (...args) => element("li", ...args)
+export const p = (...args) => element("p", ...args)
 
-export const a = (href, text) => {
-    const elm = elementWithText("a", text)
-    elm.href = href
-    return elm
-}
+export const a = (...args) => element("a", ...args)
 
 // TODO: Make the creation of these dynamic
-export const h1 = (text) => elementWithText("h1", text)
-export const h2 = (text) => elementWithText("h2", text)
-export const h3 = (text) => elementWithText("h3", text)
-export const h4 = (text) => elementWithText("h4", text)
-export const h5 = (text) => elementWithText("h5", text)
-export const h6 = (text) => elementWithText("h6", text)
+export const h1 = (...args) => element("h1", ...args)
+export const h2 = (...args) => element("h2", ...args)
+export const h3 = (...args) => element("h3", ...args)
+export const h4 = (...args) => element("h4", ...args)
+export const h5 = (...args) => element("h5", ...args)
+export const h6 = (...args) => element("h6", ...args)
+export const option = (...args) => element("option", ...args)
+export const select = (...args) => element("select", ...args)
+export const label = (...args) => element("label", ...args)
 
 
-function elementWithText(elementName, text){
-    const element = document.createElement(elementName)
-    const insideNode = document.createTextNode(text)
-    element.appendChild(insideNode)
+export const button = (...args) => element("button", ...args)
+
+// The following link explains why we can get the element to which the element was attached
+// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#the_value_of_this_within_the_handler
+export function selector(labelText, currentLimit, values, onChange) {
+    const optionElements = values.map(value =>
+        option(String(value), {value, selected: currentLimit === value})
+    )
+
+    return label(labelText, [
+        select([...optionElements], {
+            change: (event) => { onChange(parseInt(event.currentTarget.value, 10)) }
+        })
+    ])
+}
+
+/**
+ * @param {string} elementName
+ * @param {...(string|Array.<HTMLElement>|Object)} args
+ * @returns {HTMLElement}
+ */
+export function element(elementName, ...args) {
+    if (!(args.length >= 0 && args.length <= 3)) throw new Error("This function receives from 0 to 3 parameter")
+    let element = document.createElement(elementName)
+
+    // TODO: make sure there is only one of each arg type
+
+    args.forEach(value => {
+        if (Array.isArray(value)) addNestedElementsToElement(element, value)
+        else if (typeof value === "string") addTextNodeToElement(element, value)
+        else if (typeof value === "object") addPropertiesToElement(element, value)
+        }
+    )
+
     return element
 }
 
-function elementWithElementsInside(elementName, elementsInside){
-    const creatorElement = document.createElement(elementName)
-    elementsInside.forEach(element => creatorElement.appendChild(element))
-    return creatorElement
+function addTextNodeToElement(element, text) {
+    const insideNode = document.createTextNode(text)
+    element.appendChild(insideNode)
 }
 
-export function button(text, disabled, onClick) {
-    const button = elementWithText("button", text)
-    button.disabled = disabled
-    button.onclick = onClick
-    return button
+function addNestedElementsToElement(element, elementsInside) {
+    elementsInside.forEach(nestedElement => element.appendChild(nestedElement))
 }
 
-export function selector(label, currentLimit, values, onChange) {
-    const optElems = []
-    values.forEach(value => {
-        const option = elementWithText("option", String(value)) //document.createElement("option")
-        option.value = value
-        option.selected = currentLimit === value
-        optElems.push(option)
-    })
-    const labelElement = elementWithText("label", label)
-    const select = elementWithElementsInside("select", optElems)
-    select.onchange = () => { onChange(parseInt(select.value)) }
-    labelElement.appendChild(select)
-    return labelElement
+// https://stackoverflow.com/questions/9201471/how-to-add-boolean-attribute-using-javascript
+function addPropertiesToElement(element, props) {
+    for (const [propName, propValue] of Object.entries(props)) {
+        if (typeof propValue === "function")
+            element.addEventListener(propName, propValue)
+        else if(typeof propValue === "boolean"){
+            if (propValue === true)
+                element.setAttribute(propName, propName)
+            else element.removeAttribute(propName)
+        }
+        else element.setAttribute(propName, propValue)
+    }
 }
