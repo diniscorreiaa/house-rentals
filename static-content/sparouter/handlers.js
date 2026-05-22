@@ -15,37 +15,32 @@ const limitOptions = [2, 5, 10, 20, 50]
 }*/
 
 function getHome(mainContent) {
-    const form = document.createElement("form")
+    const div = document.createElement("div")
 
-    const labelTitle = document.createElement("label")
-    const textTitle = document.createTextNode("Search by title")
-    labelTitle.appendChild(textTitle)
+    const h1 = document.createElement("h1")
+    const h1Text = document.createTextNode("House Rentals HOME")
+    h1.appendChild(h1Text)
+    div.appendChild(h1)
 
-    const inputTitle = document.createElement("input")
-    inputTitle.type = "text"
-    inputTitle.id = "idTitle"
+    const searchLabel = document.createElement("label")
+    const searchLabelText = document.createTextNode("Search houses: ")
+    searchLabel.appendChild(searchLabelText)
 
-    const inputSubmit = document.createElement("input")
-    inputSubmit.type = "submit"
-    inputSubmit.value = "Search"
+    const searchInput = document.createElement("input")
+    searchInput.type = "text"
+    searchInput.placeholder = "Search by title..."
+    searchLabel.appendChild(searchInput)
+    div.appendChild(searchLabel)
 
-    form.appendChild(labelTitle)
-    form.appendChild(inputTitle)
-    form.appendChild(inputSubmit)
+    const searchButton = document.createElement("button")
+    const searchButtonText = document.createTextNode("Search")
+    searchButton.appendChild(searchButtonText)
+    searchButton.addEventListener("click", () => {
+        window.location.hash = "houses"
+    })
+    div.appendChild(searchButton)
 
-    form.addEventListener("submit", handleSubmit)
-
-    function handleSubmit(e) {
-        e.preventDefault()
-        const inputTitle = document.querySelector("#idTitle")
-        const params = new URLSearchParams()
-        params.set("limit", housesLimit)
-        params.set("skip", "0")
-        if (inputTitle.value.trim()) params.set("search", inputTitle.value.trim())
-        window.location.hash = `houses?${params.toString()}`
-    }
-
-    mainContent.replaceChildren(h1("House Rentals HOME"), form)
+    mainContent.replaceChildren(div)
 }
 
 function getHouses(mainContent) {
