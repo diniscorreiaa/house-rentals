@@ -10,37 +10,17 @@ let bookingsCurrentSkip = 0
 
 const limitOptions = [2, 5, 10, 20, 50]
 
-/*function getHome(mainContent) {
-    mainContent.replaceChildren(h1("House Rentals HOME"))
-}*/
-
 function getHome(mainContent) {
-    const div = document.createElement("div")
-
-    const h1 = document.createElement("h1")
-    const h1Text = document.createTextNode("House Rentals HOME")
-    h1.appendChild(h1Text)
-    div.appendChild(h1)
-
-    const searchLabel = document.createElement("label")
-    const searchLabelText = document.createTextNode("Search houses: ")
-    searchLabel.appendChild(searchLabelText)
-
-    const searchInput = document.createElement("input")
-    searchInput.type = "text"
-    searchInput.placeholder = "Search by title..."
-    searchLabel.appendChild(searchInput)
-    div.appendChild(searchLabel)
-
-    const searchButton = document.createElement("button")
-    const searchButtonText = document.createTextNode("Search")
-    searchButton.appendChild(searchButtonText)
-    searchButton.addEventListener("click", () => {
-        window.location.hash = "houses"
-    })
-    div.appendChild(searchButton)
-
-    mainContent.replaceChildren(div)
+    mainContent.replaceChildren(
+        h1("House Rentals HOME"),
+        label("Search houses: ", [
+            input({
+                    type: "text",
+                    placeholder: "Search by title..."
+            }),
+        ]),
+        button("Search", {click: () => { window.location.hash = "houses" }})
+    )
 }
 
 function getHouses(mainContent) {
@@ -79,8 +59,7 @@ function getHouses(mainContent) {
                 prevButton,
                 nextButton
             )
-        }
-        else {
+        } else {
             divChildren.push(p("No houses to show"), a("Return to home page", {href: "#home"}))
             mainContent.replaceChildren(...divChildren)
         }
@@ -102,7 +81,7 @@ function getHouseDetails(mainContent) {
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href:`#${bookingsUri}`}))
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href: `#${bookingsUri}`}))
             })
         })
     })
@@ -128,13 +107,13 @@ function getFullLocation(mainContent) {
 
 function getUserDetails(mainContent) {
     fetchData(undefined, (user =>
-        mainContent.replaceChildren(
-            h1(`${user.name}'s Profile`),
-            ul([
-                li(`Name: ${user.name}`),
-                li(`Email: ${user.email}`)
-            ])
-        )
+            mainContent.replaceChildren(
+                h1(`${user.name}'s Profile`),
+                ul([
+                    li(`Name: ${user.name}`),
+                    li(`Email: ${user.email}`)
+                ])
+            )
     ))
 }
 
@@ -178,8 +157,7 @@ function getBookings(mainContent) {
                     prevButton,
                     nextButton
                 )
-            }
-            else {
+            } else {
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`),
                     p("No bookings to show"),
@@ -206,7 +184,6 @@ function getBookingDetails(mainContent) {
         })
     })
 }
-
 
 
 function getFormatedDate(date) {
