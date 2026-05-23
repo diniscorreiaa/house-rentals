@@ -31,7 +31,7 @@ export const h6 = (...args) => element("h6", ...args)
 export const option = (...args) => element("option", ...args)
 export const select = (...args) => element("select", ...args)
 export const label = (...args) => element("label", ...args)
-
+export const input = (...args) => element("input", ...args)
 
 export const button = (...args) => element("button", ...args)
 

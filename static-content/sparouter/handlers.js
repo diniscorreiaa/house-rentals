@@ -1,4 +1,4 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector, label, input} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
