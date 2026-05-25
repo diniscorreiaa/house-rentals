@@ -1,4 +1,4 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector} from "./dsl-functions.js";
+import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector, label, input} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -11,7 +11,46 @@ let bookingsCurrentSkip = 0
 const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
-    mainContent.replaceChildren(h1("House Rentals HOME"))
+    // todo: make sure clicking ENTER on input ALSO changes the page.
+
+    mainContent.replaceChildren(
+        h1("House Rentals HOME"),
+        label("Search houses: ", [
+            input({
+                type: "text",
+                placeholder: "Search by title...",
+                id: "search-term-input"
+            }),
+        ]),
+        button("Search", {click: () => {
+                const searchTerm = document.getElementById("search-term-input").value
+                const encodedSearchTerm = encodeURIComponent(searchTerm)
+                window.location.hash = `houses-search?term=${encodedSearchTerm}`
+        }})
+    )
+}
+
+function getHousesSearch(mainContent){
+    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
+    const searchTerm = decodeURIComponent(queryPrams.get("term"))
+
+    fetchData("houses", (houses) => {
+        const housesLinks = []
+        const filteredHouses = houses.filter((house) => house.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+        if (filteredHouses.length !== 0) {
+            filteredHouses.forEach(house =>
+                housesLinks.push(
+                    p(house.title, [a("Details", {href: "#houses/" + house.hid})])
+                )
+            )
+        } else housesLinks.push(p("No houses found for search"))
+
+        mainContent.replaceChildren(
+            h1(`Houses for search "${searchTerm}"`),
+            ...housesLinks
+        )
+    })
 }
 
 function getHouses(mainContent) {
@@ -50,8 +89,7 @@ function getHouses(mainContent) {
                 prevButton,
                 nextButton
             )
-        }
-        else {
+        } else {
             divChildren.push(p("No houses to show"), a("Return to home page", {href: "#home"}))
             mainContent.replaceChildren(...divChildren)
         }
@@ -73,7 +111,7 @@ function getHouseDetails(mainContent) {
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href:`#${bookingsUri}`}))
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href: `#${bookingsUri}`}))
             })
         })
     })
@@ -99,13 +137,13 @@ function getFullLocation(mainContent) {
 
 function getUserDetails(mainContent) {
     fetchData(undefined, (user =>
-        mainContent.replaceChildren(
-            h1(`${user.name}'s Profile`),
-            ul([
-                li(`Name: ${user.name}`),
-                li(`Email: ${user.email}`)
-            ])
-        )
+            mainContent.replaceChildren(
+                h1(`${user.name}'s Profile`),
+                ul([
+                    li(`Name: ${user.name}`),
+                    li(`Email: ${user.email}`)
+                ])
+            )
     ))
 }
 
@@ -149,8 +187,7 @@ function getBookings(mainContent) {
                     prevButton,
                     nextButton
                 )
-            }
-            else {
+            } else {
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`),
                     p("No bookings to show"),
@@ -178,6 +215,7 @@ function getBookingDetails(mainContent) {
     })
 }
 
+
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
 }
@@ -187,6 +225,7 @@ export const handlers = {
     getHome,
     getHouses,
     getHouseDetails,
+    getHousesSearch,
     //getLocationDetails,
     getUserDetails,
     getBookings,
