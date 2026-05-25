@@ -6,10 +6,10 @@ import kotlinx.datetime.toKotlinLocalDate
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.houses.domain.Booking
 import pt.isel.ls.houses.domain.House
-import pt.isel.ls.houses.exceptions.BookingDoesNotExist
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.BookingRepository
 import java.sql.Date
+import java.time.YearMonth
 
 class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingRepository {
     override fun createBooking(
@@ -215,8 +215,47 @@ class BookingDataPostgresql(val dataSource: PGSimpleDataSource) : BookingReposit
     override fun getAvailableDays(
         hid: Int,
         month: Int,
-        year: Int
+        year: Int,
+        limit: Int?,
+        skip: Int?
     ): List<Int> {
-        TODO("Not yet implemented")
+        dataSource.connection.use {
+            var query = """
+                SELECT "StartDate", "EndDate" 
+                FROM BOOKING
+                WHERE "IdHouse" = ? AND "StartDate" <= ? AND "EndDate" >= ?
+                """
+
+            val monthLength = YearMonth.of(year, month).lengthOfMonth() //to get number of days
+            val monthStart = LocalDate(year, month, 1)
+            val monthEnd = LocalDate(year, month, monthLength)
+
+            val st = it.prepareStatement(query)
+
+            st.setInt(1, hid)
+            st.setDate(2, Date.valueOf(monthEnd.toJavaLocalDate()))
+            st.setDate(3, Date.valueOf(monthStart.toJavaLocalDate()))
+
+            val rs = st.executeQuery()
+
+            val unavailableDays = mutableListOf<Int>()
+
+            while (rs.next()) {
+                val start = rs.getDate("StartDate").toLocalDate().toKotlinLocalDate().let { startDate -> if (startDate > monthStart) startDate else monthStart }
+                val end = rs.getDate("EndDate").toLocalDate().toKotlinLocalDate().let { endDate -> if (endDate < monthEnd) endDate else monthEnd }
+
+                for (i in start.dayOfMonth..end.dayOfMonth) {
+                    unavailableDays.add(i)
+                }
+            }
+
+            val availableDays = (1..monthLength).filter { day -> day !in unavailableDays }
+            return if (limit == null || availableDays.isEmpty()) availableDays
+            else {
+                var lastDay = (skip ?: 0) + limit
+                if (lastDay > monthLength) lastDay = monthLength
+                availableDays.subList(skip ?: 0, lastDay)
+            }
+        }
     }
 }
