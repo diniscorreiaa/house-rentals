@@ -68,11 +68,7 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         return updatedBooking
     }
 
-    override fun getAvailableDays(
-        hid: Int,
-        month: Int,
-        year: Int
-    ): List<Int> {
+    override fun getAvailableDays(hid: Int, month: Int, year: Int, limit: Int?, skip: Int?): List<Int> {
         val monthLength = YearMonth.of(year, month).lengthOfMonth() //to get number of days
         val monthStart = LocalDate(year, month, 1)
         val monthEnd = LocalDate(year, month, monthLength)
@@ -90,6 +86,12 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
                 }
             }
 
-        return (1..monthLength).filter { it !in unavailableDays }
+        val availableDays = (1..monthLength).filter { it !in unavailableDays }
+        return if (limit == null || availableDays.isEmpty()) availableDays
+        else {
+            var lastDay = (skip ?: 0) + limit
+            if (lastDay > monthLength) lastDay = monthLength
+            availableDays.subList(skip ?: 0, lastDay)
+        }
     }
 }
