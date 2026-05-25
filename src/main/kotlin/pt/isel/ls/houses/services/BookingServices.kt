@@ -61,11 +61,9 @@ class BookingServices(
         return bookingData.updateBooking(bid, startDate, endDate)
     }
 
-    fun getAvailableDays(hid: Int, month: Int, year: Int): List<Int> {
-        if (month !in 1..12) throw InvalidDate()
-
+    fun getAvailableDays(hid: Int, month: Int, year: Int, limit: Int?, skip: Int?): List<Int> {
         if (houseData.getHouse(hid) == null) throw HouseDoesNotExist()
 
-        return bookingData.getAvailableDays(hid, month, year)
+        return bookingData.getAvailableDays(hid, month, year, limit, skip)
     }
 }
