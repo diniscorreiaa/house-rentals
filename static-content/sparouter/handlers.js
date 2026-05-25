@@ -111,7 +111,48 @@ function getHouseDetails(mainContent) {
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href: `#${bookingsUri}`}))
+
+                ///// Filter bookings ////
+
+                // Estas variáveis garantem que tem de haver pelo menos uma noite de reserva
+                const maxStartDate = new Date(nextYearDate)
+                maxStartDate.setDate(nextYearDate.getDate() - 1)
+
+                const minEndDate = new Date(currDate)
+                minEndDate.setDate(currDate.getDate() + 1)
+
+
+                const startDate = input({
+                    type: "date",
+                    id: "start-date-bookings",
+                    min: getFormatedDate(currDate),
+                    max: getFormatedDate(maxStartDate),
+                    value: getFormatedDate(currDate)
+                })
+                const endDate = input({
+                    type: "date",
+                    id: "end-date-bookings",
+                    min: getFormatedDate(minEndDate),
+                    max: getFormatedDate(nextYearDate),
+                    value: getFormatedDate(nextYearDate)
+                })
+
+                mainContent.replaceChildren(
+                    h1(house.title),
+                    ulData,
+                    p(house.description),
+                    p([a("See bookings for this house", {href: `#${bookingsUri}`})]),
+                    label("Or filter bookings by date: ", [
+                        p([
+                            label("Start Date: ", [startDate]),
+                            label("End Date: ", [endDate])
+                        ])
+                    ]),
+                    button("See filtered bookings", {
+                        click: () => {
+                            window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}`
+                        }})
+                )
             })
         })
     })
