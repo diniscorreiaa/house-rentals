@@ -188,8 +188,8 @@ function getBookingDetails(mainContent) {
 }
 
 function getHouseAvailableDays(mainContent) {
-    const queryParams = new URLSearchParams(currentPath().split("?")[1]) // to get year and month from query
-    const hid = currentPath().split("?")[0].split("/")[1] //to get the hid from the query as well
+    const queryParams = new URLSearchParams(currentPath().split("?")[1])
+    const hid = currentPath().split("?")[0].split("/")[1]
     const year = queryParams.get("year")
     const month = queryParams.get("month")
 
