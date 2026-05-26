@@ -66,4 +66,22 @@ class LocationWebApi(private val locationServices: LocationServices) {
             .header("content-type", "application/json")
             .body(Json.encodeToString(locations.map { GetLocationOut(it.name, it.type) }))
     }
+
+    fun getLocationsFromType(request: Request): Response {
+        val queryType = request.query("type").let {
+            it ?: throw RequiredPathParamNotFound("type")
+        }
+
+        val locationType= try {
+            LocationType.valueOf(queryType.uppercase())
+        } catch (e: IllegalArgumentException) {
+            throw LocationTypeDoesNotExist()
+        }
+
+        val paging = getLimitAndSkip(request)
+        val locations = locationServices.getLocationsFromType(locationType, paging.limit, paging.skip)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(Json.encodeToString(locations?.map { GetLocationOut(it.name, it.type) }))
+    }
 }

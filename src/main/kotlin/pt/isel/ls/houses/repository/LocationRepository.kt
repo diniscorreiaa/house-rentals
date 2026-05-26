@@ -9,4 +9,5 @@ interface LocationRepository {
     fun getChildLocations(lid: Int, limit: Int?, skip: Int?): List<Location>
     fun getHierarchy(lid: Int): List<Location> // not sure if it's the same
     fun getAllLocations(): List<Location>
+    fun getLocationsFromType(type: LocationType, limit: Int?, skip: Int?): List<Location>?
 }

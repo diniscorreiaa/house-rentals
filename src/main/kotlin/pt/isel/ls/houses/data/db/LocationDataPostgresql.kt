@@ -145,4 +145,34 @@ class LocationDataPostgresql(val dataSource: PGSimpleDataSource) : LocationRepos
             return locations
         }
     }
+
+    override fun getLocationsFromType(type: LocationType, limit: Int?, skip: Int?): List<Location> {
+        dataSource.connection.use {
+            var query = "SELECT * FROM LOCATION WHERE \"Type\" = ?::loc_type"
+
+            if (limit != null) query += " ORDER BY \"LocationName\" LIMIT ? OFFSET ?"
+
+            val st = it.prepareStatement(query)
+
+            st.setString(1, type.toString())
+            if (limit != null) {
+                st.setInt(2, limit)
+                st.setInt(3, skip ?: 0)
+            }
+
+            val rs = st.executeQuery()
+            val locations = mutableListOf<Location>()
+            while (rs.next()) {
+                locations.add(
+                    Location(
+                        rs.getInt("IdLocation"),
+                        rs.getString("LocationName"),
+                        LocationType.valueOf(rs.getString("Type")),
+                        rs.getInt("ParentLocation").let { value -> if (value == 0) null else value }
+                    )
+                )
+            }
+            return locations
+        }
+    }
 }
