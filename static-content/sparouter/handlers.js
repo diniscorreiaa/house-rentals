@@ -215,9 +215,23 @@ function getBookingDetails(mainContent) {
     })
 }
 
-
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
+}
+
+function getHouseAvailableDays(mainContent) {
+    const queryParams = new URLSearchParams(currentPath().split("?")[1])
+    const hid = currentPath().split("?")[0].split("/")[1]
+    const year = queryParams.get("year")
+    const month = queryParams.get("month")
+
+    fetchData(`houses/${hid}/available-days?year=${year}&month=${month}`, (availableDays) => {
+        mainContent.replaceChildren(
+            h1(`Available days for house ${hid} — ${month}/${year}`),
+            availableDays.length > 0 ? ul(availableDays.map(day => li(String(day)))) : p("No available days"),
+            a("Back to house", {href: `#houses/${hid}`})
+        )
+    })
 }
 
 
@@ -230,7 +244,8 @@ export const handlers = {
     getUserDetails,
     getBookings,
     getBookingDetails,
-    getFullLocation
+    getFullLocation,
+    getHouseAvailableDays
 }
 
 export default handlers
