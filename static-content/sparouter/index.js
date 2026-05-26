@@ -15,6 +15,7 @@ function loadHandler(){
     router.addRouteHandler("bookings", handlers.getBookings)
     router.addRouteHandler("users/*", handlers.getUserDetails)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
+    router.addRouteHandler("locations/create", handlers.createLocation)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 
