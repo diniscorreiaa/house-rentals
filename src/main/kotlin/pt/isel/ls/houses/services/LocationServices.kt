@@ -43,4 +43,6 @@ class LocationServices(
         if (locationData.getLocation(lid) == null) throw LocationDoesNotExist()
         return locationData.getHierarchy(lid)
     }
+
+    fun getLocationsFromType(type: LocationType, limit: Int?, skip: Int?): List<Location>? = locationData.getLocationsFromType(type, limit, skip)
 }

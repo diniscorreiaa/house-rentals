@@ -1,4 +1,19 @@
-import {h1, div, a, p, fetchData, li, ul, currentPath, ol, button, selector, label, input} from "./dsl-functions.js";
+import {
+    h1,
+    div,
+    a,
+    p,
+    fetchData,
+    li,
+    ul,
+    currentPath,
+    ol,
+    button,
+    selector,
+    label,
+    input,
+    select, option
+} from "./dsl-functions.js";
 
 export const API_BASE_URL = "http://localhost:8000/"
 
@@ -256,6 +271,113 @@ function getBookingDetails(mainContent) {
     })
 }
 
+function createLocation(mainContent) {
+    const locTypes = ["COUNTRY", "REGION", "DISTRICT", "MUNICIPALITY", "LOCALITY"]
+
+    const nameInput = input({
+        type: "text",
+        placeholder: "Insert location name"
+    })
+
+    const parentLocations = div() // Div vazia para colocar os parentLocations dinamicamente
+
+    const typeSelect = select(locTypes.map(type => option(type, {value: type})))
+
+    typeSelect.addEventListener("change", (ev) => {
+        const selectedType = ev.currentTarget.value
+
+        let parentType = null
+        if (selectedType !== "COUNTRY") parentType = locTypes[locTypes.findIndex( type => type === selectedType) - 1]
+
+        if (!parentType) {
+            parentLocations.replaceChildren()
+            return
+        }
+
+        fetchData(`locations?type=${parentType}`, (locations) => {
+            if (locations.length === 0) {
+                parentLocations.replaceChildren(p(`No parent locations exist for type ${selectedType} yet. Create one first.`))
+                return
+            }
+
+            parentLocations.replaceChildren(label("Parent: ", [select({ id: "parent-locations-select"}, locations.map( loc => option(loc.name, { value: loc.lid })))]))
+        })
+    })
+
+    // TODO: Adicionar header Authorization na próxima fase
+    const createButton = button("Create", {
+        click: () => {
+            const parentSelector = document.getElementById("parent-locations-select")
+
+            const body = { name: nameInput.value, type: typeSelect.value, parentId: parentSelector ? parentSelector.value : null}
+
+            fetch(API_BASE_URL + "locations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            }).then( () => {
+                window.location.hash = currentPath()
+            })
+        }
+    })
+
+    mainContent.replaceChildren(
+        h1("Create location"),
+        label("Name: ", [nameInput]),
+        label("Type: ", [typeSelect]),
+        parentLocations,
+        createButton
+    )
+}
+
+function createHouse(mainContent) {
+    const titleInput = input({type: "text", placeholder: "Insert House Title"})
+    const locations = div()
+    const areaInput = input({ type: "number", placeholder: "Insert area" })
+    const priceInput = input({ type: "number", placeholder: "Insert price" })
+    const descriptionInput = input({ type: "text", placeholder: "Insert description" })
+
+    fetchData(`locations?type=locality`, (locs) => {
+        if (locs.length === 0) {
+            locations.replaceChildren(p(`No available locations`))
+            return
+        }
+
+        const locationSelect = select(locs.map(loc => option(loc.name, {value: loc.lid})))
+        locations.replaceChildren(locationSelect)
+
+        // TODO: Adicionar header Authorization na próxima fase
+        const createButton = button("Create", {
+            click: () => {
+                const body = {
+                    title: titleInput.value,
+                    location: parseInt(locationSelect.value),
+                    areaSqMt: parseFloat(areaInput.value),
+                    pricePerNight: parseFloat(priceInput.value),
+                    description: descriptionInput.value}
+
+                fetch(API_BASE_URL + "houses", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                })
+                    .then( res => res.json())
+                    .then( (house) => {
+                    window.location.hash = `houses/${house.hid}`
+                })
+            }
+        })
+
+        mainContent.replaceChildren(
+            label("Title: ", [titleInput]),
+            label("Location: ", [locations]),
+            label("Area (m2): ", [areaInput]),
+            label("Price per night (euros): ", [priceInput]),
+            label("Description: ", [descriptionInput]),
+            createButton
+        )
+    })
+}
 
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
@@ -271,7 +393,9 @@ export const handlers = {
     getUserDetails,
     getBookings,
     getBookingDetails,
-    getFullLocation
+    getFullLocation,
+    createLocation,
+    createHouse
 }
 
 export default handlers

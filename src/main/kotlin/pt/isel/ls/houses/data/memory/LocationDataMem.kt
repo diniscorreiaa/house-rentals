@@ -58,4 +58,14 @@ class LocationDataMem : LocationRepository {
 
     // Used for verifying if a Location already exists in the services layer
     override fun getAllLocations(): List<Location> = locations.values.flatten()
+
+    override fun getLocationsFromType(type: LocationType, limit: Int?, skip: Int?): List<Location>? {
+        val locations = locations[type]
+        if (limit == null || locations!!.isEmpty()) return locations
+        else {
+            var lastLocationIdx = (skip ?: 0) + limit
+            if (lastLocationIdx > locations.size) lastLocationIdx = locations.size
+            return locations.subList(skip ?: 0, lastLocationIdx)
+        }
+    }
 }

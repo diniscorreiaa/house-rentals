@@ -207,6 +207,9 @@ GET {{api}}/locations/100/full
 ### Get full hierarchical path of invalid id
 GET {{api}}/locations/abc/full
 
+### Get all LOCALITY locations
+GET {{api}}/locations?type=locality&limit=2&skip=1
+
 
 // House Management
 

@@ -60,6 +60,7 @@ fun main() {
         "locations/{lid}" bind GET to webApi.location::getLocation,
         "locations/{lid}/children" bind GET to webApi.location::getChildLocations,
         "locations/{lid}/full" bind GET to webApi.location::getHierarchy,
+        "locations" bind GET to webApi.location::getLocationsFromType
     )
 
     val houseRoutes = routes(

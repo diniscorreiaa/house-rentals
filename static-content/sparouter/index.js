@@ -9,12 +9,14 @@ function loadHandler(){
 
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)
+    router.addRouteHandler("houses/create", handlers.createHouse)
     router.addRouteHandler("houses/*", handlers.getHouseDetails)
     router.addRouteHandler("houses-search", handlers.getHousesSearch)
     router.addRouteHandler("locations/*/full", handlers.getFullLocation)
     router.addRouteHandler("bookings", handlers.getBookings)
     router.addRouteHandler("users/*", handlers.getUserDetails)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
+    router.addRouteHandler("locations/create", handlers.createLocation)
 
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 

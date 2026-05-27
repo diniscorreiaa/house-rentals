@@ -13,4 +13,4 @@ data class CreateLocationIn(val name: String, val type: String, val parentId: In
 data class CreateLocationOut(val lid: Int)
 
 @Serializable
-data class GetLocationOut(val name: String, val type: LocationType)
+data class GetLocationOut(val lid: Int, val name: String, val type: LocationType)
