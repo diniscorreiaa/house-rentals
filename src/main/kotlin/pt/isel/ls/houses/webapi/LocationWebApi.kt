@@ -39,7 +39,7 @@ class LocationWebApi(private val locationServices: LocationServices) {
         val location = locationServices.getLocation(locationId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(GetLocationOut(location.name, location.type)))
+            .body(Json.encodeToString(GetLocationOut(locationId, location.name, location.type)))
     }
 
     fun getChildLocations(request: Request): Response {
@@ -52,7 +52,7 @@ class LocationWebApi(private val locationServices: LocationServices) {
         val locations = locationServices.getChildLocations(locationId, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(locations.map { GetLocationOut(it.name, it.type) }))
+            .body(Json.encodeToString(locations.map { GetLocationOut(it.lid, it.name, it.type) }))
     }
 
     fun getHierarchy(request: Request): Response {
@@ -64,7 +64,7 @@ class LocationWebApi(private val locationServices: LocationServices) {
         val locations = locationServices.getHierarchy(locationId)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(locations.map { GetLocationOut(it.name, it.type) }))
+            .body(Json.encodeToString(locations.map { GetLocationOut(it.lid, it.name, it.type) }))
     }
 
     fun getLocationsFromType(request: Request): Response {
@@ -82,6 +82,6 @@ class LocationWebApi(private val locationServices: LocationServices) {
         val locations = locationServices.getLocationsFromType(locationType, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(locations?.map { GetLocationOut(it.name, it.type) }))
+            .body(Json.encodeToString(locations?.map { GetLocationOut(it.lid, it.name, it.type) }))
     }
 }
