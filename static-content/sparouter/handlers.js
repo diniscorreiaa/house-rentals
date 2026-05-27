@@ -235,8 +235,7 @@ function createLocation(mainContent) {
 
     const nameInput = input({
         type: "text",
-        placeholder: "Insert location name",
-        id: "create-location-input"
+        placeholder: "Insert location name"
     })
 
     const parentLocations = div() // Div vazia para colocar os parentLocations dinamicamente
@@ -291,7 +290,52 @@ function createLocation(mainContent) {
 }
 
 function createHouse(mainContent) {
+    const titleInput = input({type: "text", placeholder: "Insert House Title"})
+    const locations = div()
+    const areaInput = input({ type: "number", placeholder: "Insert area" })
+    const priceInput = input({ type: "number", placeholder: "Insert price" })
+    const descriptionInput = input({ type: "text", placeholder: "Insert description" })
 
+    fetchData(`locations?type=locality`, (locs) => {
+        if (locs.length === 0) {
+            locations.replaceChildren(p(`No available locations`))
+            return
+        }
+
+        const locationSelect = select(locs.map(loc => option(loc.name, {value: loc.lid})))
+        locations.replaceChildren(locationSelect)
+
+        // TODO: Adicionar header Authorization na próxima fase
+        const createButton = button("Create", {
+            click: () => {
+                const body = {
+                    title: titleInput.value,
+                    location: parseInt(locationSelect.value),
+                    areaSqMt: parseFloat(areaInput.value),
+                    pricePerNight: parseFloat(priceInput.value),
+                    description: descriptionInput.value}
+
+                fetch(API_BASE_URL + "houses", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                })
+                    .then( res => res.json())
+                    .then( (house) => {
+                    window.location.hash = `houses/${house.hid}`
+                })
+            }
+        })
+
+        mainContent.replaceChildren(
+            label("Title: ", [titleInput]),
+            label("Location: ", [locations]),
+            label("Area (m2): ", [areaInput]),
+            label("Price per night (euros): ", [priceInput]),
+            label("Description: ", [descriptionInput]),
+            createButton
+        )
+    })
 }
 
 function getFormatedDate(date) {
@@ -309,7 +353,8 @@ export const handlers = {
     getBookings,
     getBookingDetails,
     getFullLocation,
-    createLocation
+    createLocation,
+    createHouse
 }
 
 export default handlers
