@@ -1,12 +1,14 @@
 package pt.isel.ls.houses.webapi
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.serialization.json.Json
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NO_CONTENT
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
+import pt.isel.ls.houses.exceptions.InvalidDate
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
 import pt.isel.ls.houses.exceptions.RequiredQueryParamNotFound
@@ -19,6 +21,8 @@ import pt.isel.ls.houses.webapi.dtos.GetBookingOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
 import pt.isel.ls.houses.webapi.dtos.UpdateBookingIn
 import pt.isel.ls.houses.webapi.dtos.UpdateBookingOut
+import java.time.DateTimeException
+import java.time.Year
 import java.time.format.DateTimeParseException
 
 const val INTERVAL_DELIMITER = ':'
@@ -77,7 +81,15 @@ class BookingWebApi(private val bookingServices: BookingServices) {
 
         return Response(OK)
             .header("content-type", "application/json")
-            .body(Json.encodeToString(bookings.map { GetBookingOut(it.bid, it.startDate, it.endDate, it.userId, it.houseId) }))
+            .body(Json.encodeToString(bookings.map {
+                GetBookingOut(
+                    it.bid,
+                    it.startDate,
+                    it.endDate,
+                    it.userId,
+                    it.houseId
+                )
+            }))
     }
 
     fun getAvailableHouses(request: Request): Response {
@@ -148,47 +160,68 @@ class BookingWebApi(private val bookingServices: BookingServices) {
     }
 
     fun getAvailableDays(request: Request): Response {
-        val houseId = (request.path("hid") ?: request.query("hid")).let {
+        val houseId = request.path("hid").let {
             it ?: throw RequiredQueryParamNotFound("hid")
             it.toIntOrNull() ?: throw InvalidIdentifier("hid")
         }
 
         val month = request.query("month").let {
             it ?: throw RequiredQueryParamNotFound("month")
-            it.toIntOrNull() ?: throw InvalidIdentifier("month")
+            checkMonth(it)
         }
 
-        val year = request.query("year").let {
-            it ?: throw RequiredQueryParamNotFound("year")
-            it.toIntOrNull() ?: throw InvalidIdentifier("year")
+            val year = request.query("year").let {
+                it ?: throw RequiredQueryParamNotFound("year")
+                checkYear(it)
+            }
+
+            val paging = getLimitAndSkip(request)
+
+            val availableDays = bookingServices.getAvailableDays(houseId, month, year, paging.limit, paging.skip)
+            return Response(OK)
+                .header("content-type", "application/json")
+                .body(Json.encodeToString(availableDays))
         }
-
-        val availableDays = bookingServices.getAvailableDays(houseId, month, year)
-
-        return Response(OK)
-            .header("content-type", "application/json")
-            .body(Json.encodeToString(availableDays))
     }
-}
 
-private class Interval(val startDate: LocalDate, val endDate: LocalDate)
+    private class Interval(val startDate: LocalDate, val endDate: LocalDate)
 
-// TODO: refactor later
-private fun String.intervalToDates(): Interval? {
-    val split = this.split(INTERVAL_DELIMITER)
-    if (split.size != 2) return null
+    // TODO: refactor later
+    private fun String.intervalToDates(): Interval? {
+        val split = this.split(INTERVAL_DELIMITER)
+        if (split.size != 2) return null
 
-    val start = parseDateOrNull(split.first()) ?: throw WrongFormatDate(split.first())
-    val end = parseDateOrNull(split.last()) ?: throw WrongFormatDate(split.last())
-    return Interval(start, end)
-}
-
-private fun parseDateOrNull(date: String): LocalDate? {
-    return try {
-        LocalDate.parse(date)
-    } catch (_: DateTimeParseException) {
-        null
-    } catch (_: IllegalArgumentException) {
-        null
+        val start = parseDateOrNull(split.first()) ?: throw WrongFormatDate(split.first())
+        val end = parseDateOrNull(split.last()) ?: throw WrongFormatDate(split.last())
+        return Interval(start, end)
     }
-}
+
+    private fun parseDateOrNull(date: String): LocalDate? {
+        return try {
+            LocalDate.parse(date)
+        } catch (_: DateTimeParseException) {
+            null
+        } catch (_: IllegalArgumentException) {
+            null
+        }
+    }
+
+    private fun checkMonth(month: String): Int {
+        try {
+            val monthInt = month.toIntOrNull() ?: throw InvalidDate()
+            Month.of(monthInt)
+            return monthInt
+        } catch (_: DateTimeException) {
+            throw InvalidDate()
+        }
+    }
+
+    private fun checkYear(year: String): Int {
+        try {
+            val yearInt = year.toIntOrNull() ?: throw InvalidDate()
+            Year.of(yearInt)
+            return yearInt
+        } catch (_: DateTimeException) {
+            throw InvalidDate()
+        }
+    }

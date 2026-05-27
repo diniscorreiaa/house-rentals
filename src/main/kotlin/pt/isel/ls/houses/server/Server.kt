@@ -74,7 +74,8 @@ fun main() {
         "bookings/{bid}" bind GET to webApi.booking::getBooking,
         "houses/available" bind GET to webApi.booking::getAvailableHouses,
         "bookings/{bid}" bind DELETE to webApi.booking::deleteBooking,
-        "bookings/{bid}" bind PUT to webApi.booking::updateBooking
+        "bookings/{bid}" bind PUT to webApi.booking::updateBooking,
+        "houses/{hid}/daysAvailable" bind GET to webApi.booking::getAvailableDays
     )
 
     // bookingRoutes have to come BEFORE houseRoutes, for houses/available endpoint to be matched first to houses/{hid}

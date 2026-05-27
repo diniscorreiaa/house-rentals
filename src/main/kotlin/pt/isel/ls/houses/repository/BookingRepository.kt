@@ -12,5 +12,5 @@ interface BookingRepository {
     fun userBookings(uid: Int): List<Booking> // TODO: Faz sentido ter paging?
     fun deleteBooking(bid: Int)
     fun updateBooking(bid: Int, startDate: LocalDate, endDate: LocalDate): Booking
-    fun getAvailableDays(hid: Int, month: Int, year: Int): List<Int>
+    fun getAvailableDays(hid: Int, month: Int, year: Int, limit: Int?, skip: Int?): List<Int>
 }

@@ -378,6 +378,9 @@ GET {{api}}/users/999999/bookings
 ### Get bookings of invalid id (400)
 GET {{api}}/users/abca/bookings
 
+### Get available days for booking of house 2 with limit 10
+GET {{api}}/houses/2/daysAvailable?month=12&year=2025&limit=10
+
 ### Update booking 1
 PUT {{api}}/bookings/1
 Content-Type: {{accept-content}}
