@@ -15,6 +15,7 @@ function loadHandler(){
     router.addRouteHandler("locations/*/full", handlers.getFullLocation)
     router.addRouteHandler("bookings", handlers.getBookings)
     router.addRouteHandler("users/*", handlers.getUserDetails)
+    router.addRouteHandler("bookings/create", handlers.createBooking)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
     router.addRouteHandler("locations/create", handlers.createLocation)
 
