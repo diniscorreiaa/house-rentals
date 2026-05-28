@@ -157,6 +157,7 @@ function getHouseDetails(mainContent) {
                     ulData,
                     p(house.description),
                     p([a("See bookings for this house", {href: `#${bookingsUri}`})]),
+                    p("Interested? ", [a("Book now!", { href: `#bookings/create?hid=${house.hid}`})]),
                     label("Or filter bookings by date: ", [
                         p([
                             label("Start Date: ", [startDate]),
@@ -379,6 +380,144 @@ function createHouse(mainContent) {
     })
 }
 
+function createBooking(mainContent) {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    const queryParams = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
+    const houseId = queryParams.get("hid")
+
+    const currDate = new Date()
+    const nextYearDate = new Date()
+    nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
+
+
+    // Estas variáveis garantem que tem de haver pelo menos uma noite de reserva
+    const maxStartDate = new Date(nextYearDate)
+    maxStartDate.setDate(nextYearDate.getDate() - 1)
+
+    const minEndDate = new Date(currDate)
+    minEndDate.setDate(currDate.getDate() + 1)
+
+
+    const startDate = input({
+        type: "date",
+        id: "start-date-bookings",
+        min: getFormatedDate(currDate),
+        max: getFormatedDate(maxStartDate),
+        value: getFormatedDate(currDate)
+    })
+    const endDate = input({
+        type: "date",
+        id: "end-date-bookings",
+        min: getFormatedDate(minEndDate),
+        max: getFormatedDate(nextYearDate),
+        value: getFormatedDate(nextYearDate)
+    })
+
+
+    const currentYear = currDate.getFullYear()
+    const nextYear = nextYearDate.getFullYear()
+    const currentMonth = currDate.getMonth() + 1
+    const nextYearMonth = nextYearDate.getMonth() + 1
+    const currentDay = currDate.getDate()
+    const nextYearDay = nextYearDate.getDate()
+
+    const yearSelect = select([
+        option(String(currentYear), { value: currentYear }),
+        option(String(nextYear), { value: nextYear })
+    ])
+
+    const monthsDiv = div()
+    const availableDaysDiv = div()
+
+    function updateAvailableDays(month, year) {
+        fetchData(`houses/${houseId}/daysAvailable?month=${month}&year=${year}`, (days) => {
+            if (days.length === 0) {
+                availableDaysDiv.replaceChildren(p("No available days for this month."))
+                return
+            }
+
+            let validDays = days
+
+            const monthInt = parseInt(month)
+            const yearInt = parseInt(year)
+
+            // Lógica para não incluir dias passados ou com mais de exatamente um ano
+
+            if (monthInt === currentMonth && yearInt === currentYear)
+                validDays = days.filter( day => day >= currentDay)
+
+            else if (monthInt === nextYearMonth && yearInt === nextYear)
+                validDays = days.filter( day => day <= nextYearDay)
+
+            availableDaysDiv.replaceChildren(
+                p(`Available days: ${validDays.join(", ")}`)
+            )
+        })
+    }
+
+    function updateMonthSelector() {
+        const selectedYear = parseInt(yearSelect.value)
+
+        let validMonths = []
+        if (selectedYear === currentYear) {
+            validMonths = months.slice(currentMonth - 1)
+        } else {
+            validMonths = months.slice(0, nextYearMonth)
+        }
+
+        const monthSelect = select(
+            validMonths.map(month =>
+                option(month, { value: months.indexOf(month) + 1 })
+            )
+        )
+
+        monthSelect.addEventListener("change", () => {
+            updateAvailableDays(monthSelect.value, yearSelect.value)
+        })
+
+        monthsDiv.replaceChildren(
+            label("Month: ", [monthSelect])
+        )
+
+        updateAvailableDays(monthSelect.value, yearSelect.value)
+    }
+
+    yearSelect.addEventListener("change", updateMonthSelector)
+
+    fetchData(`houses/${houseId}`, (house) => {
+        updateMonthSelector() // Temos de chamar antes de apresentar monthsDiv na página pois monthsDiv é um div vazio e queremos que seja atualizado com o seletor
+
+        mainContent.replaceChildren(
+            h1(`You are booking for house ${house.title}`),
+            p("Check for available days: ", [
+                label("Year: ", [yearSelect]),
+                monthsDiv,
+                availableDaysDiv
+            ]),
+            label("Start date: ", [startDate]),
+            label("End date: ", [endDate]),
+            button("Create booking", {
+                click: () => {
+                    fetch(API_BASE_URL + "bookings", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            hid: parseInt(houseId, 10),
+                            startDate: startDate.value,
+                            endDate: endDate.value
+                        })
+                    })
+                        .then( res => res.json())
+                        .then( (booking) => {
+                            window.location.hash = `bookings/${booking.bid}`
+                        })
+                }
+            })
+        )
+    })
+}
+
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
 }
@@ -395,7 +534,8 @@ export const handlers = {
     getBookingDetails,
     getFullLocation,
     createLocation,
-    createHouse
+    createHouse,
+    createBooking
 }
 
 export default handlers
