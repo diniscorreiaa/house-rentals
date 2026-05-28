@@ -15,6 +15,7 @@ import {
     select, option
 } from "./dsl-functions.js";
 
+// this is only temporary
 const tempToken = "4657f27c-5218-4bec-ba9a-b195807cb2ec"
 
 export const API_BASE_URL = "http://localhost:8000/"
@@ -229,6 +230,11 @@ function getBookings(mainContent) {
                                 }
                             }),
 
+                            button("Update", {
+                                click: () => {
+                                    window.location.hash = `bookings/${booking.bid}/update`
+                                }
+                            })
                         ]
                     )
                 )
