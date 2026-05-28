@@ -15,6 +15,8 @@ import {
     select, option
 } from "./dsl-functions.js";
 
+const tempToken = "4657f27c-5218-4bec-ba9a-b195807cb2ec"
+
 export const API_BASE_URL = "http://localhost:8000/"
 
 export let housesLimit = 2
@@ -218,7 +220,7 @@ function getBookings(mainContent) {
                             button("Delete", {
                                 click: () => {
                                     fetch(`bookings/${booking.bid}`, {
-                                            headers: {"Authorization": "3794da2c-596e-4c2c-8816-3d1716dd13c0"},
+                                            headers: {"Authorization": tempToken},
                                             method: "DELETE"
                                         }
                                     ).then(() =>
@@ -328,7 +330,10 @@ function createLocation(mainContent) {
 
             fetch(API_BASE_URL + "locations", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Authorization": tempToken,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(body)
             }).then( () => {
                 window.location.hash = currentPath()
@@ -373,7 +378,9 @@ function createHouse(mainContent) {
 
                 fetch(API_BASE_URL + "houses", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": tempToken,
+                        "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 })
                     .then( res => res.json())
@@ -515,7 +522,9 @@ function createBooking(mainContent) {
                 click: () => {
                     fetch(API_BASE_URL + "bookings", {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: {
+                            "Authorization": tempToken,
+                            "Content-Type": "application/json" },
                         body: JSON.stringify({
                             hid: parseInt(houseId, 10),
                             startDate: startDate.value,
@@ -570,7 +579,7 @@ function updateBooking(mainContent){
                 console.log(booking)
                 fetch(`bookings/${bid}`, {
                     method: "PUT",
-                    headers: {"Authorization": "3794da2c-596e-4c2c-8816-3d1716dd13c0"},
+                    headers: {"Authorization": tempToken},
                     body: JSON.stringify({
                         startDate: startDate.value,
                         endDate: endDate.value
