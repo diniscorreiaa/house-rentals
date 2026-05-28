@@ -211,10 +211,24 @@ function getBookings(mainContent) {
         const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
         fetchData(`houses/${params.get("hid")}`, (house) => {
             if (bookings.length !== 0) {
-                const items = bookings.map(booking =>
-                    li(`${booking.startDate} until ${booking.endDate}`, [
-                        a("Details", {href: "#bookings/" + booking.bid})
-                    ])
+                const items = bookings.map((booking, idx) =>
+                    li(`${booking.startDate} until ${booking.endDate}`, {id: `booking-${idx}`}, [
+                            a("Details", {href: "#bookings/" + booking.bid}),
+
+                            button("Delete", {
+                                click: () => {
+                                    fetch(`bookings/${booking.bid}`, {
+                                            headers: {"Authorization": "3794da2c-596e-4c2c-8816-3d1716dd13c0"},
+                                            method: "DELETE"
+                                        }
+                                    ).then(() =>
+                                        document.getElementById(`booking-${idx}`).remove()
+                                    )
+                                }
+                            }),
+
+                        ]
+                    )
                 )
 
                 const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
@@ -518,6 +532,62 @@ function createBooking(mainContent) {
     })
 }
 
+
+function updateBooking(mainContent){
+    const bid = window.location.hash.split('/')[1]
+    fetchData(`bookings/${bid}`, (booking) => {
+        // TODO: this is repeated code. in future, refactor to function
+        const currDate = new Date()
+        const nextYearDate = new Date()
+        nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
+
+
+        // Estas variáveis garantem que tem de haver pelo menos uma noite de reserva
+        const maxStartDate = new Date(nextYearDate)
+        maxStartDate.setDate(nextYearDate.getDate() - 1)
+
+        const minEndDate = new Date(currDate)
+        minEndDate.setDate(currDate.getDate() + 1)
+
+
+        const startDate = input({
+            type: "date",
+            min: getFormatedDate(currDate),
+            max: getFormatedDate(maxStartDate),
+            value: booking.startDate
+        })
+        const endDate = input({
+            type: "date",
+            min: getFormatedDate(minEndDate),
+            max: getFormatedDate(nextYearDate),
+            value: booking.endDate
+        })
+
+        const updateButton = button("Update", {
+            click: () => {
+                booking.startDate = startDate.value
+                booking.endDate = endDate.value
+                console.log(booking)
+                fetch(`bookings/${bid}`, {
+                    method: "PUT",
+                    headers: {"Authorization": "3794da2c-596e-4c2c-8816-3d1716dd13c0"},
+                    body: JSON.stringify({
+                        startDate: startDate.value,
+                        endDate: endDate.value
+                    })
+                })
+            }
+        })
+
+        mainContent.replaceChildren(
+            h1("Update Booking"),
+            startDate,
+            endDate,
+            updateButton
+        )
+    })
+}
+
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
 }
@@ -535,7 +605,8 @@ export const handlers = {
     getFullLocation,
     createLocation,
     createHouse,
-    createBooking
+    createBooking,
+    updateBooking
 }
 
 export default handlers
