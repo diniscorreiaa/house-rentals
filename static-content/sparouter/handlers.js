@@ -111,7 +111,8 @@ function getHouseDetails(mainContent) {
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
-                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href: `#${bookingsUri}`}))
+                mainContent.replaceChildren(h1(house.title), ulData, p(house.description), a("See bookings for this house", {href: `#${bookingsUri}`}),
+                    p([a("Check available days by month", {href: `#houses/${house.hid}/available-days`})]),)
             })
         })
     })
@@ -233,7 +234,6 @@ function getHouseAvailableDays(mainContent) {
         )
     })
 }
-
 
 export const handlers = {
     getHome,
