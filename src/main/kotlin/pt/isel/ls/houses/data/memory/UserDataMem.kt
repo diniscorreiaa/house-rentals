@@ -9,8 +9,8 @@ class UserDataMem : UserRepository {
     private val users = mutableListOf<User>()
     private var id = 1
 
-    override fun createUser(name: String, email: String): User {
-        val user = User(id++, name, email, Uuid.random())
+    override fun createUser(name: String, email: String, password: String): User {
+        val user = User(id++, name, email, Uuid.random(), password)
         users.add(user)
         return user
     }

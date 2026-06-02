@@ -5,7 +5,7 @@ import kotlin.uuid.Uuid
 
 /////////// Input ///////////
 @Serializable
-data class CreateUserIn(val name: String, val email: String)
+data class CreateUserIn(val name: String, val email: String, val password: String)
 
 
 /////////// Output ///////////

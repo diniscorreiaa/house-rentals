@@ -17,7 +17,7 @@ class UserWebApi(private val userServices: UserServices) {
 
     fun createUser(request: Request): Response {
         val user = Json.decodeFromString<CreateUserIn>(request.bodyString())
-        val newUser = userServices.createUser(user.name, user.email)
+        val newUser = userServices.createUser(user.name, user.email, user.password)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(CreateUserOut(newUser.uid, newUser.token)))

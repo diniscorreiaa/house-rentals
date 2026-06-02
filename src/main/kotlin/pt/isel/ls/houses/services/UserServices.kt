@@ -11,10 +11,10 @@ class UserServices(
     private val userData: UserRepository,
     private val bookingData: BookingRepository
 ) {
-    fun createUser(name: String, email: String): User {
+    fun createUser(name: String, email: String, password: String): User {
         if (userData.getUserByEmail(email) != null) throw UserEmailAlreadyExists()
 
-        val user = userData.createUser(name, email)
+        val user = userData.createUser(name, email, password)
         return user
     }
 
