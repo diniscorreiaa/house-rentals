@@ -204,6 +204,64 @@ paths:
 
 
   /locations:
+    get:
+      tags:
+        - Locations
+      summary: Get the list of locations of a given type.
+      description: >
+        Returns all locations identifier name and type.
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+          required: true
+          description: Name of the location type
+      responses:
+        "200":
+          description: Successful retrieval of children information.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    lid:
+                      type: integer
+                    name:
+                      type: string
+                    type:
+                      type: string
+              example:
+                - lid: 4
+                  name: "Paço de Arcos"
+                  type: "LOCALITY"
+                - lid: 5
+                  name: "Algés"
+                  type: "LOCALITY"
+                - lid: 6
+                  name: "Barcarena"
+                  type: "LOCALITY"
+
+
+        "400":
+          description: Bad request retrieving location's of given type
+          content:
+            plain:
+              example:
+                uri: "/locations/"
+                message: "Location type does not exist, valid types: COUNTRY, REGION, DISTRICT, MUNICIPALITY, LOCALITY"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "/locations"
+                message: "Internal error, contact the developers to report this situation."
+
+
     post:
       tags:
         - Locations
@@ -507,7 +565,7 @@ paths:
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
                 uri: "/houses"
                 message: "Internal error, contact the developers to report this situation."
@@ -574,7 +632,7 @@ paths:
         "500":
           description: Internal server error.
           content:
-            plain:
+            application/json:
               example:
                 uri: "/houses"
                 message: "Internal error, contact the developers to report this situation."
@@ -626,7 +684,7 @@ paths:
         "400":
           description: Bad request retrieving house information.
           content:
-            plain:
+            application/json:
               example:
                 uri: "/houses/abc"
                 message: "Invalid identifier hid"
@@ -634,7 +692,7 @@ paths:
         "404":
           description: House not found.
           content:
-            plain:
+            application/json:
               example:
                 uri: "/houses/99999"
                 message: "House does not exist"
@@ -645,6 +703,67 @@ paths:
             plain:
               example:
                 uri: "/houses/1"
+                message: "Internal error, contact the developers to report this situation."
+
+  /houses/{hid}/daysAvailable:
+    get:
+      tags:
+        - Houses
+      summary: Get the list of the available days to book an house in specific month.
+      description: >
+        Returns the identifier, title, location, area per square meter, price per night and description of the specified house.
+      parameters:
+        - in: path
+          name: hid
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the house
+        - in: query
+          name: month
+          schema:
+            type: integer
+          required: true
+          description: Month to check for available days
+        - in: query
+          name: year
+          schema:
+            type: integer
+          required: true
+          description: Year to check for available days
+      responses:
+        "200":
+          description: Successful retrieval of available days.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                example: [1, 2, 3, 4, 5, 6, 12, 13, 14, 15]
+
+        "400":
+          description: Bad request retrieving house's available days.
+          content:
+            application/json:
+              example:
+                uri: "/houses/abc/daysAvailable"
+                message: "Invalid identifier hid"
+
+        "404":
+          description: House not found.
+          content:
+            application/json:
+              example:
+                uri: "/houses/99999/daysAvailable"
+                message: "House does not exist"
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "/houses/1/daysAvailable"
                 message: "Internal error, contact the developers to report this situation."
 
 
