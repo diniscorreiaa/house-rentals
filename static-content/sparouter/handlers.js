@@ -603,6 +603,16 @@ function updateBooking(mainContent){
     })
 }
 
+function signIn(mainContent){
+    mainContent.replaceChildren()
+    // TODO
+}
+
+function signUp(mainContent){
+    mainContent.replaceChildren()
+    // TODO
+}
+
 function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
 }
@@ -621,7 +631,9 @@ export const handlers = {
     createLocation,
     createHouse,
     createBooking,
-    updateBooking
+    updateBooking,
+    signIn,
+    signUp
 }
 
 export default handlers
