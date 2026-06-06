@@ -604,13 +604,37 @@ function updateBooking(mainContent){
 }
 
 function signIn(mainContent){
-    mainContent.replaceChildren()
-    // TODO
+    mainContent.replaceChildren(
+        h1("Login"),
+        label("Username:",
+            [input({type: "text", id: "input-username"})]
+        ),
+        label("Password:", [
+            input({type: "password", id: "input-password"})
+        ]),
+        button("Confirm", {
+            click: () => {
+                // TODO
+            }
+        })
+    )
 }
 
 function signUp(mainContent){
-    mainContent.replaceChildren()
-    // TODO
+    mainContent.replaceChildren(
+        h1("Register new user"),
+        label("Username:",
+            [input({type: "text", id: "input-username"})]
+        ),
+        label("Password:", [
+            input({type: "password", id: "input-password"})
+        ]),
+        button("Confirm", {
+            click: () => {
+                // TODO
+            }
+        })
+    )
 }
 
 function getFormatedDate(date) {
