@@ -10,7 +10,8 @@ Content-Type: application/json
 
 {
   "name": "João Pinto Marques",
-  "email": "joaomarques@example.com"
+  "email": "joaomarques@example.com",
+  "password": "12345"
 }
 > {% client.global.set("tokenFirstUser", response.body.token) %}
 
@@ -20,7 +21,8 @@ Content-Type: application/json
 
 {
   "name": "Maria Rosário",
-  "email": "mariarosario@example.com"
+  "email": "mariarosario@example.com",
+  "password": "54321"
 }
 > {% client.global.set("tokenSecondUser", response.body.token) %}
 
@@ -31,7 +33,8 @@ Content-Type: application/json
 
 {
   "name": "João António Marques",
-  "email": "joaomarques@example.com"
+  "email": "joaomarques@example.com",
+  "password": "joao123"
 }
 
 ### iii. CREATE LOCATION
