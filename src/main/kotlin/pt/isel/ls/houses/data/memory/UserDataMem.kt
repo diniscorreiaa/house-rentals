@@ -17,9 +17,9 @@ class UserDataMem : UserRepository {
 
     override fun getUser(uid: Int): User? = users.find { it.uid == uid }
 
-
     override fun getUserByEmail(email: String): User? = users.find { it.email == email }
 
     override fun getUserByToken(token: Uuid): User? = users.find { it.token == token }
 
+    override fun login(username: String, password: String): User? = users.find { it.name == username && it.password == password }
 }

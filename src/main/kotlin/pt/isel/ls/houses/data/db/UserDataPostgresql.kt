@@ -87,4 +87,24 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource) : UserRepository { 
             )
         }
     }
+
+    override fun login(username: String, password: String): User? {
+        dataSource.connection.use {
+            val st =
+                it.prepareStatement("SELECT * FROM \"user\" WHERE \"UserName\" = ? AND \"Password\" = ?")
+            st.setString(1, username)
+            st.setString(2, password)
+
+            val rs = st.executeQuery()
+            if (!rs.next()) return null
+
+            return User(
+                rs.getInt("IdUser"),
+                username,
+                rs.getString("Email"),
+                Uuid.parse(rs.getString("Token")),
+                password
+            )
+        }
+    }
 }

@@ -11,7 +11,6 @@ import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import pt.isel.ls.houses.data.db.DataPostgresSQL
-import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
 
@@ -52,7 +51,8 @@ fun main() {
     val userRoutes = routes(
         "users" bind POST to webApi.user::createUser,
         "users/{uid}" bind GET to webApi.user::getUser,
-        "users/{uid}/bookings" bind GET to webApi.user::userBookings
+        "users/{uid}/bookings" bind GET to webApi.user::userBookings,
+        "users/login" bind POST to webApi.user::login,
     )
 
     val locationRoutes = routes(
