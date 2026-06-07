@@ -43,7 +43,7 @@ class BookingServicesTests {
         val locations = locationServices(data)
         val houses = houseServices(data)
 
-        token = userServices(data).createUser("dummy", "dummy@example.com").token
+        token = userServices(data).createUser("dummy", "dummy@example.com", "password").token
 
         createParentLocations(locationServices(data))
         val loc = locations.createLocation(name = "Paço de Arcos", type = LocationType.LOCALITY, parentId = 3, token)
@@ -100,7 +100,7 @@ class BookingServicesTests {
         val data = DataMem()
         val bookingServices = bookingServices(data)
 
-        token = userServices(data).createUser("dummy", "dummy@example.com").token
+        token = userServices(data).createUser("dummy", "dummy@example.com", "password").token
 
         assertFailsWith<HouseDoesNotExist> {
             bookingServices.createBooking(
@@ -224,7 +224,7 @@ class BookingServicesTests {
         val houses = houseServices(data)
 
 
-        token = userServices(data).createUser("dummy", "dummy@example.com").token
+        token = userServices(data).createUser("dummy", "dummy@example.com", "password").token
 
         createParentLocations(locationServices(data))
         val locId = locationServices(data).createLocation(
