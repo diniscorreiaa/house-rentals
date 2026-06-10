@@ -616,13 +616,15 @@ function signIn(mainContent){
         ]),
         button("Confirm", {
             click: () => {
-                fetch("user/login", {
+                fetch("users/login", {
                     method: "POST",
                     body: JSON.stringify({
                         username: document.getElementById("input-username").value,
                         password: document.getElementById("input-password").value
                     }),
                 }).then((res) => {
+                    if (!res.ok) throw new Error(`Error logging in`);
+
                     sessionStorage.setItem("token", res.body.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
