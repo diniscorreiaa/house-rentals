@@ -20,8 +20,8 @@ function loadHandler(){
     router.addRouteHandler("bookings/*/update", handlers.updateBooking)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
     router.addRouteHandler("locations/create", handlers.createLocation)
-    router.addRouteHandler("sign-up", handlers.signUp)
-    router.addRouteHandler("sign-in", handlers.signIn)
+    router.addRouteHandler("login", handlers.signIn)
+    router.addRouteHandler("register", handlers.signUp)
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 
     updateLoginLogoutLinks()
@@ -61,12 +61,12 @@ const logoutLink = () => a("Logout", {
 
 const loginLink = () => a("Login", {
     click: () => {
-        window.location.hash = "sign-in"
+        window.location.hash = "login"
     }, class: "link-secondary"
 })
 
 const registerLink = () => a("Register", {
     click: () => {
-        window.location.hash = "sign-up"
+        window.location.hash = "register"
     }, class: "link-secondary"
 })
