@@ -36,36 +36,34 @@ function hashChangeHandler(){
     handler(mainContent)
 }
 
-function updateLoginLogoutLinks() {
-    const loginElem = document.getElementById("login-link")
-    const logoutElem = document.getElementById("logout-link")
-    const registerElem = document.getElementById("register-link")
+export function updateLoginLogoutLinks() {
     const div = document.getElementById("top-bar")
 
     if (sessionStorage.getItem("token") != null) {
-        loginElem.remove()
-        registerElem.remove()
-        div.appendChild(logoutLink())
+        loginLink.remove()
+        registerLink.remove()
+        div.appendChild(logoutLink)
     } else {
-        div.appendChild(loginLink())
-        div.appendChild(registerLink())
-        logoutElem.remove()
+        div.appendChild(loginLink)
+        div.appendChild(registerLink)
+        logoutLink.remove()
     }
 }
 
-const logoutLink = () => a("Logout", {
+const logoutLink = a("Logout", {
     click: () => {
         sessionStorage.removeItem("token")
+        updateLoginLogoutLinks()
     }, class: "link-secondary"
 })
 
-const loginLink = () => a("Login", {
+const loginLink = a("Login", {
     click: () => {
         window.location.hash = "login"
     }, class: "link-secondary"
 })
 
-const registerLink = () => a("Register", {
+const registerLink = a("Register", {
     click: () => {
         window.location.hash = "register"
     }, class: "link-secondary"

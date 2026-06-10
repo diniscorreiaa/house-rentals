@@ -15,6 +15,8 @@ import {
     select, option
 } from "./dsl-functions.js";
 
+import {updateLoginLogoutLinks} from "./index.js"
+
 // this is only temporary
 const tempToken = "4657f27c-5218-4bec-ba9a-b195807cb2ec"
 
@@ -622,7 +624,7 @@ function signIn(mainContent){
                     }),
                 }).then((res) => {
                     sessionStorage.setItem("token", res.body.token)
-                    console.log(res.body.token)
+                    updateLoginLogoutLinks()
                     window.location.hash = `home`
                 })
             }
