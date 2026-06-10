@@ -614,7 +614,17 @@ function signIn(mainContent){
         ]),
         button("Confirm", {
             click: () => {
-                // TODO
+                fetch("user/login", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        username: document.getElementById("input-username").value,
+                        password: document.getElementById("input-password").value
+                    }),
+                }).then((res) => {
+                    sessionStorage.setItem("token", res.body.token)
+                    console.log(res.body.token)
+                    window.location.hash = `home`
+                })
             }
         })
     )
