@@ -9,17 +9,17 @@ class UserDataMem : UserRepository {
     private val users = mutableListOf<User>()
     private var id = 1
 
-    override fun createUser(name: String, email: String): User {
-        val user = User(id++, name, email, Uuid.random())
+    override fun createUser(name: String, email: String, password: String): User {
+        val user = User(id++, name, email, Uuid.random(), password)
         users.add(user)
         return user
     }
 
     override fun getUser(uid: Int): User? = users.find { it.uid == uid }
 
-
     override fun getUserByEmail(email: String): User? = users.find { it.email == email }
 
     override fun getUserByToken(token: Uuid): User? = users.find { it.token == token }
 
+    override fun login(username: String, password: String): User? = users.find { it.name == username && it.password == password }
 }

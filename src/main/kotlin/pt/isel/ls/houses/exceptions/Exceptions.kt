@@ -44,3 +44,5 @@ class WrongTypeForQuery(query: String, expectedType: String) :
     HttpException(Status.BAD_REQUEST, "Wrong type for query $query, please use a $expectedType")
 
 class InvalidIdentifier(idName: String) : HttpException(Status.BAD_REQUEST, "Invalid identifier $idName")
+
+class InvalidLogin : HttpException(Status.BAD_REQUEST, "Wrong login credentials")
