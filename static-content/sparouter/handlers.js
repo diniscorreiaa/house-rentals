@@ -640,12 +640,27 @@ function signUp(mainContent){
         label("Username:",
             [input({type: "text", id: "input-username"})]
         ),
+        label("email:",
+            [input({type: "text", id: "input-email"})]
+        ),
         label("Password:", [
             input({type: "password", id: "input-password"})
         ]),
         button("Confirm", {
             click: () => {
-                // TODO
+                fetch("users", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: document.getElementById("input-username").value,
+                        email: document.getElementById("input-email").value,
+                        password: document.getElementById("input-password").value
+                    }),
+                }).then((res) => {
+                    console.log(res)
+                    sessionStorage.setItem("token", res.body.token)
+                    updateLoginLogoutLinks()
+                    window.location.hash = `home`
+                })
             }
         })
     )
