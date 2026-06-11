@@ -15,8 +15,7 @@ import {
     select, option
 } from "./dsl-functions.js";
 
-// this is only temporary
-const tempToken = "4657f27c-5218-4bec-ba9a-b195807cb2ec"
+import {updateLoginLogoutLinks} from "./index.js"
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"
@@ -224,7 +223,7 @@ function getBookings(mainContent) {
                             button("Delete", {
                                 click: () => {
                                     fetch(`bookings/${booking.bid}`, {
-                                            headers: {"Authorization": tempToken},
+                                            headers: {"Authorization": sessionStorage.getItem("token")},
                                             method: "DELETE"
                                         }
                                     ).then(() =>
@@ -340,7 +339,7 @@ function createLocation(mainContent) {
             fetch(API_BASE_URL + "locations", {
                 method: "POST",
                 headers: {
-                    "Authorization": tempToken,
+                    "Authorization": sessionStorage.getItem("token"),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(body)
@@ -388,7 +387,7 @@ function createHouse(mainContent) {
                 fetch(API_BASE_URL + "houses", {
                     method: "POST",
                     headers: {
-                        "Authorization": tempToken,
+                        "Authorization": sessionStorage.getItem("token"),
                         "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 })
@@ -532,7 +531,7 @@ function createBooking(mainContent) {
                     fetch(API_BASE_URL + "bookings", {
                         method: "POST",
                         headers: {
-                            "Authorization": tempToken,
+                            "Authorization": sessionStorage.getItem("token"),
                             "Content-Type": "application/json" },
                         body: JSON.stringify({
                             hid: parseInt(houseId, 10),
@@ -588,7 +587,7 @@ function updateBooking(mainContent){
                 console.log(booking)
                 fetch(`bookings/${bid}`, {
                     method: "PUT",
-                    headers: {"Authorization": tempToken},
+                    headers: {"Authorization": sessionStorage.getItem("token")},
                     body: JSON.stringify({
                         startDate: startDate.value,
                         endDate: endDate.value
@@ -604,6 +603,80 @@ function updateBooking(mainContent){
             updateButton
         )
     })
+}
+
+// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
+function signIn(mainContent) {
+    mainContent.replaceChildren(
+        h1("Login"),
+        label("Username:",
+            [input({type: "text", id: "input-username"})]
+        ),
+        label("Password:", [
+            input({type: "password", id: "input-password"})
+        ]),
+        button("Confirm", {
+            click: () => {
+                fetch("users/login", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        username: document.getElementById("input-username").value,
+                        password: document.getElementById("input-password").value
+                    }),
+                })
+                    .then((res) => {
+                            if (!res.ok) throw new Error(`Error logging in`)
+                            return res
+                        }
+                    )
+                    .then((res) => res.json())
+                    .then((tokenAndId) => {
+                        sessionStorage.setItem("token", tokenAndId.token)
+                        updateLoginLogoutLinks()
+                        window.location.hash = `home`
+                    })
+            }
+        })
+    )
+}
+
+// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
+function signUp(mainContent){
+    mainContent.replaceChildren(
+        h1("Register new user"),
+        label("Username:",
+            [input({type: "text", id: "input-username"})]
+        ),
+        label("email:",
+            [input({type: "text", id: "input-email"})]
+        ),
+        label("Password:", [
+            input({type: "password", id: "input-password"})
+        ]),
+        button("Confirm", {
+            click: () => {
+                fetch("users", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: document.getElementById("input-username").value,
+                        email: document.getElementById("input-email").value,
+                        password: document.getElementById("input-password").value
+                    }),
+                })
+                    .then((res) => {
+                            if (!res.ok) throw new Error(`Error logging in`)
+                            return res
+                        }
+                    )
+                    .then((res) => res.json())
+                    .then((tokenAndId) => {
+                    sessionStorage.setItem("token", tokenAndId.token)
+                    updateLoginLogoutLinks()
+                    window.location.hash = `home`
+                })
+            }
+        })
+    )
 }
 
 function getFormatedDate(date) {
@@ -624,7 +697,9 @@ export const handlers = {
     createLocation,
     createHouse,
     createBooking,
-    updateBooking
+    updateBooking,
+    signIn,
+    signUp
 }
 
 export default handlers

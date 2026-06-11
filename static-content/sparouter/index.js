@@ -1,5 +1,6 @@
 import router from "./router.js";
 import handlers, {housesLimit} from "./handlers.js";
+import {a} from "./dsl-functions.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -19,9 +20,11 @@ function loadHandler(){
     router.addRouteHandler("bookings/*/update", handlers.updateBooking)
     router.addRouteHandler("bookings/*", handlers.getBookingDetails)
     router.addRouteHandler("locations/create", handlers.createLocation)
-
+    router.addRouteHandler("login", handlers.signIn)
+    router.addRouteHandler("register", handlers.signUp)
     router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 
+    updateLoginLogoutLinks()
     hashChangeHandler()
 }
 
@@ -32,3 +35,36 @@ function hashChangeHandler(){
     const handler = router.getRouteHandler(path)
     handler(mainContent)
 }
+
+export function updateLoginLogoutLinks() {
+    const div = document.getElementById("top-bar")
+
+    if (sessionStorage.getItem("token") != null) {
+        loginLink.remove()
+        registerLink.remove()
+        div.appendChild(logoutLink)
+    } else {
+        div.appendChild(loginLink)
+        div.appendChild(registerLink)
+        logoutLink.remove()
+    }
+}
+
+const logoutLink = a("Logout", {
+    click: () => {
+        sessionStorage.removeItem("token")
+        updateLoginLogoutLinks()
+    }, class: "link-secondary"
+})
+
+const loginLink = a("Login", {
+    click: () => {
+        window.location.hash = "login"
+    }, class: "link-secondary"
+})
+
+const registerLink = a("Register", {
+    click: () => {
+        window.location.hash = "register"
+    }, class: "link-secondary"
+})
