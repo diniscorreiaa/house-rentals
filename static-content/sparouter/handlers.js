@@ -602,7 +602,7 @@ function updateBooking(mainContent){
     })
 }
 
-function signIn(mainContent){
+function signIn(mainContent) {
     mainContent.replaceChildren(
         h1("Login"),
         label("Username:",
@@ -619,13 +619,18 @@ function signIn(mainContent){
                         username: document.getElementById("input-username").value,
                         password: document.getElementById("input-password").value
                     }),
-                }).then((res) => {
-                    if (!res.ok) throw new Error(`Error logging in`);
-
-                    sessionStorage.setItem("token", res.body.token)
-                    updateLoginLogoutLinks()
-                    window.location.hash = `home`
                 })
+                    .then((res) => {
+                            if (!res.ok) throw new Error(`Error logging in`)
+                            return res
+                        }
+                    )
+                    .then((res) => res.json())
+                    .then((tokenAndId) => {
+                        sessionStorage.setItem("token", tokenAndId.token)
+                        updateLoginLogoutLinks()
+                        window.location.hash = `home`
+                    })
             }
         })
     )
@@ -653,7 +658,6 @@ function signUp(mainContent){
                         password: document.getElementById("input-password").value
                     }),
                 }).then((res) => {
-                    console.log(res)
                     sessionStorage.setItem("token", res.body.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
