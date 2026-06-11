@@ -10,6 +10,7 @@ import org.http4k.routing.routes
 import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import org.slf4j.LoggerFactory
 import pt.isel.ls.houses.data.db.DataPostgresSQL
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
@@ -41,6 +42,8 @@ get /houses/available?{startDate}&{endDate} (paging)
 */
 
 const val SERVER_PORT = 8000
+
+val logger = LoggerFactory.getLogger("pt.isel.ls.server.ServerKt")
 
 fun main() {
     val data = DataPostgresSQL()
