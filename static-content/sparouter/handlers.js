@@ -657,8 +657,15 @@ function signUp(mainContent){
                         email: document.getElementById("input-email").value,
                         password: document.getElementById("input-password").value
                     }),
-                }).then((res) => {
-                    sessionStorage.setItem("token", res.body.token)
+                })
+                    .then((res) => {
+                            if (!res.ok) throw new Error(`Error logging in`)
+                            return res
+                        }
+                    )
+                    .then((res) => res.json())
+                    .then((tokenAndId) => {
+                    sessionStorage.setItem("token", tokenAndId.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
                 })
