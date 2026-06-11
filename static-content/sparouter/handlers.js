@@ -18,7 +18,10 @@ import {
 // this is only temporary
 const tempToken = "4657f27c-5218-4bec-ba9a-b195807cb2ec"
 
-export const API_BASE_URL = "http://localhost:8000/"
+// From teacher's notes
+export const API_BASE_URL = window.location.hostname === "localhost"
+    ? "http://localhost:8000/"
+    : `https://${window.location.hostname}/`
 
 export let housesLimit = 2
 let housesCurrentSkip = 0
