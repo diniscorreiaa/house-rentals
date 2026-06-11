@@ -26,8 +26,20 @@ dependencies {
 }
 
 tasks.register<Copy>("copyRuntimeDependencies") {
+    description = "Copies the runtime dependencies to the build/libs directory."
     into("build/libs")
     from(configurations.runtimeClasspath)
+}
+
+tasks.named<Jar>("jar") {
+    dependsOn("copyRuntimeDependencies")
+    manifest {
+        attributes["Main-Class"] = "pt.isel.ls.houses.server.ServerKt"
+
+        // nome do projecto
+        val jarName = archiveFileName.get()
+        attributes["Class-Path"] = "$jarName " + configurations.runtimeClasspath.get().joinToString(" ") { it.name }
+    }
 }
 
 // So that we don't have to spam our code with @OptIn(ExperimentalUuidApi::class)
