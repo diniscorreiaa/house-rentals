@@ -77,7 +77,7 @@ function getHouses(mainContent) {
     const queryPrams = new URLSearchParams(currentPath().split("?")[1])
     housesCurrentSkip = parseInt(queryPrams.get("skip"))
     fetchData(undefined, (houses) => {
-        const divChildren = [h1("All Houses")]
+        const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
         if (houses.length !== 0) {
             houses.forEach(house =>
                 divChildren.push(
@@ -104,15 +104,14 @@ function getHouses(mainContent) {
                 }
             })
 
-            mainContent.replaceChildren(...divChildren,
-                limitSelector,
-                prevButton,
-                nextButton
-            )
+            divChildren.push(limitSelector, prevButton, nextButton)
         } else {
-            divChildren.push(p("No houses to show"), a("Return to home page", {href: "#home"}))
-            mainContent.replaceChildren(...divChildren)
+            divChildren.push(p("No houses to show"))
         }
+        mainContent.replaceChildren(
+            ...divChildren,
+            a("Return to home page", {href: "#home"})
+        )
     })
 }
 
@@ -366,10 +365,8 @@ function createHouse(mainContent) {
     const descriptionInput = input({ type: "text", placeholder: "Insert description" })
 
     fetchData(`locations?type=locality`, (locs) => {
-        if (locs.length === 0) {
+        if (locs.length === 0)
             locations.replaceChildren(p(`No available locations`))
-            return
-        }
 
         const locationSelect = select(locs.map(loc => option(loc.name, {value: loc.lid})))
         locations.replaceChildren(locationSelect)
