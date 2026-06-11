@@ -602,6 +602,7 @@ function updateBooking(mainContent){
     })
 }
 
+// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signIn(mainContent) {
     mainContent.replaceChildren(
         h1("Login"),
@@ -636,6 +637,7 @@ function signIn(mainContent) {
     )
 }
 
+// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signUp(mainContent){
     mainContent.replaceChildren(
         h1("Register new user"),
