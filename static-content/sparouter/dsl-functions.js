@@ -13,15 +13,10 @@ export const currentPath = () => window.location.hash.replace("#","")
 
 export const ul = (...args) => element("ul", ...args)
 export const ol = (...args) => element("ol", ...args)
-
 export const div = (...args) => element("div", ...args)
-
 export const li = (...args) => element("li", ...args)
 export const p = (...args) => element("p", ...args)
-
 export const a = (...args) => element("a", ...args)
-
-// TODO: Make the creation of these dynamic
 export const h1 = (...args) => element("h1", ...args)
 export const h2 = (...args) => element("h2", ...args)
 export const h3 = (...args) => element("h3", ...args)
@@ -32,7 +27,6 @@ export const option = (...args) => element("option", ...args)
 export const select = (...args) => element("select", ...args)
 export const label = (...args) => element("label", ...args)
 export const input = (...args) => element("input", ...args)
-
 export const button = (...args) => element("button", ...args)
 
 // The following link explains why we can get the element to which the element was attached
