@@ -1,15 +1,3 @@
-import {API_BASE_URL} from "./handlers.js";
-import {currentPath} from "./utils";
-
-
-export function fetchData(path = currentPath(), execute) {
-    fetch(API_BASE_URL + path)
-        .then(res => res.json())
-        .then(data => execute(data))
-}
-
-/////////////////////////////////////////////////////
-
 export const ul = (...args) => element("ul", ...args)
 export const ol = (...args) => element("ol", ...args)
 export const div = (...args) => element("div", ...args)
