@@ -1,4 +1,5 @@
 import {API_BASE_URL} from "./handlers.js";
+import {currentPath} from "./utils";
 
 
 export function fetchData(path = currentPath(), execute) {
@@ -6,8 +7,6 @@ export function fetchData(path = currentPath(), execute) {
         .then(res => res.json())
         .then(data => execute(data))
 }
-
-export const currentPath = () => window.location.hash.replace("#","")
 
 /////////////////////////////////////////////////////
 

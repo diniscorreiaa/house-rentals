@@ -1,0 +1,1 @@
+export const currentPath = () => window.location.hash.replace("#", "")
