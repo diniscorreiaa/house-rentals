@@ -14,7 +14,7 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {currentPath, fetchData} from "./utils";
+import {currentPath, fetchData, getFormatedDate} from "./utils";
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"
@@ -673,10 +673,6 @@ function signUp(mainContent){
             }
         })
     )
-}
-
-function getFormatedDate(date) {
-    return date.toISOString().split("T")[0]
 }
 
 
