@@ -14,7 +14,7 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {currentPath, fetchData, getFormatedDate} from "./utils";
+import {currentPath, fetchData, getFormatedDate} from "./utils.js"
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"

@@ -1,4 +1,4 @@
-import {API_BASE_URL} from "./handlers";
+import {API_BASE_URL} from "./handlers.js";
 
 export const currentPath = () => window.location.hash.replace("#", "")
 
