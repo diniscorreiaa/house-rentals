@@ -21,13 +21,6 @@ export const API_BASE_URL = window.location.hostname === "localhost"
     ? "http://localhost:8000/"
     : `https://${window.location.hostname}/`
 
-// TODO this is a hack, find a better way after refactor for duplicate code is finished.
-export let housesLimit = { value: 2 }
-let housesCurrentSkip = { value: 0 }
-
-let bookingsLimit = { value: 2 }
-let bookingsCurrentSkip = { value: 0 }
-
 const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
@@ -73,7 +66,8 @@ function getHousesSearch(mainContent){
 }
 
 function getHouses(mainContent) {
-    housesCurrentSkip.value = parseInt(getQueryParamValue("skip"))
+    const housesLimit = parseInt(getQueryParamValue("limit"))
+    const housesCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
         if (houses.length !== 0) {
@@ -111,7 +105,7 @@ function getHouseDetails(mainContent) {
                 const currDate = new Date()
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit.value}&skip=${bookingsCurrentSkip.value}` // Estão visíveis bookings até 1 ano a partir da data atual
+                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=2&skip=0` // Estão visíveis bookings até 1 ano a partir da data atual
 
                 ///// Filter bookings ////
 
@@ -152,7 +146,7 @@ function getHouseDetails(mainContent) {
                     ]),
                     button("See filtered bookings", {
                         click: () => {
-                            window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}`
+                            window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=2&skip=0`
                         }})
                 )
             })
@@ -191,7 +185,8 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    bookingsCurrentSkip.value = parseInt(getQueryParamValue("skip"))
+    const bookingsLimit = parseInt(getQueryParamValue("limit"))
+    const bookingsCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (bookings) => {
         fetchData(`houses/${getQueryParamValue("hid")}`, (house) => {
             if (bookings.length !== 0) {
