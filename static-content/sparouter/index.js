@@ -1,12 +1,13 @@
 import router from "./router.js";
-import handlers, {housesLimit} from "./handlers.js";
+import handlers from "./handlers.js";
 import {a} from "./dsl-functions.js";
+import {currentPath} from "./utils.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
 
 function loadHandler(){
-    document.getElementById("housesLink").onclick = (ev) => { ev.preventDefault() ;window.location.hash = `houses?limit=${housesLimit}&skip=0`} // https://knowledge.evinced.com/system-validations/anchor-without-href
+    document.getElementById("housesLink").onclick = (ev) => { ev.preventDefault() ;window.location.hash = `houses?limit=2&skip=0`} // https://knowledge.evinced.com/system-validations/anchor-without-href
 
     router.addRouteHandler("home", handlers.getHome)
     router.addRouteHandler("houses", handlers.getHouses)
@@ -30,9 +31,8 @@ function loadHandler(){
 
 function hashChangeHandler(){
     const mainContent = document.getElementById("mainContent")
-    const path =  window.location.hash.replace("#", "")
 
-    const handler = router.getRouteHandler(path)
+    const handler = router.getRouteHandler(currentPath())
     handler(mainContent)
 }
 

@@ -3,30 +3,23 @@ import {
     div,
     a,
     p,
-    fetchData,
     li,
     ul,
-    currentPath,
     ol,
     button,
-    selector,
     label,
     input,
     select, option
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
+import {currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
+import {pagingPrevNextButtons} from "./components.js";
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"
     ? "http://localhost:8000/"
     : `https://${window.location.hostname}/`
-
-export let housesLimit = 2
-let housesCurrentSkip = 0
-
-let bookingsLimit = 2
-let bookingsCurrentSkip = 0
 
 const limitOptions = [2, 5, 10, 20, 50]
 
@@ -51,8 +44,7 @@ function getHome(mainContent) {
 }
 
 function getHousesSearch(mainContent){
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    const searchTerm = decodeURIComponent(queryPrams.get("term"))
+    const searchTerm = getQueryParamValue("term")
 
     fetchData("houses", (houses) => {
         const housesLinks = []
@@ -74,8 +66,8 @@ function getHousesSearch(mainContent){
 }
 
 function getHouses(mainContent) {
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    housesCurrentSkip = parseInt(queryPrams.get("skip"))
+    const housesLimit = parseInt(getQueryParamValue("limit"))
+    const housesCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
         if (houses.length !== 0) {
@@ -85,26 +77,10 @@ function getHouses(mainContent) {
                 )
             )
 
-            const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => {
-                window.location.hash = `houses?limit=${newLimit}&skip=0`;
-                housesLimit = newLimit
-            }) // É necessário dar reset ao skip para garantir alinhamento
+            const pagingDiv =
+                pagingPrevNextButtons("houses", housesLimit, housesCurrentSkip, houses.length, limitOptions)
 
-            const prevButton = button("Previous", {
-                disabled: housesCurrentSkip === 0,
-                click: () => {
-                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
-                }
-            })
-
-            const nextButton = button("Next", {
-                disabled: houses.length < housesLimit,
-                click: () => {
-                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
-                }
-            })
-
-            divChildren.push(limitSelector, prevButton, nextButton)
+            divChildren.push(pagingDiv)
         } else {
             divChildren.push(p("No houses to show"))
         }
@@ -129,7 +105,7 @@ function getHouseDetails(mainContent) {
                 const currDate = new Date()
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
+                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=2&skip=0` // Estão visíveis bookings até 1 ano a partir da data atual
 
                 ///// Filter bookings ////
 
@@ -170,7 +146,7 @@ function getHouseDetails(mainContent) {
                     ]),
                     button("See filtered bookings", {
                         click: () => {
-                            window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}`
+                            window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=2&skip=0`
                         }})
                 )
             })
@@ -209,11 +185,10 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    const queryParams = new URLSearchParams(currentPath().split("?")[1])
-    bookingsCurrentSkip = parseInt(queryParams.get("skip"))
+    const bookingsLimit = parseInt(getQueryParamValue("limit"))
+    const bookingsCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (bookings) => {
-        const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
-        fetchData(`houses/${params.get("hid")}`, (house) => {
+        fetchData(`houses/${getQueryParamValue("hid")}`, (house) => {
             if (bookings.length !== 0) {
                 const items = bookings.map((booking, idx) =>
                     li(`${booking.startDate} until ${booking.endDate}`, {id: `booking-${idx}`}, [
@@ -240,32 +215,14 @@ function getBookings(mainContent) {
                     )
                 )
 
-                const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
+                const baseUri = `bookings?hid=${getQueryParamValue("hid")}&date-interval=${getQueryParamValue("date-interval")}`
 
-                const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => {
-                    window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`;
-                    bookingsLimit = newLimit
-                }) // É necessário dar reset ao skip para garantir alinhamento
-
-                const prevButton = button("Previous", {
-                    disabled: bookingsCurrentSkip === 0,
-                    click: () => {
-                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
-                    }
-                })
-
-                const nextButton = button("Next", {
-                    disabled: bookings.length < bookingsLimit,
-                    click: () => {
-                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
-                    }
-                })
+                const paging =
+                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
 
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`), ol(items),
-                    limitSelector,
-                    prevButton,
-                    nextButton
+                    paging
                 )
             } else {
                 mainContent.replaceChildren(
@@ -409,8 +366,7 @@ function createHouse(mainContent) {
 function createBooking(mainContent) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-    const queryParams = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
-    const houseId = queryParams.get("hid")
+    const houseId = getQueryParamValue("hid")
 
     const currDate = new Date()
     const nextYearDate = new Date()
@@ -674,10 +630,6 @@ function signUp(mainContent){
             }
         })
     )
-}
-
-function getFormatedDate(date) {
-    return date.toISOString().split("T")[0]
 }
 
 
