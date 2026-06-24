@@ -24,7 +24,11 @@ export const API_BASE_URL = window.location.hostname === "localhost"
 const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
-    // todo: make sure clicking ENTER on input ALSO changes the page.
+    const executeSearch = () => {
+        const searchTerm = document.getElementById("search-term-input").value
+        const encodedSearchTerm = encodeURIComponent(searchTerm)
+        window.location.hash = `houses-search?term=${encodedSearchTerm}`
+    }
 
     mainContent.replaceChildren(
         h1("House Rentals HOME"),
@@ -32,14 +36,14 @@ function getHome(mainContent) {
             input({
                 type: "text",
                 placeholder: "Search by title...",
-                id: "search-term-input"
+                id: "search-term-input",
+                keydown: (event) => {
+                    // https://stackoverflow.com/a/20998671
+                    if (event.key === 'Enter') executeSearch()
+                }
             }),
         ]),
-        button("Search", {click: () => {
-                const searchTerm = document.getElementById("search-term-input").value
-                const encodedSearchTerm = encodeURIComponent(searchTerm)
-                window.location.hash = `houses-search?term=${encodedSearchTerm}`
-        }})
+        button("Search", {click: executeSearch})
     )
 }
 
