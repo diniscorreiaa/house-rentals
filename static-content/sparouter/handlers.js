@@ -81,13 +81,11 @@ function getHouses(mainContent) {
                 )
             )
 
-            const pagingDiv =
+            divChildren.push(
                 pagingPrevNextButtons("houses", housesLimit, housesCurrentSkip, houses.length, limitOptions)
+            )
+        } else divChildren.push(p("No houses to show"))
 
-            divChildren.push(pagingDiv)
-        } else {
-            divChildren.push(p("No houses to show"))
-        }
         mainContent.replaceChildren(
             ...divChildren,
             a("Return to home page", {href: "#home"})
@@ -112,7 +110,7 @@ function getHouseDetails(mainContent) {
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=2&skip=0` // Estão visíveis bookings até 1 ano a partir da data atual
 
                 ///// Filter bookings ////
-
+                // TODO: Extract this to component
                 // Estas variáveis garantem que tem de haver pelo menos uma noite de reserva
                 const maxStartDate = new Date(nextYearDate)
                 maxStartDate.setDate(nextYearDate.getDate() - 1)
@@ -151,7 +149,8 @@ function getHouseDetails(mainContent) {
                     button("See filtered bookings", {
                         click: () => {
                             window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=2&skip=0`
-                        }})
+                        }
+                    })
                 )
             })
         })
@@ -167,11 +166,11 @@ function getLocationDetails(mainContent) {
 
 function getFullLocation(mainContent) {
     fetchData(undefined, (locations) => {
-        const listLoc = locations.map((location) => location.name + `(${location.type})`)
-
         mainContent.replaceChildren(
             h1(`Full location of ${locations[locations.length - 1].name}`),
-            p(listLoc.join(" -> "))
+            p(locations
+                .map((location) => location.name + `(${location.type})`)
+                .join(" -> "))
         )
     })
 }
@@ -196,37 +195,32 @@ function getBookings(mainContent) {
             if (bookings.length !== 0) {
                 const items = bookings.map((booking, idx) =>
                     li(`${booking.startDate} until ${booking.endDate}`, {id: `booking-${idx}`}, [
-                            a("Details", {href: "#bookings/" + booking.bid}),
-
-                            button("Delete", {
-                                click: () => {
-                                    fetch(`bookings/${booking.bid}`, {
-                                            headers: {"Authorization": sessionStorage.getItem("token")},
-                                            method: "DELETE"
-                                        }
-                                    ).then(() =>
-                                        document.getElementById(`booking-${idx}`).remove()
-                                    )
-                                }
-                            }),
-
-                            button("Update", {
-                                click: () => {
-                                    window.location.hash = `bookings/${booking.bid}/update`
-                                }
-                            })
-                        ]
+                        a("Details", {href: "#bookings/" + booking.bid}),
+                        button("Delete", {
+                            click: () => {
+                                fetch(`bookings/${booking.bid}`, {
+                                        headers: {"Authorization": sessionStorage.getItem("token")},
+                                        method: "DELETE"
+                                    }
+                                ).then(() =>
+                                    document.getElementById(`booking-${idx}`).remove()
+                                )
+                            }
+                        }),
+                        button("Update", {
+                            click: () => {
+                                window.location.hash = `bookings/${booking.bid}/update`
+                            }
+                        })]
                     )
                 )
 
                 const baseUri = `bookings?hid=${getQueryParamValue("hid")}&date-interval=${getQueryParamValue("date-interval")}`
 
-                const paging =
-                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
-
                 mainContent.replaceChildren(
-                    h1(`Bookings for ${house.title}`), ol(items),
-                    paging
+                    h1(`Bookings for ${house.title}`),
+                    ol(items),
+                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
                 )
             } else {
                 mainContent.replaceChildren(
@@ -266,30 +260,29 @@ function createLocation(mainContent) {
 
     const parentLocations = div() // Div vazia para colocar os parentLocations dinamicamente
 
-    const typeSelect = select(locTypes.map(type => option(type, {value: type})))
+    const typeSelect = select(locTypes.map(type => option(type, {value: type})), {
+        change: (ev) => {
+            const selectedType = ev.currentTarget.value
 
-    typeSelect.addEventListener("change", (ev) => {
-        const selectedType = ev.currentTarget.value
+            let parentType = null
+            if (selectedType !== "COUNTRY") parentType = locTypes[locTypes.findIndex(type => type === selectedType) - 1]
 
-        let parentType = null
-        if (selectedType !== "COUNTRY") parentType = locTypes[locTypes.findIndex( type => type === selectedType) - 1]
-
-        if (!parentType) {
-            parentLocations.replaceChildren()
-            return
-        }
-
-        fetchData(`locations?type=${parentType}`, (locations) => {
-            if (locations.length === 0) {
-                parentLocations.replaceChildren(p(`No parent locations exist for type ${selectedType} yet. Create one first.`))
+            if (!parentType) {
+                parentLocations.replaceChildren()
                 return
             }
 
-            parentLocations.replaceChildren(label("Parent: ", [select({ id: "parent-locations-select"}, locations.map( loc => option(loc.name, { value: loc.lid })))]))
-        })
+            fetchData(`locations?type=${parentType}`, (locations) => {
+                if (locations.length === 0) {
+                    parentLocations.replaceChildren(p(`No parent locations exist for type ${selectedType} yet. Create one first.`))
+                    return
+                }
+
+                parentLocations.replaceChildren(label("Parent: ", [select({id: "parent-locations-select"}, locations.map(loc => option(loc.name, {value: loc.lid})))]))
+            })
+        }
     })
 
-    // TODO: Adicionar header Authorization na próxima fase
     const createButton = button("Create", {
         click: () => {
             const parentSelector = document.getElementById("parent-locations-select")
@@ -332,7 +325,6 @@ function createHouse(mainContent) {
         const locationSelect = select(locs.map(loc => option(loc.name, {value: loc.lid})))
         locations.replaceChildren(locationSelect)
 
-        // TODO: Adicionar header Authorization na próxima fase
         const createButton = button("Create", {
             click: () => {
                 const body = {
@@ -367,11 +359,13 @@ function createHouse(mainContent) {
     })
 }
 
+// TODO: simplify this
 function createBooking(mainContent) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     const houseId = getQueryParamValue("hid")
 
+    // TODO: Extract to function
     const currDate = new Date()
     const nextYearDate = new Date()
     nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
