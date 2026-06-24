@@ -1,6 +1,7 @@
 import router from "./router.js";
 import handlers, {housesLimit} from "./handlers.js";
 import {a} from "./dsl-functions.js";
+import {currentPath} from "./utils.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -30,9 +31,8 @@ function loadHandler(){
 
 function hashChangeHandler(){
     const mainContent = document.getElementById("mainContent")
-    const path =  window.location.hash.replace("#", "")
 
-    const handler = router.getRouteHandler(path)
+    const handler = router.getRouteHandler(currentPath())
     handler(mainContent)
 }
 
