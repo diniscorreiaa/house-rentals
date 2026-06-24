@@ -17,3 +17,8 @@ export function fetchData(path = currentPath(), execute) {
 export function getFormatedDate(date) {
     return date.toISOString().split("T")[0]
 }
+
+export function getQueryParamValue(name){
+    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
+    return decodeURIComponent(queryPrams.get(name))
+}

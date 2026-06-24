@@ -14,7 +14,7 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {currentPath, fetchData, getFormatedDate} from "./utils.js"
+import {currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"
@@ -50,8 +50,7 @@ function getHome(mainContent) {
 }
 
 function getHousesSearch(mainContent){
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    const searchTerm = decodeURIComponent(queryPrams.get("term"))
+    const searchTerm = getQueryParamValue("term")
 
     fetchData("houses", (houses) => {
         const housesLinks = []
@@ -73,8 +72,7 @@ function getHousesSearch(mainContent){
 }
 
 function getHouses(mainContent) {
-    const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    housesCurrentSkip = parseInt(queryPrams.get("skip"))
+    housesCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
         if (houses.length !== 0) {
@@ -208,11 +206,9 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    const queryParams = new URLSearchParams(currentPath().split("?")[1])
-    bookingsCurrentSkip = parseInt(queryParams.get("skip"))
+    bookingsCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (bookings) => {
-        const params = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
-        fetchData(`houses/${params.get("hid")}`, (house) => {
+        fetchData(`houses/${getQueryParamValue("hid")}`, (house) => {
             if (bookings.length !== 0) {
                 const items = bookings.map((booking, idx) =>
                     li(`${booking.startDate} until ${booking.endDate}`, {id: `booking-${idx}`}, [
@@ -408,8 +404,7 @@ function createHouse(mainContent) {
 function createBooking(mainContent) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-    const queryParams = new URLSearchParams(currentPath().split("?")[1]) // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
-    const houseId = queryParams.get("hid")
+    const houseId = getQueryParamValue("hid")
 
     const currDate = new Date()
     const nextYearDate = new Date()
