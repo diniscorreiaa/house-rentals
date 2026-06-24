@@ -40,6 +40,7 @@ export function pagingPrevNextButtons(hashEndpoint, limit, currSkip, totalLength
     })
 
     const nextButton = button("Next", {
+        // TODO, disabled condition fails in case where skip == totalLength. That is, we can click next one more time, but then there's nothing to read
         disabled: totalLength < limit,
         click: () => {
             window.location.hash = `${hashEndpoint}${separator}limit=${limit}&skip=${currSkip + limit}`
