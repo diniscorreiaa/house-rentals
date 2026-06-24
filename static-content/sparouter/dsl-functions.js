@@ -20,20 +20,6 @@ function createCustomElement(name){
     return (...args) => element(name, ...args)
 }
 
-// The following link explains why we can get the element to which the element was attached
-// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#the_value_of_this_within_the_handler
-export function selector(labelText, currentLimit, values, onChange) {
-    const optionElements = values.map(value =>
-        option(String(value), {value, selected: currentLimit === value})
-    )
-
-    return label(labelText, [
-        select([...optionElements], {
-            change: (event) => { onChange(parseInt(event.currentTarget.value, 10)) }
-        })
-    ])
-}
-
 /**
  * @param {string} elementName
  * @param {...(string|Array.<HTMLElement>|Object)} args
