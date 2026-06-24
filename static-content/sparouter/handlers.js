@@ -7,7 +7,6 @@ import {
     ul,
     ol,
     button,
-    selector,
     label,
     input,
     select, option
@@ -15,17 +14,19 @@ import {
 
 import {updateLoginLogoutLinks} from "./index.js"
 import {currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
+import {pagingPrevNextButtons} from "./components.js";
 
 // From teacher's notes
 export const API_BASE_URL = window.location.hostname === "localhost"
     ? "http://localhost:8000/"
     : `https://${window.location.hostname}/`
 
-export let housesLimit = 2
-let housesCurrentSkip = 0
+// TODO this is a hack, find a better way after refactor for duplicate code is finished.
+export let housesLimit = { value: 2 }
+let housesCurrentSkip = { value: 0 }
 
-let bookingsLimit = 2
-let bookingsCurrentSkip = 0
+let bookingsLimit = { value: 2 }
+let bookingsCurrentSkip = { value: 0 }
 
 const limitOptions = [2, 5, 10, 20, 50]
 
@@ -72,7 +73,7 @@ function getHousesSearch(mainContent){
 }
 
 function getHouses(mainContent) {
-    housesCurrentSkip = parseInt(getQueryParamValue("skip"))
+    housesCurrentSkip.value = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
         const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
         if (houses.length !== 0) {
@@ -82,26 +83,10 @@ function getHouses(mainContent) {
                 )
             )
 
-            const limitSelector = selector("Select limit:", housesLimit, limitOptions, (newLimit) => {
-                window.location.hash = `houses?limit=${newLimit}&skip=0`;
-                housesLimit = newLimit
-            }) // É necessário dar reset ao skip para garantir alinhamento
+            const pagingDiv =
+                pagingPrevNextButtons("houses", housesLimit, housesCurrentSkip, houses.length, limitOptions)
 
-            const prevButton = button("Previous", {
-                disabled: housesCurrentSkip === 0,
-                click: () => {
-                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip - housesLimit}`
-                }
-            })
-
-            const nextButton = button("Next", {
-                disabled: houses.length < housesLimit,
-                click: () => {
-                    window.location.hash = `houses?limit=${housesLimit}&skip=${housesCurrentSkip + housesLimit}`
-                }
-            })
-
-            divChildren.push(limitSelector, prevButton, nextButton)
+            divChildren.push(pagingDiv)
         } else {
             divChildren.push(p("No houses to show"))
         }
@@ -126,7 +111,7 @@ function getHouseDetails(mainContent) {
                 const currDate = new Date()
                 const nextYearDate = new Date()
                 nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)
-                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit}&skip=${bookingsCurrentSkip}` // Estão visíveis bookings até 1 ano a partir da data atual
+                const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=${bookingsLimit.value}&skip=${bookingsCurrentSkip.value}` // Estão visíveis bookings até 1 ano a partir da data atual
 
                 ///// Filter bookings ////
 
@@ -206,7 +191,7 @@ function getUserDetails(mainContent) {
 }
 
 function getBookings(mainContent) {
-    bookingsCurrentSkip = parseInt(getQueryParamValue("skip"))
+    bookingsCurrentSkip.value = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (bookings) => {
         fetchData(`houses/${getQueryParamValue("hid")}`, (house) => {
             if (bookings.length !== 0) {
@@ -235,32 +220,14 @@ function getBookings(mainContent) {
                     )
                 )
 
-                const baseUri = `bookings?hid=${queryParams.get("hid")}&date-interval=${queryParams.get("date-interval")}`
+                const baseUri = `bookings?hid=${getQueryParamValue("hid")}&date-interval=${getQueryParamValue("date-interval")}`
 
-                const limitSelector = selector("Select limit:", bookingsLimit, limitOptions, (newLimit) => {
-                    window.location.hash = `${baseUri}&limit=${newLimit}&skip=0`;
-                    bookingsLimit = newLimit
-                }) // É necessário dar reset ao skip para garantir alinhamento
-
-                const prevButton = button("Previous", {
-                    disabled: bookingsCurrentSkip === 0,
-                    click: () => {
-                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip - bookingsLimit}`
-                    }
-                })
-
-                const nextButton = button("Next", {
-                    disabled: bookings.length < bookingsLimit,
-                    click: () => {
-                        window.location.hash = `${baseUri}&limit=${bookingsLimit}&skip=${bookingsCurrentSkip + bookingsLimit}`
-                    }
-                })
+                const paging =
+                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
 
                 mainContent.replaceChildren(
                     h1(`Bookings for ${house.title}`), ol(items),
-                    limitSelector,
-                    prevButton,
-                    nextButton
+                    paging
                 )
             } else {
                 mainContent.replaceChildren(
