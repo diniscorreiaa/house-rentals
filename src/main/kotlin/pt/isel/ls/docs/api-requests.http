@@ -288,6 +288,8 @@ GET {{api}}/houses?skip=1
 ### Get available houses
 GET {{api}}/houses/available?startDate=2025-10-10&endDate=2026-05-10
 
+### Price prediction
+GET {{api}}/houses/predictPrice?areaSqMt=300&location=4&nights=5
 
 // Booking Management
 
