@@ -76,17 +76,17 @@ class HouseWebApi(private val houseServices: HouseServices) {
     }
 
     fun getPredictedPrice(request: Request): Response {
-        val areaSqMt = request.path("areaSqMt").let {
+        val areaSqMt = request.query("areaSqMt").let {
             it ?: throw RequiredPathParamNotFound("areaSqMt")
             it.toDoubleOrNull() ?: throw WrongTypeForQuery("areaSqMt", "number")
         }
 
-        val location = request.path("location").let {
+        val location = request.query("location").let {
             it ?: throw RequiredPathParamNotFound("location")
             it.toIntOrNull() ?: throw InvalidIdentifier("location")
         }
 
-        val nights = request.path("nights").let {
+        val nights = request.query("nights").let {
             it ?: throw RequiredPathParamNotFound("location")
             it.toIntOrNull() ?: throw WrongTypeForQuery("nights", "number")
         }
