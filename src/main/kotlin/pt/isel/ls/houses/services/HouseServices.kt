@@ -37,4 +37,14 @@ class HouseServices(
     fun getHouse(hid: Int) = houseData.getHouse(hid) ?: throw HouseDoesNotExist()
 
     fun getHouses(limit: Int?, skip: Int?) = houseData.getHouses(limit, skip)
+
+    fun getPredictedPrice(areaSqMt: Double, location: Int, nights: Int): Pair<Double, Double> {
+        val location = locationData.getLocation(location) ?: throw LocationDoesNotExist()
+        val allHouses = getHouses(null, null)
+
+        if (location.type == LocationType.LOCALITY) {
+            TODO()
+        }
+        else TODO()
+    }
 }

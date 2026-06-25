@@ -7,10 +7,12 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.path
 import pt.isel.ls.houses.exceptions.InvalidIdentifier
 import pt.isel.ls.houses.exceptions.RequiredPathParamNotFound
+import pt.isel.ls.houses.exceptions.WrongTypeForQuery
 import pt.isel.ls.houses.services.HouseServices
 import pt.isel.ls.houses.webapi.dtos.CreateHouseIn
 import pt.isel.ls.houses.webapi.dtos.CreateHouseOut
 import pt.isel.ls.houses.webapi.dtos.GetHouseOut
+import pt.isel.ls.houses.webapi.dtos.PredictPriceOut
 
 class HouseWebApi(private val houseServices: HouseServices) {
 
@@ -71,5 +73,31 @@ class HouseWebApi(private val houseServices: HouseServices) {
                     it.owner
                 )
             }))
+    }
+
+    fun getPredictedPrice(request: Request): Response {
+        val areaSqMt = request.path("areaSqMt").let {
+            it ?: throw RequiredPathParamNotFound("areaSqMt")
+            it.toDoubleOrNull() ?: throw WrongTypeForQuery("areaSqMt", "number")
+        }
+
+        val location = request.path("location").let {
+            it ?: throw RequiredPathParamNotFound("location")
+            it.toIntOrNull() ?: throw InvalidIdentifier("location")
+        }
+
+        val nights = request.path("nights").let {
+            it ?: throw RequiredPathParamNotFound("location")
+            it.toIntOrNull() ?: throw WrongTypeForQuery("nights", "number")
+        }
+
+        val predictedPrice = houseServices.getPredictedPrice(areaSqMt, location, nights)
+        return Response(OK)
+            .header("content-type", "application/json")
+            .body(
+                Json.encodeToString(
+                    PredictPriceOut(predictedPrice.first, predictedPrice.second)
+                )
+            )
     }
 }

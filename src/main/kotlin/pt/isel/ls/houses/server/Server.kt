@@ -70,6 +70,7 @@ fun main() {
         "houses" bind POST to webApi.house::createHouse,
         "houses/{hid}" bind GET to webApi.house::getHouse,
         "houses" bind GET to webApi.house::getHouses,
+        "houses/predictPrice" bind GET to webApi.house::getPredictedPrice
     )
 
     val bookingRoutes = routes(
