@@ -12,18 +12,18 @@ import kotlin.math.roundToLong
 // ===============================
 
 // Represents a house with area (m²) and price (euros)
-data class House(val area: Double, val price: Double)
+data class HousePrediction(val area: Double, val price: Double)
 
 // Original data with actual empty intervals
 val houses = listOf(
-    House(35.0, 120000.0),
-    House(52.0, 155000.0),
-    House(70.0, 210000.0),
-    House(95.0, 260000.0),
+    HousePrediction(35.0, 120000.0),
+    HousePrediction(52.0, 155000.0),
+    HousePrediction(70.0, 210000.0),
+    HousePrediction(95.0, 260000.0),
     // gap: no data between 95 and 140
-    House(140.0, 340000.0),
+    HousePrediction(140.0, 340000.0),
     // large gap
-    House(220.0, 480000.0)
+    HousePrediction(220.0, 480000.0)
 )
 
 // ===============================
@@ -47,15 +47,15 @@ class Scale(values: List<Double>) {
 data class NormalizedData(
     val areas: Scale,   // Scale for areas
     val prices: Scale,  // Scale for prices
-    val data: List<House> // Normalized data
+    val data: List<HousePrediction> // Normalized data
 )
 
 // Normalize data
-fun List<House>.normalize(): NormalizedData {
+fun List<HousePrediction>.normalize(): NormalizedData {
     val areas = Scale(map { it.area })
     val prices = Scale(map { it.price })
     return NormalizedData(areas, prices, data = map {
-        House(areas.normalize(it.area), prices.normalize(it.price))
+        HousePrediction(areas.normalize(it.area), prices.normalize(it.price))
     })
 }
 
@@ -97,7 +97,7 @@ fun updateParams(p: Params, delta: Params, lr: Double) = Params(
 
 // Main training function
 fun train(
-    data: List<House>, // normalized
+    data: List<HousePrediction>, // normalized
     epochs: Int = 3000,
     lr: Double = 0.05
 ): Params {
@@ -119,6 +119,20 @@ fun train(
 // ===============================
 // 6. Execution
 // ===============================
+
+fun predictPrice(housesToPredict: List<HousePrediction>, predictArea: Double): Double{
+    val (areas, prices, data) = housesToPredict.normalize()
+
+    val params = train(data)
+
+    fun getPriceForArea(area: Double): Double {
+        val areaNorm = areas.normalize(area)
+        val priceNorm = predict(areaNorm, params)
+        return prices.denormalize(priceNorm)
+    }
+
+    return getPriceForArea(predictArea)
+}
 
 fun main() {
     // Normalize data
