@@ -83,9 +83,9 @@ class LinearRegressionTest {
     fun `train should reduce error on simple linear data`() {
         // y = 2x
         val simpleData = listOf(
-            House(0.0, 0.0),
-            House(0.5, 1.0),
-            House(1.0, 2.0)
+            HousePrediction(0.0, 0.0),
+            HousePrediction(0.5, 1.0),
+            HousePrediction(1.0, 2.0)
         )
         val params = train(simpleData, epochs = 5000, lr = 0.1)
         // We expect w close to 2 and b close to 0

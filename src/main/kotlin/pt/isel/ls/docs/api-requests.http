@@ -236,7 +236,7 @@ Authorization: {{token}}
     "description": "Apartamento T2 com vista para o rio. Com 2 quartos duplos, quarto de casal, casa de banho, cozinha e sala."
 }
 
-### Create house
+### Create house in Paço de Arcos
 POST {{api}}/houses
 Content-Type: {{accept-content}}
 Authorization: {{token}}
@@ -247,6 +247,32 @@ Authorization: {{token}}
     "areaSqMt": 88,
     "pricePerNight": 300,
     "description": "T3 Moradia independente com 3 quartos, casa de banho, cozinha e zona de arrumos"
+}
+
+### Create house in Algés
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T0 Apartamento",
+    "location": 5,
+    "areaSqMt": 40,
+    "pricePerNight": 67.5,
+    "description": "Apartamento sem quarto"
+}
+
+### Create house in Barcarena
+POST {{api}}/houses
+Content-Type: {{accept-content}}
+Authorization: {{token}}
+
+{
+    "title": "T5 Apartamento de luxo",
+    "location": 6,
+    "areaSqMt": 350,
+    "pricePerNight": 450,
+    "description": "Garagem incluida na área"
 }
 
 ### Create house missing parameters in body
@@ -294,6 +320,11 @@ GET {{api}}/houses?skip=1
 ### Get available houses
 GET {{api}}/houses/available?startDate=2025-10-10&endDate=2026-05-10
 
+### Price prediction for location of type LOCALITY
+GET {{api}}/houses/predictPrice?areaSqMt=300&location=4&nights=5
+
+### Price prediction for location of type DISTRICT (recursively look for locations from there)
+GET {{api}}/houses/predictPrice?areaSqMt=300&location=2&nights=5
 
 // Booking Management
 

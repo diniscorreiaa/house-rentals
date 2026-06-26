@@ -27,3 +27,9 @@ data class GetHouseOut(
     val description: String,
     val owner: Int
 )
+
+@Serializable
+data class PredictPriceOut(
+    val predictedPricePerNight: Double,
+    val predictedTotalPrice: Double
+)
