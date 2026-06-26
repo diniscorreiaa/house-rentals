@@ -843,6 +843,67 @@ paths:
                 uri: "houses/available"
                 message: "Internal error, contact the developers to report this situation."
 
+  /houses/predictPrice:
+    get:
+      tags:
+        - Houses
+      summary: Get the predicted rental price of a house
+      description: >
+        Returns the price per nig title, location, area per square meter, price per night and description.
+      parameters:
+        - in: query
+          name: areaSqMt
+          schema:
+            type: number
+          required: true
+          description: area of the house in square meters
+        - in: query
+          name: location
+          schema:
+            type: number
+          required: true
+          description: location
+        - in: query
+          name: nights
+          schema:
+            type: number
+          required: true
+          description: number of nights
+      responses:
+        "200":
+          description: Successful price prediction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  predictedPricePerNight:
+                    type: number
+                  predictedTotalPrice:
+                    type: number
+              example:
+                {
+                  "predictedPricePerNight": 410.132501696935,
+                  "predictedTotalPrice": 2050.662508484675
+                }
+
+        "400":
+          description: Bad request because no location parameter passed...
+          content:
+            application/json:
+              example:
+                {
+                  "uri":"/houses/predictPrice",
+                 "message":"Did not find required path parameter location"
+                }
+
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              example:
+                uri: "houses/available"
+                message: "Internal error, contact the developers to report this situation."
 
   /bookings:
     post:
