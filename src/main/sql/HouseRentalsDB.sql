@@ -9,6 +9,7 @@ CREATE TABLE "user" (
     "UserName" varchar(30) NOT NULL,
     "Email" varchar(50) NOT NULL UNIQUE,
     "Token" uuid DEFAULT gen_random_uuid(),
+    "Password" varchar(128) NOT NULL,
     CONSTRAINT PK_USER PRIMARY KEY ("IdUser")
 );
 
@@ -33,7 +34,6 @@ CREATE TABLE HOUSE (
     "Price" double precision NOT NULL,
     "Description" text NOT NULL,
     "Owner" int NOT NULL,
-    "Password" varchar(128) NOT NULL,
     CONSTRAINT PK_HOUSE PRIMARY KEY ("IdHouse"),
     CONSTRAINT FK_HOUSE_LOCATION
         FOREIGN KEY ("Location")

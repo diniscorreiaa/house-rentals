@@ -14,7 +14,7 @@ class UserDataPostgresql(val dataSource: PGSimpleDataSource) : UserRepository { 
     override fun createUser(name: String, email: String, password: String): User {
         dataSource.connection.use {
             val st =
-                it.prepareStatement("INSERT INTO \"user\" (\"UserName\", \"Email\", \"Password\") VALUES (?, ?) RETURNING \"IdUser\", \"Token\"")
+                it.prepareStatement("INSERT INTO \"user\" (\"UserName\", \"Email\", \"Password\") VALUES (?, ?, ?) RETURNING \"IdUser\", \"Token\"")
 
             st.setString(1, name)
             st.setString(2, email)
