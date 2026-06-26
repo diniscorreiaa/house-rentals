@@ -12,6 +12,7 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
 import pt.isel.ls.houses.data.db.DataPostgresSQL
+import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
 
@@ -68,6 +69,7 @@ fun main() {
 
     val houseRoutes = routes(
         "houses" bind POST to webApi.house::createHouse,
+        "houses/predictPrice" bind GET to webApi.house::getPredictedPrice,
         "houses/{hid}" bind GET to webApi.house::getHouse,
         "houses" bind GET to webApi.house::getHouses,
     )

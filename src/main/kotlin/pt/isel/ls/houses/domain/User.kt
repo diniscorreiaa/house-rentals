@@ -1,8 +1,6 @@
 package pt.isel.ls.houses.domain
 
-import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
-
 
 data class User(
     val uid: Int,

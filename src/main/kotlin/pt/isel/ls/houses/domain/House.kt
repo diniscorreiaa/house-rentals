@@ -1,8 +1,5 @@
 package pt.isel.ls.houses.domain
 
-import kotlinx.serialization.Serializable
-
-
 data class House(
     val hid: Int,
     val title: String,

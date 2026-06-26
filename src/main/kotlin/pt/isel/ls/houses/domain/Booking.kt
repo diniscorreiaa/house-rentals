@@ -1,8 +1,6 @@
 package pt.isel.ls.houses.domain
 
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.Serializable
-
 
 data class Booking(
     val bid: Int,

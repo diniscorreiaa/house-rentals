@@ -21,7 +21,8 @@ export function getFormatedDate(date) {
 
 export function getQueryParamValue(name){
     const queryPrams = new URLSearchParams(currentPath().split("?")[1])
-    return decodeURIComponent(queryPrams.get(name))
+    const value = queryPrams.get(name)
+    return value ? decodeURIComponent(value) : null
 }
 
 export function checkIfErrorsFromApi(maybeError, errorPlaceholder) {

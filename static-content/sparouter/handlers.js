@@ -35,11 +35,27 @@ function getHome(mainContent) {
     const executeSearch = () => {
         const searchTerm = document.getElementById("search-term-input").value
         const encodedSearchTerm = encodeURIComponent(searchTerm)
-        window.location.hash = `houses-search?term=${encodedSearchTerm}`
+
+        const locId = locSelect.value
+        let hash = `houses-search`
+        const params = []
+        if (locId) params.push(`lid=${locId}`)
+        if (searchTerm) params.push(`term=${encodedSearchTerm}`)
+        if (params.length) hash += "?" + params.join("&")
+
+        window.location.hash = hash
     }
+
+    const locSelect = select()
+
+    fetchData("locations?type=LOCALITY", (locations) => {
+        const options = [option("All Locations", { value: "" }), ...locations.map(location => option(location.name, { value: location.lid}))]
+        locSelect.replaceChildren(...options)
+    })
 
     mainContent.replaceChildren(
         h1("House Rentals HOME"),
+        label("Location: ", [locSelect]),
         label("Search houses: ", [
             input({
                 type: "text",
@@ -57,13 +73,19 @@ function getHome(mainContent) {
 
 function getHousesSearch(mainContent) {
     const searchTerm = getQueryParamValue("term")
+    const locId = getQueryParamValue("lid")
 
-    fetchData("houses", (houses) => {
+    let url = "houses"
+    const params = []
+    if (locId) params.push(`location=${locId}`)
+    if (searchTerm) params.push(`name=${searchTerm}`)
+    if (params.length) url += "?" + params.join("&")
+
+    fetchData(url, (houses) => {
         const housesLinks = []
-        const filteredHouses = houses.filter((house) => house.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        if (filteredHouses.length !== 0) {
-            filteredHouses.forEach(house =>
+        if (houses.length) {
+            houses.forEach(house =>
                 housesLinks.push(
                     p(house.title, [a("Details", {href: "#houses/" + house.hid})])
                 )
@@ -120,7 +142,7 @@ function getHouseDetails(mainContent) {
                 const bookingsUri = `bookings?hid=${house.hid}&date-interval=${getFormatedDate(currDate)}:${getFormatedDate(nextYearDate)}` + `&limit=2&skip=0` // Estão visíveis bookings até 1 ano a partir da data atual
 
                 ///// Filter bookings ////
-                // TODO: Extract this to component
+
                 // Estas variáveis garantem que tem de haver pelo menos uma noite de reserva
                 const maxStartDate = new Date(nextYearDate)
                 maxStartDate.setDate(nextYearDate.getDate() - 1)
@@ -374,13 +396,11 @@ function createHouse(mainContent) {
     })
 }
 
-// TODO: simplify this
 function createBooking(mainContent) {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     const houseId = getQueryParamValue("hid")
 
-    // TODO: Extract to function
     const currDate = new Date()
     const nextYearDate = new Date()
     nextYearDate.setFullYear(nextYearDate.getFullYear() + 1)

@@ -1,13 +1,10 @@
 package pt.isel.ls.houses.domain
 
-import kotlinx.serialization.Serializable
-
-
 data class Location(
     val lid: Int,
     val name: String,
     val type: LocationType,
-    val parentLocation: Int?    // TODO: rename to parentId (gonna affect datamem and datapostgres)
+    val parentLocation: Int?
 ) {
     override fun equals(other: Any?): Boolean {
         if (other !is Location) return false

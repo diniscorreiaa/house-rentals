@@ -47,7 +47,7 @@ class BookingDataMem(private val houseDataMem: HouseDataMem) : BookingRepository
         skip: Int?
     ): List<House> {
          val occupiedHIds = bookings.filter { it.startDate <= endDate && it.endDate >= startDate}.map { it.houseId }
-         val houses = houseDataMem.getHouses(null, null).filter { it.hid !in occupiedHIds }
+         val houses = houseDataMem.getHouses(null, null,null, null).filter { it.hid !in occupiedHIds }
          if (limit != null) return houses.subList(skip ?: 0, (skip ?: 0) + limit)
          return houses
      }
