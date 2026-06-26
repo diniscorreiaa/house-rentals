@@ -12,6 +12,7 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
 import pt.isel.ls.houses.data.db.DataPostgresSQL
+import pt.isel.ls.houses.data.memory.DataMem
 import pt.isel.ls.houses.services.Services
 import pt.isel.ls.houses.webapi.WebApi
 

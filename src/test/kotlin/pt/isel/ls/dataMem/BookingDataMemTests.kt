@@ -13,7 +13,7 @@ class BookingDataMemTests {
     fun `create booking is successful`() {
         val houseRepo = HouseDataMem()
         val bookingRepo = BookingDataMem(houseRepo)
-        val house = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1")
+        val house = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1", 1)
 
         val firstBooking = bookingRepo.createBooking(house.hid, 42, LocalDate(2025, 1, 1), LocalDate(2025, 1, 5))
         val secondBooking = bookingRepo.createBooking(house.hid, 43, LocalDate(2025, 1, 6), LocalDate(2025, 1, 8))
@@ -38,7 +38,7 @@ class BookingDataMemTests {
     fun `getBookings with skip and limit`() {
         val houseRepo = HouseDataMem()
         val bookingRepo = BookingDataMem(houseRepo)
-        val house = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1")
+        val house = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1", 1)
 
         val booking1 = bookingRepo.createBooking(house.hid, 1, LocalDate(2025, 1, 1), LocalDate(2025, 1, 2))
         val booking2 = bookingRepo.createBooking(house.hid, 2, LocalDate(2025, 1, 3), LocalDate(2025, 1, 4))
@@ -57,9 +57,9 @@ class BookingDataMemTests {
     fun `getAvailableHouses filters out overlapping bookings`() {
         val houseRepo = HouseDataMem()
         val bookingRepo = BookingDataMem(houseRepo)
-        val house1 = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1")
-        val house2 = houseRepo.createHouse("House 2", 2, 102.0, 52.0, "Description 2")
-        val house3 = houseRepo.createHouse("House 3", 3, 103.0, 53.0, "Description 3")
+        val house1 = houseRepo.createHouse("House 1", 1, 101.0, 51.0, "Description 1", 1)
+        val house2 = houseRepo.createHouse("House 2", 2, 102.0, 52.0, "Description 2", 2)
+        val house3 = houseRepo.createHouse("House 3", 3, 103.0, 53.0, "Description 3", 3)
 
         bookingRepo.createBooking(house1.hid, 1, LocalDate(2025, 3, 10), LocalDate(2025, 3, 12))
         bookingRepo.createBooking(house2.hid, 2, LocalDate(2025, 4, 1), LocalDate(2025, 4, 3))

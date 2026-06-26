@@ -17,8 +17,8 @@ class UserDataMemTests {
     fun `createUser assigns sequential UIDS`() {
         val repo = newRepo()
 
-        val firstUser = repo.createUser(name = "Dummy", email = "dummy@email.com")
-        val secondUser = repo.createUser(name = "Dummy2", email = "dummy2@email.com")
+        val firstUser = repo.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
+        val secondUser = repo.createUser(name = "Dummy2", email = "dummy2@email.com", password = "password2")
 
         assertEquals(1, firstUser.uid)
         assertEquals(2, secondUser.uid)
@@ -27,7 +27,7 @@ class UserDataMemTests {
     @Test
     fun `getUser returns created user successfully`() {
         val repo = newRepo()
-        val created = repo.createUser(name = "Dummy", email = "dummy@email.com")
+        val created = repo.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         val fetched = repo.getUser(created.uid)
 
@@ -38,7 +38,7 @@ class UserDataMemTests {
     @Test
     fun `getUserByEmail returns created user successfully`() {
         val repo = newRepo()
-        val created = repo.createUser(name = "Dummy", email = "dummy@email.com")
+        val created = repo.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         val fetched = repo.getUserByEmail(created.email)
 
@@ -49,7 +49,7 @@ class UserDataMemTests {
     @Test
     fun `getUserByToken returns created user successfully`() {
         val repo = newRepo()
-        val created = repo.createUser(name = "Dummy", email = "dummy@email.com")
+        val created = repo.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         val fetched = repo.getUserByToken(created.token)
 
@@ -61,8 +61,8 @@ class UserDataMemTests {
     fun `createUser generates unique tokens`() {
         val repo = newRepo()
 
-        val first = repo.createUser(name = "Dummy", email = "dummy@email.com")
-        val second = repo.createUser(name = "Dummy2", email = "dummy2@email.com")
+        val first = repo.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
+        val second = repo.createUser(name = "Dummy2", email = "dummy2@email.com", password = "password2")
 
         assertNotEquals(first.token, second.token)
     }

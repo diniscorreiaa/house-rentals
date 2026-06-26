@@ -23,7 +23,7 @@ class UserServicesTests {
     fun `createUser returns user with correct name and email`() {
         val services = newServices()
 
-        val createdUser = services.createUser(name = "Dummy", email = "dummy@email.com")
+        val createdUser = services.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         assertEquals(1, createdUser.uid)
         assertEquals("Dummy", createdUser.name)
@@ -35,7 +35,7 @@ class UserServicesTests {
     fun `createUser assigns UID starting at 1`() {
         val services = newServices()
 
-        val user = services.createUser(name = "Dummy", email = "dummy@email.com")
+        val user = services.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         assertEquals(1, user.uid)
     }
@@ -44,8 +44,8 @@ class UserServicesTests {
     fun `createUser generates unique tokens for each user`() {
         val services = newServices()
 
-        val user1 = services.createUser(name = "Dummy", email = "dummy@email.com")
-        val user2 = services.createUser(name = "Dummy2", email = "dummy2@email.com")
+        val user1 = services.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
+        val user2 = services.createUser(name = "Dummy2", email = "dummy2@email.com", password = "password2")
 
         assertNotEquals(user1.token, user2.token)
     }
@@ -53,10 +53,10 @@ class UserServicesTests {
     @Test
     fun `createUser with duplicate email throws UserEmailAlreadyExists Exception`() {
         val services = newServices()
-        services.createUser(name = "Dummy", email = "dummy@email.com")
+        services.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
         assertFailsWith<UserEmailAlreadyExists> {
-            services.createUser(name = "Dummy2", email = "dummy@email.com")
+            services.createUser(name = "Dummy2", email = "dummy@email.com", password = "password2")
         }
     }
 
@@ -72,11 +72,11 @@ class UserServicesTests {
     @Test
     fun `getUser returns correct user among multiple users`() {
         val services = newServices()
-        services.createUser(name = "Dummy", email = "dummy@email.com")
+        services.createUser(name = "Dummy", email = "dummy@email.com", password = "password")
 
-        val dummy2 = services.createUser(name = "Dummy2", email = "dummy2@email.com")
+        val dummy2 = services.createUser(name = "Dummy2", email = "dummy2@email.com", password = "password2")
 
-        services.createUser(name = "Dummy3", email = "dummy3@email.com")
+        services.createUser(name = "Dummy3", email = "dummy3@email.com", password = "password3")
 
         val fetched = services.getUser(dummy2.uid)
 

@@ -39,11 +39,11 @@ class HouseServices(
 
     fun getHouse(hid: Int) = houseData.getHouse(hid) ?: throw HouseDoesNotExist()
 
-    fun getHouses(limit: Int?, skip: Int?) = houseData.getHouses(limit, skip)
+    fun getHouses(locId: Int?, name: String?, limit: Int?, skip: Int?) = houseData.getHouses(locId, name, limit, skip)
 
     fun getPredictedPrice(areaSqMt: Double, location: Int, nights: Int): Pair<Double, Double> {
         val locationValue = locationData.getLocation(location) ?: throw LocationDoesNotExist()
-        val allHouses = getHouses(null, null)
+        val allHouses = getHouses(null, null, null, null)
 
         // Recursively follow locations to get all localities (e.g. for Lisbon district, get all localities Ids)
         fun getLocalityIds(l: Location): List<Int> = if (l.type == LocationType.LOCALITY) listOf(l.lid)

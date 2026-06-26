@@ -59,7 +59,11 @@ class HouseWebApi(private val houseServices: HouseServices) {
     // TODO: verificar se é possível remover o parâmetro não usado request
     fun getHouses(request: Request): Response {
         val paging = getLimitAndSkip(request)
-        val houses = houseServices.getHouses(paging.limit, paging.skip)
+
+        val locationId = request.query("location")?.toIntOrNull()
+        val name = request.query("name")
+
+        val houses = houseServices.getHouses(locationId, name, paging.limit, paging.skip)
         return Response(OK)
             .header("content-type", "application/json")
             .body(Json.encodeToString(houses.map {
