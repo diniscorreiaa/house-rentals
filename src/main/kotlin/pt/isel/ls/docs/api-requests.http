@@ -279,6 +279,12 @@ GET {{api}}/houses/1
 ### Get houses
 GET {{api}}/houses
 
+### Get houses given house name for searching
+GET {{api}}/houses?name=pen
+
+### Get houses given location id and limit
+GET {{api}}/houses?location=4&limit=1
+
 ### Get houses with paging
 GET {{api}}/houses?limit=1&skip=1
 
