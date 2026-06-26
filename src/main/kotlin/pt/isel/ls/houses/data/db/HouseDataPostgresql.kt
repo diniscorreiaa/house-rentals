@@ -58,16 +58,32 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
         }
     }
 
-    override fun getHouses(limit: Int?, skip: Int?): List<House> {
+    override fun getHouses(locId: Int?, name: String?, limit: Int?, skip: Int?): List<House> {
         dataSource.connection.use {
             var query = "SELECT * FROM HOUSE"
+            var containsWhere = false
+
+            if(locId != null) {
+                query += " WHERE \"Location\" = ?"
+                containsWhere = true
+            }
+
+            if (!name.isNullOrBlank()) {
+                if(!containsWhere) query += " WHERE LOWER(\"Title\") LIKE LOWER(?)"
+                else query += " AND LOWER(\"Title\") LIKE LOWER(?)"
+            }
+
             if (limit != null) query += " ORDER BY \"IdHouse\" LIMIT ? OFFSET ?"
 
             val st = it.prepareStatement(query)
 
+            var paramIdx = 1
+
+            if (locId != null) st.setInt(paramIdx++, locId)
+            if (!name.isNullOrBlank()) st.setString(paramIdx++, "%$name%")
             if (limit != null) {
-                st.setInt(1, limit)
-                st.setInt(2, skip ?: 0)
+                st.setInt(paramIdx++, limit)
+                st.setInt(paramIdx, skip ?: 0)
             }
 
             val rs = st.executeQuery()
