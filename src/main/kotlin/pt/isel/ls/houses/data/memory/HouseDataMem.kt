@@ -28,7 +28,7 @@ class HouseDataMem : HouseRepository {
         if (locId != null) result = result.filter { it.location == locId }
         if (!name.isNullOrBlank()) result = result.filter { it.title.contains(name, true) }
 
-        if (limit == null || houses.isEmpty()) return houses
+        if (limit == null || result.isEmpty()) return result
 
         var lastHouseIdx = (skip ?: 0) + limit
         if (lastHouseIdx > result.size) lastHouseIdx = result.size
