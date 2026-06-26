@@ -18,14 +18,16 @@ class HouseDataMemTests {
             location = 1,
             areaSqMt = 80.0,
             pricePerNight = 50.0,
-            description = "First house"
+            description = "First house",
+            owner = 1
         )
         val second = repo.createHouse(
             title = "Second",
             location = 2,
             areaSqMt = 90.0,
             pricePerNight = 60.0,
-            description = "Second house"
+            description = "Second house",
+            owner = 1
         )
 
         assertEquals(1, first.hid)
@@ -41,7 +43,8 @@ class HouseDataMemTests {
             location = 3,
             areaSqMt = 65.5,
             pricePerNight = 120.0,
-            description = "Skyline view"
+            description = "Skyline view",
+            owner = 1
         )
 
         assertEquals("Loft", created.title)
@@ -59,7 +62,8 @@ class HouseDataMemTests {
             location = 4,
             areaSqMt = 70.0,
             pricePerNight = 75.0,
-            description = "Cozy cabin"
+            description = "Cozy cabin",
+            owner = 1
         )
 
         val fetched = repo.getHouse(created.hid)
@@ -85,21 +89,24 @@ class HouseDataMemTests {
             location = 5,
             areaSqMt = 55.0,
             pricePerNight = 45.0,
-            description = "One desc"
+            description = "One desc",
+            owner = 1
         )
         val second = repo.createHouse(
             title = "Two",
             location = 6,
             areaSqMt = 65.0,
             pricePerNight = 55.0,
-            description = "Two desc"
+            description = "Two desc",
+            owner = 1
         )
         val third = repo.createHouse(
             title = "Three",
             location = 7,
             areaSqMt = 75.0,
             pricePerNight = 65.0,
-            description = "Three desc"
+            description = "Three desc",
+            owner = 1
         )
 
         val houses = repo.getHouses(limit = null, skip = null)
@@ -117,9 +124,9 @@ class HouseDataMemTests {
     @Test
     fun `getHouses applies skip and limit safely`() {
         val repo = newRepo()
-        val first = repo.createHouse("A", 8, 80.0, 80.0, "A House")
-        val second = repo.createHouse("B", 9, 90.0, 90.0, "B House")
-        val third = repo.createHouse("C", 10, 100.0, 100.0, "C House")
+        val first = repo.createHouse("A", 8, 80.0, 80.0, "A House", 1)
+        val second = repo.createHouse("B", 9, 90.0, 90.0, "B House", 1)
+        val third = repo.createHouse("C", 10, 100.0, 100.0, "C House", 1)
 
         val paged = repo.getHouses(limit = 2, skip = 1)
         assertEquals(listOf(second, third), paged)

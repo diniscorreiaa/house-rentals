@@ -18,7 +18,7 @@ class LocationServicesTests {
     private val data = DataMem()
     private fun newServices() = LocationServices(data.user, data.location)
 
-    private val token = UserServices(data.user, data.booking).createUser("dummy", "dummy@example.com").token
+    private val token = UserServices(data.user, data.booking).createUser("dummy", "dummy@example.com", "password").token
 
     @Test
     fun `createLocation without parent persists`() {
