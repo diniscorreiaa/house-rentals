@@ -22,10 +22,13 @@ class HouseCache(private val n: Int) {
     }
 
     fun putHouse(house: House) {
-        cache.removeIf { it.hid == house.hid } // remove the house if it already exists to update its position in the cache
-        if (cache.size >= n) {
-            cache.removeAt(0) // remove the oldest one if cache is full
+        val existed = cache.removeIf { it.hid == house.hid } // remove the house if it already exists to update its position in the cache
+        if (existed){
+            cache.add(house) // make newest
+            return
         }
+
+        if (cache.size >= n) cache.removeAt(0) // remove the oldest one if cache is full
         cache.add(house)
     }
 }
