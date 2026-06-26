@@ -2,6 +2,7 @@ package pt.isel.ls.houses.services
 
 import pt.isel.ls.houses.HousePrediction
 import pt.isel.ls.houses.domain.House
+import pt.isel.ls.houses.domain.Location
 import pt.isel.ls.houses.domain.LocationType
 import pt.isel.ls.houses.exceptions.HouseDoesNotExist
 import pt.isel.ls.houses.exceptions.HouseLocationMustBeLocality
@@ -46,7 +47,24 @@ class HouseServices(
 
         val relevantHouses = if (locationValue.type == LocationType.LOCALITY)
             allHouses.filter { it.location == location }
-        else TODO("For case where it's an upper location, include all children recursively")
+        else {
+            fun res(l: Location, res: MutableList<Int>) {
+                if (l.type == LocationType.LOCALITY){
+                    res += l.lid
+                    return
+                } else {
+                    locationData
+                        .getChildLocations(l.lid, null, null)
+                        .forEach { childLocation ->
+                            res(childLocation, res)
+                        }
+                }
+            }
+            val relevantLocalitiesIds = mutableListOf<Int>()
+            res(locationValue, relevantLocalitiesIds)
+
+            allHouses.filter { it.location in relevantLocalitiesIds }
+        }
 
         val housePredictions = relevantHouses.map { HousePrediction(it.area, it.price) }
 
