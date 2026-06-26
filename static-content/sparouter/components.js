@@ -1,4 +1,6 @@
-import {button, div, label, option, select} from "./dsl-functions.js";
+import {a, button, div, label, option, select} from "./dsl-functions.js";
+import {rmToken} from "./utils.js";
+import {updateLoginLogoutLinks} from "./index.js";
 
 // The following link explains why we can get the element to which the element was attached
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#the_value_of_this_within_the_handler
@@ -49,3 +51,23 @@ export function pagingPrevNextButtons(hashEndpoint, limit, currSkip, totalLength
 
     return div([limitSelector, prevButton, nextButton])
 }
+
+export const logoutLink = a("Logout", {
+    click: () => {
+        rmToken()
+        updateLoginLogoutLinks()
+        window.location.reload()
+    }, class: "link-secondary"
+})
+
+export const loginLink = a("Login", {
+    click: () => {
+        window.location.hash = "login"
+    }, class: "link-secondary"
+})
+
+export const registerLink = a("Register", {
+    click: () => {
+        window.location.hash = "register"
+    }, class: "link-secondary"
+})

@@ -1,7 +1,7 @@
 import router from "./router.js";
 import handlers from "./handlers.js";
-import {a} from "./dsl-functions.js";
-import {currentPath, getToken, rmToken} from "./utils.js";
+import {currentPath, getToken} from "./utils.js";
+import {loginLink, logoutLink, registerLink} from "./components.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -49,22 +49,3 @@ export function updateLoginLogoutLinks() {
         logoutLink.remove()
     }
 }
-
-const logoutLink = a("Logout", {
-    click: () => {
-        rmToken()
-        updateLoginLogoutLinks()
-    }, class: "link-secondary"
-})
-
-const loginLink = a("Login", {
-    click: () => {
-        window.location.hash = "login"
-    }, class: "link-secondary"
-})
-
-const registerLink = a("Register", {
-    click: () => {
-        window.location.hash = "register"
-    }, class: "link-secondary"
-})
