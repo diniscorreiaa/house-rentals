@@ -342,9 +342,18 @@ function createHouse(mainContent) {
                     body: JSON.stringify(body)
                 })
                     .then( res => res.json())
-                    .then( (house) => {
-                    window.location.hash = `houses/${house.hid}`
-                })
+                    .then( maybeError => {
+                        if (maybeError.message !== undefined){
+                            mainContent.appendChild(p(`ERROR: ${maybeError.message}`))
+                            throw Error(`ERROR: ${maybeError.message}`)
+                        }
+
+                        return maybeError // not an error
+                    })
+                    .then(house => {
+                        window.location.hash = `houses/${house.hid}`
+                    }
+                )
             }
         })
 
@@ -354,7 +363,7 @@ function createHouse(mainContent) {
             label("Area (m2): ", [areaInput]),
             label("Price per night (euros): ", [priceInput]),
             label("Description: ", [descriptionInput]),
-            createButton
+            createButton,
         )
     })
 }
