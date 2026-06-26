@@ -157,13 +157,6 @@ function getHouseDetails(mainContent) {
     })
 }
 
-/*
-function getLocationDetails(mainContent) {
-    getSomeDetails(mainContent, "name", "type")
-    // TODO: Incluir hierarquia?
-}
-*/
-
 function getFullLocation(mainContent) {
     fetchData(undefined, (locations) => {
         mainContent.replaceChildren(
@@ -646,7 +639,6 @@ export const handlers = {
     getHouses,
     getHouseDetails,
     getHousesSearch,
-    //getLocationDetails,
     getUserDetails,
     getBookings,
     getBookingDetails,
