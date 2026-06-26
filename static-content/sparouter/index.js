@@ -1,7 +1,7 @@
 import router from "./router.js";
 import handlers from "./handlers.js";
 import {a} from "./dsl-functions.js";
-import {currentPath} from "./utils.js";
+import {currentPath, getToken, rmToken} from "./utils.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -39,7 +39,7 @@ function hashChangeHandler(){
 export function updateLoginLogoutLinks() {
     const div = document.getElementById("top-bar")
 
-    if (sessionStorage.getItem("token") != null) {
+    if (getToken() != null) {
         loginLink.remove()
         registerLink.remove()
         div.appendChild(logoutLink)
@@ -52,7 +52,7 @@ export function updateLoginLogoutLinks() {
 
 const logoutLink = a("Logout", {
     click: () => {
-        sessionStorage.removeItem("token")
+        rmToken()
         updateLoginLogoutLinks()
     }, class: "link-secondary"
 })

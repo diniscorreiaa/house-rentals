@@ -13,7 +13,15 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {checkIfErrorsFromApi, currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
+import {
+    checkIfErrorsFromApi,
+    currentPath,
+    fetchData,
+    getFormatedDate,
+    getQueryParamValue,
+    getToken,
+    setToken
+} from "./utils.js"
 import {pagingPrevNextButtons} from "./components.js";
 
 // From teacher's notes
@@ -192,7 +200,7 @@ function getBookings(mainContent) {
                         button("Delete", {
                             click: () => {
                                 fetch(`bookings/${booking.bid}`, {
-                                        headers: {"Authorization": sessionStorage.getItem("token")},
+                                        headers: {"Authorization": getToken()},
                                         method: "DELETE"
                                     }
                                 ).then(() =>
@@ -285,7 +293,7 @@ function createLocation(mainContent) {
             fetch(API_BASE_URL + "locations", {
                 method: "POST",
                 headers: {
-                    "Authorization": sessionStorage.getItem("token"),
+                    "Authorization": getToken(),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(body)
@@ -335,7 +343,7 @@ function createHouse(mainContent) {
                 fetch(API_BASE_URL + "houses", {
                     method: "POST",
                     headers: {
-                        "Authorization": sessionStorage.getItem("token"),
+                        "Authorization": getToken(),
                         "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 })
@@ -483,7 +491,7 @@ function createBooking(mainContent) {
                     fetch(API_BASE_URL + "bookings", {
                         method: "POST",
                         headers: {
-                            "Authorization": sessionStorage.getItem("token"),
+                            "Authorization": getToken(),
                             "Content-Type": "application/json" },
                         body: JSON.stringify({
                             hid: parseInt(houseId, 10),
@@ -538,10 +546,10 @@ function updateBooking(mainContent){
             click: () => {
                 booking.startDate = startDate.value
                 booking.endDate = endDate.value
-                console.log(booking)
+
                 fetch(`bookings/${bid}`, {
                     method: "PUT",
-                    headers: {"Authorization": sessionStorage.getItem("token")},
+                    headers: {"Authorization": getToken()},
                     body: JSON.stringify({
                         startDate: startDate.value,
                         endDate: endDate.value
@@ -585,7 +593,7 @@ function signIn(mainContent) {
                     )
                     .then((res) => res.json())
                     .then((tokenAndId) => {
-                        sessionStorage.setItem("token", tokenAndId.token)
+                        setToken(tokenAndId.token)
                         updateLoginLogoutLinks()
                         window.location.hash = `home`
                     })
@@ -624,7 +632,7 @@ function signUp(mainContent){
                     )
                     .then((res) => res.json())
                     .then((tokenAndId) => {
-                    sessionStorage.setItem("token", tokenAndId.token)
+                    setToken(tokenAndId.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
                 })

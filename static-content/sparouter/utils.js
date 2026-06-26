@@ -32,3 +32,7 @@ export function checkIfErrorsFromApi(maybeError, errorPlaceholder) {
 
     return maybeError // not an error
 }
+
+export const getToken = () => sessionStorage.getItem("token")
+export const setToken = (tokenStr) => sessionStorage.setItem("token", tokenStr)
+export const rmToken = () => sessionStorage.removeItem("token")
