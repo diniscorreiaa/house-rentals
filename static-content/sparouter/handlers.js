@@ -81,7 +81,9 @@ function getHouses(mainContent) {
     const housesLimit = parseInt(getQueryParamValue("limit"))
     const housesCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
-        const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
+        const divChildren = [h1("All Houses")]
+        getToken() ? divChildren.push(a("Create a house", {href: "#houses/create"})) : undefined
+
         if (houses.length !== 0) {
             houses.forEach(house =>
                 divChildren.push(
