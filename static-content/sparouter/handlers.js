@@ -25,9 +25,16 @@ const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
     // todo: make sure clicking ENTER on input ALSO changes the page.
+    const locSelect = select()
+
+    fetchData("locations?type=LOCALITY", (locations) => {
+        const options = [option("All Locations", { value: "" }), ...locations.map(location => option(location.name, { value: location.lid}))]
+        locSelect.replaceChildren(...options)
+    })
 
     mainContent.replaceChildren(
         h1("House Rentals HOME"),
+        label("Location: ", [locSelect]),
         label("Search houses: ", [
             input({
                 type: "text",
@@ -38,20 +45,33 @@ function getHome(mainContent) {
         button("Search", {click: () => {
                 const searchTerm = document.getElementById("search-term-input").value
                 const encodedSearchTerm = encodeURIComponent(searchTerm)
-                window.location.hash = `houses-search?term=${encodedSearchTerm}`
+                const locId = locSelect.value
+                let hash = `houses-search`
+                const params = []
+                if (locId) params.push(`lid=${locId}`)
+                if (searchTerm) params.push(`term=${encodedSearchTerm}`)
+                if (params.length) hash += "?" + params.join("&")
+                window.location.hash = hash
         }})
     )
 }
 
 function getHousesSearch(mainContent){
     const searchTerm = getQueryParamValue("term")
+    const locId = getQueryParamValue("lid")
 
-    fetchData("houses", (houses) => {
+    let url = "houses"
+    const params = []
+    if (locId) params.push(`location=${locId}`)
+    if (searchTerm) params.push(`name=${searchTerm}`)
+    if (params.length) url += "?" + params.join("&")
+
+    console.log(url)
+    fetchData(url, (houses) => {
         const housesLinks = []
-        const filteredHouses = houses.filter((house) => house.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        if (filteredHouses.length !== 0) {
-            filteredHouses.forEach(house =>
+        if (houses.length) {
+            houses.forEach(house =>
                 housesLinks.push(
                     p(house.title, [a("Details", {href: "#houses/" + house.hid})])
                 )
