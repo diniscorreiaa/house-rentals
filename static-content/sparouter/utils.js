@@ -26,7 +26,7 @@ export function getQueryParamValue(name){
 
 export function checkIfErrorsFromApi(maybeError, errorPlaceholder) {
     if (maybeError.message !== undefined){
-        errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`))
+        errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`, {style: "color:red"}))
         throw Error(`ERROR: ${maybeError.message}`)
     }
 
