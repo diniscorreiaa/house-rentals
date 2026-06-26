@@ -45,26 +45,12 @@ class HouseServices(
         val locationValue = locationData.getLocation(location) ?: throw LocationDoesNotExist()
         val allHouses = getHouses(null, null)
 
-        val relevantHouses = if (locationValue.type == LocationType.LOCALITY)
-            allHouses.filter { it.location == location }
-        else {
-            fun res(l: Location, res: MutableList<Int>) {
-                if (l.type == LocationType.LOCALITY){
-                    res += l.lid
-                    return
-                } else {
-                    locationData
-                        .getChildLocations(l.lid, null, null)
-                        .forEach { childLocation ->
-                            res(childLocation, res)
-                        }
-                }
-            }
-            val relevantLocalitiesIds = mutableListOf<Int>()
-            res(locationValue, relevantLocalitiesIds)
+        // Recursively follow locations to get all localities (e.g. for Lisbon district, get all localities Ids)
+        fun getLocalityIds(l: Location): List<Int> = if (l.type == LocationType.LOCALITY) listOf(l.lid)
+        else locationData.getChildLocations(l.lid, null, null).flatMap { getLocalityIds(it) }
 
-            allHouses.filter { it.location in relevantLocalitiesIds }
-        }
+        val relevantLocalityIds = getLocalityIds(locationValue)
+        val relevantHouses = allHouses.filter { it.location in relevantLocalityIds }
 
         val housePredictions = relevantHouses.map { HousePrediction(it.area, it.price) }
 
