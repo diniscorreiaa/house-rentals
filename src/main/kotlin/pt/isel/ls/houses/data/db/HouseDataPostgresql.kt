@@ -1,11 +1,16 @@
 package pt.isel.ls.houses.data.db
 
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ls.houses.HouseCache
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.HouseRepository
 
+const val HOUSE_DETAILS_CACHE_SIZE = 100
+
 class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository {
+    val houseDetailsCache = HouseCache(HOUSE_DETAILS_CACHE_SIZE)
+
     override fun createHouse(
         title: String,
         location: Int,
@@ -32,6 +37,8 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
     }
 
     override fun getHouse(hid: Int): House? {
+        houseDetailsCache.getHouse(hid).let { if (it != null) return it }
+
         dataSource.connection.use {
             val st = it.prepareStatement("SELECT * FROM HOUSE WHERE \"IdHouse\" = ?")
             st.setInt(1, hid)
@@ -47,7 +54,7 @@ class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository 
                 rs.getDouble("Price"),
                 rs.getString("Description"),
                 rs.getInt("Owner")
-            )
+            ).also { house -> houseDetailsCache.putHouse(house) }
         }
     }
 
