@@ -317,6 +317,7 @@ function createHouse(mainContent) {
     const areaInput = input({ type: "number", placeholder: "Insert area" })
     const priceInput = input({ type: "number", placeholder: "Insert price" })
     const descriptionInput = input({ type: "text", placeholder: "Insert description" })
+    const errorPlaceholder = div()
 
     fetchData(`locations?type=locality`, (locs) => {
         if (locs.length === 0)
@@ -344,7 +345,7 @@ function createHouse(mainContent) {
                     .then( res => res.json())
                     .then( maybeError => {
                         if (maybeError.message !== undefined){
-                            mainContent.appendChild(p(`ERROR: ${maybeError.message}`))
+                            errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`))
                             throw Error(`ERROR: ${maybeError.message}`)
                         }
 
@@ -364,6 +365,7 @@ function createHouse(mainContent) {
             label("Price per night (euros): ", [priceInput]),
             label("Description: ", [descriptionInput]),
             createButton,
+            errorPlaceholder
         )
     })
 }
