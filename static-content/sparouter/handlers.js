@@ -328,12 +328,16 @@ function createHouse(mainContent) {
 
         const createButton = button("Create", {
             click: () => {
+                const parsedArea = parseFloat(areaInput.value)
+                const parsedPrice = parseFloat(priceInput.value)
+
                 const body = {
                     title: titleInput.value,
                     location: parseInt(locationSelect.value),
-                    areaSqMt: parseFloat(areaInput.value),
-                    pricePerNight: parseFloat(priceInput.value),
-                    description: descriptionInput.value}
+                    areaSqMt: isNaN(parsedArea) ? undefined : parsedArea,
+                    pricePerNight: isNaN(parsedPrice) ? undefined : parsedPrice,
+                    description: descriptionInput.value
+                }
 
                 fetch(API_BASE_URL + "houses", {
                     method: "POST",
