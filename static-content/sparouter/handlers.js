@@ -55,7 +55,7 @@ function getHome(mainContent) {
     )
 }
 
-function getHousesSearch(mainContent){
+function getHousesSearch(mainContent) {
     const searchTerm = getQueryParamValue("term")
 
     fetchData("houses", (houses) => {
@@ -149,7 +149,11 @@ function getHouseDetails(mainContent) {
                     ulData,
                     p(house.description),
                     p([a("See bookings for this house", {href: `#${bookingsUri}`})]),
-                    p("Interested? ", [a("Book now!", { href: `#bookings/create?hid=${house.hid}`})]),
+                    ...(
+                        getToken()
+                            ? [p("Interested? ", [a("Book now!", {href: `#bookings/create?hid=${house.hid}`})])]
+                            : []
+                    ),
                     label("Or filter bookings by date: ", [
                         p([
                             label("Start Date: ", [startDate]),
