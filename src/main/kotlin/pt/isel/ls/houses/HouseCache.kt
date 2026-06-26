@@ -3,7 +3,7 @@ package pt.isel.ls.houses
 import pt.isel.ls.houses.domain.House
 
 
-class Cache(private val n: Int) {
+class HouseCache(private val n: Int) {
     private val cache: MutableList<House> = mutableListOf()
 
     init {

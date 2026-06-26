@@ -1,7 +1,7 @@
 package pt.isel.ls.houses.data.db
 
 import org.postgresql.ds.PGSimpleDataSource
-import pt.isel.ls.houses.Cache
+import pt.isel.ls.houses.HouseCache
 import pt.isel.ls.houses.domain.House
 import pt.isel.ls.houses.exceptions.InternalError
 import pt.isel.ls.houses.repository.HouseRepository
@@ -9,7 +9,7 @@ import pt.isel.ls.houses.repository.HouseRepository
 const val HOUSE_DETAILS_CACHE_SIZE = 100
 
 class HouseDataPostgresql(val dataSource: PGSimpleDataSource) : HouseRepository {
-    val houseDetailsCache = Cache(HOUSE_DETAILS_CACHE_SIZE)
+    val houseDetailsCache = HouseCache(HOUSE_DETAILS_CACHE_SIZE)
 
     override fun createHouse(
         title: String,
