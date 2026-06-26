@@ -58,7 +58,7 @@ class HouseServicesTests {
         assertEquals(95.0, house.price)
         assertEquals("Near the sea", house.description)
         assertEquals(house, houses.getHouse(house.hid))
-        assertEquals(listOf(house), houses.getHouses(null, null))
+        assertEquals(listOf(house), houses.getHouses(null, null, null, null))
     }
 
     @Test
@@ -132,6 +132,6 @@ class HouseServicesTests {
             token
         )
 
-        assertEquals(listOf(house1, house2), houses.getHouses(null, null))
+        assertEquals(listOf(house1, house2), houses.getHouses(null, null, null, null))
     }
 }

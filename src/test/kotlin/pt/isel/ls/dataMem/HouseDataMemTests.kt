@@ -109,7 +109,7 @@ class HouseDataMemTests {
             owner = 1
         )
 
-        val houses = repo.getHouses(limit = null, skip = null)
+        val houses = repo.getHouses(null,null,limit = null, skip = null)
 
         assertEquals(listOf(first, second, third), houses)
     }
@@ -118,7 +118,7 @@ class HouseDataMemTests {
     fun `getHouses returns empty list when none created`() {
         val repo = newRepo()
 
-        assertTrue(repo.getHouses(limit = null, skip = null).isEmpty())
+        assertTrue(repo.getHouses(null, null,limit = null, skip = null).isEmpty())
     }
 
     @Test
@@ -128,7 +128,7 @@ class HouseDataMemTests {
         val second = repo.createHouse("B", 9, 90.0, 90.0, "B House", 1)
         val third = repo.createHouse("C", 10, 100.0, 100.0, "C House", 1)
 
-        val paged = repo.getHouses(limit = 2, skip = 1)
+        val paged = repo.getHouses(null, null, limit = 2, skip = 1)
         assertEquals(listOf(second, third), paged)
 
     }
