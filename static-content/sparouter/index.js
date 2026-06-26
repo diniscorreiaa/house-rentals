@@ -1,7 +1,7 @@
 import router from "./router.js";
 import handlers from "./handlers.js";
 import {currentPath, getToken} from "./utils.js";
-import {loginLink, logoutLink, registerLink} from "./components.js";
+import {createLocationLink, loginLink, logoutLink, registerLink} from "./components.js";
 
 window.addEventListener('load', loadHandler)
 window.addEventListener('hashchange', hashChangeHandler)
@@ -42,8 +42,10 @@ export function updateLoginLogoutLinks() {
     if (getToken() != null) {
         loginLink.remove()
         registerLink.remove()
+        div.appendChild(createLocationLink)
         div.appendChild(logoutLink)
     } else {
+        createLocationLink.remove()
         div.appendChild(loginLink)
         div.appendChild(registerLink)
         logoutLink.remove()

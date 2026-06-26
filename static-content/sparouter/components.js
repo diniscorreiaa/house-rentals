@@ -71,3 +71,5 @@ export const registerLink = a("Register", {
         window.location.hash = "register"
     }, class: "link-secondary"
 })
+
+export const createLocationLink = a("Create Location", {href: "#locations/create", class: "link-secondary"})
