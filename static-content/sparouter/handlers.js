@@ -13,7 +13,7 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
+import {checkIfErrorsFromApi, currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
 import {pagingPrevNextButtons} from "./components.js";
 
 // From teacher's notes
@@ -347,14 +347,7 @@ function createHouse(mainContent) {
                     body: JSON.stringify(body)
                 })
                     .then( res => res.json())
-                    .then( maybeError => {
-                        if (maybeError.message !== undefined){
-                            errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`))
-                            throw Error(`ERROR: ${maybeError.message}`)
-                        }
-
-                        return maybeError // not an error
-                    })
+                    .then((maybeError) => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                     .then(house => {
                         window.location.hash = `houses/${house.hid}`
                     }

@@ -1,4 +1,5 @@
 import {API_BASE_URL} from "./handlers.js";
+import {p} from "./dsl-functions.js";
 
 export const currentPath = () => window.location.hash.replace("#", "")
 
@@ -21,4 +22,13 @@ export function getFormatedDate(date) {
 export function getQueryParamValue(name){
     const queryPrams = new URLSearchParams(currentPath().split("?")[1])
     return decodeURIComponent(queryPrams.get(name))
+}
+
+export function checkIfErrorsFromApi(maybeError, errorPlaceholder) {
+    if (maybeError.message !== undefined){
+        errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`))
+        throw Error(`ERROR: ${maybeError.message}`)
+    }
+
+    return maybeError // not an error
 }
