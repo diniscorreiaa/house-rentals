@@ -91,7 +91,7 @@ class HouseWebApi(private val houseServices: HouseServices) {
         }
 
         val nights = request.query("nights").let {
-            it ?: throw RequiredPathParamNotFound("location")
+            it ?: throw RequiredPathParamNotFound("nights")
             it.toIntOrNull() ?: throw WrongTypeForQuery("nights", "number")
         }
 
