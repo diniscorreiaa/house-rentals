@@ -475,7 +475,7 @@ function createBooking(mainContent) {
 
     fetchData(`houses/${houseId}`, (house) => {
         updateMonthSelector() // Temos de chamar antes de apresentar monthsDiv na página pois monthsDiv é um div vazio e queremos que seja atualizado com o seletor
-
+        const errorPlaceholder = div()
         mainContent.replaceChildren(
             h1(`You are booking for house ${house.title}`),
             p("Check for available days: ", [
@@ -499,11 +499,13 @@ function createBooking(mainContent) {
                         })
                     })
                         .then( res => res.json())
+                        .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                         .then( (booking) => {
                             window.location.hash = `bookings/${booking.bid}`
                         })
                 }
-            })
+            }),
+            errorPlaceholder
         )
     })
 }
