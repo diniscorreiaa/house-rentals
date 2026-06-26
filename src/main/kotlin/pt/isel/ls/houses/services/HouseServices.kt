@@ -36,5 +36,5 @@ class HouseServices(
 
     fun getHouse(hid: Int) = houseData.getHouse(hid) ?: throw HouseDoesNotExist()
 
-    fun getHouses(limit: Int?, skip: Int?) = houseData.getHouses(limit, skip)
+    fun getHouses(locId: Int?, name: String?, limit: Int?, skip: Int?) = houseData.getHouses(locId, name, limit, skip)
 }

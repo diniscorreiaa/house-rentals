@@ -578,6 +578,18 @@ paths:
         Returns all houses identifier, title, location, area per square meter, price per night and description.
       parameters:
         - in: query
+          name: location
+          schema:
+            type: integer
+          required: false
+          description: Location identifier used for filtering
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: false
+          description: String contained in the house title, used for searching
+        - in: query
           name: limit
           schema:
             type: integer
