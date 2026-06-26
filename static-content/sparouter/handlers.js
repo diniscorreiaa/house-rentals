@@ -13,7 +13,15 @@ import {
 } from "./dsl-functions.js";
 
 import {updateLoginLogoutLinks} from "./index.js"
-import {currentPath, fetchData, getFormatedDate, getQueryParamValue} from "./utils.js"
+import {
+    checkIfErrorsFromApi,
+    currentPath,
+    fetchData,
+    getFormatedDate,
+    getQueryParamValue,
+    getToken,
+    setToken
+} from "./utils.js"
 import {pagingPrevNextButtons} from "./components.js";
 
 // From teacher's notes
@@ -24,7 +32,20 @@ export const API_BASE_URL = window.location.hostname === "localhost"
 const limitOptions = [2, 5, 10, 20, 50]
 
 function getHome(mainContent) {
-    // todo: make sure clicking ENTER on input ALSO changes the page.
+    const executeSearch = () => {
+        const searchTerm = document.getElementById("search-term-input").value
+        const encodedSearchTerm = encodeURIComponent(searchTerm)
+
+        const locId = locSelect.value
+        let hash = `houses-search`
+        const params = []
+        if (locId) params.push(`lid=${locId}`)
+        if (searchTerm) params.push(`term=${encodedSearchTerm}`)
+        if (params.length) hash += "?" + params.join("&")
+
+        window.location.hash = hash
+    }
+
     const locSelect = select()
 
     fetchData("locations?type=LOCALITY", (locations) => {
@@ -39,24 +60,18 @@ function getHome(mainContent) {
             input({
                 type: "text",
                 placeholder: "Search by title...",
-                id: "search-term-input"
+                id: "search-term-input",
+                keydown: (event) => {
+                    // https://stackoverflow.com/a/20998671
+                    if (event.key === 'Enter') executeSearch()
+                }
             }),
         ]),
-        button("Search", {click: () => {
-                const searchTerm = document.getElementById("search-term-input").value
-                const encodedSearchTerm = encodeURIComponent(searchTerm)
-                const locId = locSelect.value
-                let hash = `houses-search`
-                const params = []
-                if (locId) params.push(`lid=${locId}`)
-                if (searchTerm) params.push(`term=${encodedSearchTerm}`)
-                if (params.length) hash += "?" + params.join("&")
-                window.location.hash = hash
-        }})
+        button("Search", {click: executeSearch})
     )
 }
 
-function getHousesSearch(mainContent){
+function getHousesSearch(mainContent) {
     const searchTerm = getQueryParamValue("term")
     const locId = getQueryParamValue("lid")
 
@@ -66,7 +81,6 @@ function getHousesSearch(mainContent){
     if (searchTerm) params.push(`name=${searchTerm}`)
     if (params.length) url += "?" + params.join("&")
 
-    console.log(url)
     fetchData(url, (houses) => {
         const housesLinks = []
 
@@ -89,7 +103,9 @@ function getHouses(mainContent) {
     const housesLimit = parseInt(getQueryParamValue("limit"))
     const housesCurrentSkip = parseInt(getQueryParamValue("skip"))
     fetchData(undefined, (houses) => {
-        const divChildren = [h1("All Houses"), a("Create a house", {href: "#houses/create"})]
+        const divChildren = [h1("All Houses")]
+        getToken() ? divChildren.push(a("Create a house", {href: "#houses/create"})) : undefined
+
         if (houses.length !== 0) {
             houses.forEach(house =>
                 divChildren.push(
@@ -97,13 +113,11 @@ function getHouses(mainContent) {
                 )
             )
 
-            const pagingDiv =
+            divChildren.push(
                 pagingPrevNextButtons("houses", housesLimit, housesCurrentSkip, houses.length, limitOptions)
+            )
+        } else divChildren.push(p("No houses to show"))
 
-            divChildren.push(pagingDiv)
-        } else {
-            divChildren.push(p("No houses to show"))
-        }
         mainContent.replaceChildren(
             ...divChildren,
             a("Return to home page", {href: "#home"})
@@ -157,7 +171,11 @@ function getHouseDetails(mainContent) {
                     ulData,
                     p(house.description),
                     p([a("See bookings for this house", {href: `#${bookingsUri}`})]),
-                    p("Interested? ", [a("Book now!", { href: `#bookings/create?hid=${house.hid}`})]),
+                    ...(
+                        getToken()
+                            ? [p("Interested? ", [a("Book now!", {href: `#bookings/create?hid=${house.hid}`})])]
+                            : []
+                    ),
                     label("Or filter bookings by date: ", [
                         p([
                             label("Start Date: ", [startDate]),
@@ -167,27 +185,21 @@ function getHouseDetails(mainContent) {
                     button("See filtered bookings", {
                         click: () => {
                             window.location.hash = `bookings?hid=${house.hid}&date-interval=${startDate.value}:${endDate.value}` + `&limit=2&skip=0`
-                        }})
+                        }
+                    })
                 )
             })
         })
     })
 }
 
-/*
-function getLocationDetails(mainContent) {
-    getSomeDetails(mainContent, "name", "type")
-    // TODO: Incluir hierarquia?
-}
-*/
-
 function getFullLocation(mainContent) {
     fetchData(undefined, (locations) => {
-        const listLoc = locations.map((location) => location.name + `(${location.type})`)
-
         mainContent.replaceChildren(
             h1(`Full location of ${locations[locations.length - 1].name}`),
-            p(listLoc.join(" -> "))
+            p(locations
+                .map((location) => location.name + `(${location.type})`)
+                .join(" -> "))
         )
     })
 }
@@ -212,37 +224,32 @@ function getBookings(mainContent) {
             if (bookings.length !== 0) {
                 const items = bookings.map((booking, idx) =>
                     li(`${booking.startDate} until ${booking.endDate}`, {id: `booking-${idx}`}, [
-                            a("Details", {href: "#bookings/" + booking.bid}),
-
-                            button("Delete", {
-                                click: () => {
-                                    fetch(`bookings/${booking.bid}`, {
-                                            headers: {"Authorization": sessionStorage.getItem("token")},
-                                            method: "DELETE"
-                                        }
-                                    ).then(() =>
-                                        document.getElementById(`booking-${idx}`).remove()
-                                    )
-                                }
-                            }),
-
-                            button("Update", {
-                                click: () => {
-                                    window.location.hash = `bookings/${booking.bid}/update`
-                                }
-                            })
-                        ]
+                        a("Details", {href: "#bookings/" + booking.bid}),
+                        button("Delete", {
+                            click: () => {
+                                fetch(`bookings/${booking.bid}`, {
+                                        headers: {"Authorization": getToken()},
+                                        method: "DELETE"
+                                    }
+                                ).then(() =>
+                                    document.getElementById(`booking-${idx}`).remove()
+                                )
+                            }
+                        }),
+                        button("Update", {
+                            click: () => {
+                                window.location.hash = `bookings/${booking.bid}/update`
+                            }
+                        })]
                     )
                 )
 
                 const baseUri = `bookings?hid=${getQueryParamValue("hid")}&date-interval=${getQueryParamValue("date-interval")}`
 
-                const paging =
-                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
-
                 mainContent.replaceChildren(
-                    h1(`Bookings for ${house.title}`), ol(items),
-                    paging
+                    h1(`Bookings for ${house.title}`),
+                    ol(items),
+                    pagingPrevNextButtons(baseUri, bookingsLimit, bookingsCurrentSkip, bookings.length, limitOptions)
                 )
             } else {
                 mainContent.replaceChildren(
@@ -282,30 +289,29 @@ function createLocation(mainContent) {
 
     const parentLocations = div() // Div vazia para colocar os parentLocations dinamicamente
 
-    const typeSelect = select(locTypes.map(type => option(type, {value: type})))
+    const typeSelect = select(locTypes.map(type => option(type, {value: type})), {
+        change: (ev) => {
+            const selectedType = ev.currentTarget.value
 
-    typeSelect.addEventListener("change", (ev) => {
-        const selectedType = ev.currentTarget.value
+            let parentType = null
+            if (selectedType !== "COUNTRY") parentType = locTypes[locTypes.findIndex(type => type === selectedType) - 1]
 
-        let parentType = null
-        if (selectedType !== "COUNTRY") parentType = locTypes[locTypes.findIndex( type => type === selectedType) - 1]
-
-        if (!parentType) {
-            parentLocations.replaceChildren()
-            return
-        }
-
-        fetchData(`locations?type=${parentType}`, (locations) => {
-            if (locations.length === 0) {
-                parentLocations.replaceChildren(p(`No parent locations exist for type ${selectedType} yet. Create one first.`))
+            if (!parentType) {
+                parentLocations.replaceChildren()
                 return
             }
 
-            parentLocations.replaceChildren(label("Parent: ", [select({ id: "parent-locations-select"}, locations.map( loc => option(loc.name, { value: loc.lid })))]))
-        })
+            fetchData(`locations?type=${parentType}`, (locations) => {
+                if (locations.length === 0) {
+                    parentLocations.replaceChildren(p(`No parent locations exist for type ${selectedType} yet. Create one first.`))
+                    return
+                }
+
+                parentLocations.replaceChildren(label("Parent: ", [select({id: "parent-locations-select"}, locations.map(loc => option(loc.name, {value: loc.lid})))]))
+            })
+        }
     })
 
-    // TODO: Adicionar header Authorization na próxima fase
     const createButton = button("Create", {
         click: () => {
             const parentSelector = document.getElementById("parent-locations-select")
@@ -315,7 +321,7 @@ function createLocation(mainContent) {
             fetch(API_BASE_URL + "locations", {
                 method: "POST",
                 headers: {
-                    "Authorization": sessionStorage.getItem("token"),
+                    "Authorization": getToken(),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(body)
@@ -340,6 +346,7 @@ function createHouse(mainContent) {
     const areaInput = input({ type: "number", placeholder: "Insert area" })
     const priceInput = input({ type: "number", placeholder: "Insert price" })
     const descriptionInput = input({ type: "text", placeholder: "Insert description" })
+    const errorPlaceholder = div()
 
     fetchData(`locations?type=locality`, (locs) => {
         if (locs.length === 0)
@@ -348,27 +355,32 @@ function createHouse(mainContent) {
         const locationSelect = select(locs.map(loc => option(loc.name, {value: loc.lid})))
         locations.replaceChildren(locationSelect)
 
-        // TODO: Adicionar header Authorization na próxima fase
         const createButton = button("Create", {
             click: () => {
+                const parsedArea = parseFloat(areaInput.value)
+                const parsedPrice = parseFloat(priceInput.value)
+
                 const body = {
                     title: titleInput.value,
                     location: parseInt(locationSelect.value),
-                    areaSqMt: parseFloat(areaInput.value),
-                    pricePerNight: parseFloat(priceInput.value),
-                    description: descriptionInput.value}
+                    areaSqMt: isNaN(parsedArea) ? undefined : parsedArea,
+                    pricePerNight: isNaN(parsedPrice) ? undefined : parsedPrice,
+                    description: descriptionInput.value
+                }
 
                 fetch(API_BASE_URL + "houses", {
                     method: "POST",
                     headers: {
-                        "Authorization": sessionStorage.getItem("token"),
+                        "Authorization": getToken(),
                         "Content-Type": "application/json" },
                     body: JSON.stringify(body)
                 })
                     .then( res => res.json())
-                    .then( (house) => {
-                    window.location.hash = `houses/${house.hid}`
-                })
+                    .then((maybeError) => checkIfErrorsFromApi(maybeError, errorPlaceholder))
+                    .then(house => {
+                        window.location.hash = `houses/${house.hid}`
+                    }
+                )
             }
         })
 
@@ -378,7 +390,8 @@ function createHouse(mainContent) {
             label("Area (m2): ", [areaInput]),
             label("Price per night (euros): ", [priceInput]),
             label("Description: ", [descriptionInput]),
-            createButton
+            createButton,
+            errorPlaceholder
         )
     })
 }
@@ -489,7 +502,7 @@ function createBooking(mainContent) {
 
     fetchData(`houses/${houseId}`, (house) => {
         updateMonthSelector() // Temos de chamar antes de apresentar monthsDiv na página pois monthsDiv é um div vazio e queremos que seja atualizado com o seletor
-
+        const errorPlaceholder = div()
         mainContent.replaceChildren(
             h1(`You are booking for house ${house.title}`),
             p("Check for available days: ", [
@@ -504,7 +517,7 @@ function createBooking(mainContent) {
                     fetch(API_BASE_URL + "bookings", {
                         method: "POST",
                         headers: {
-                            "Authorization": sessionStorage.getItem("token"),
+                            "Authorization": getToken(),
                             "Content-Type": "application/json" },
                         body: JSON.stringify({
                             hid: parseInt(houseId, 10),
@@ -513,11 +526,13 @@ function createBooking(mainContent) {
                         })
                     })
                         .then( res => res.json())
+                        .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                         .then( (booking) => {
                             window.location.hash = `bookings/${booking.bid}`
                         })
                 }
-            })
+            }),
+            errorPlaceholder
         )
     })
 }
@@ -557,10 +572,10 @@ function updateBooking(mainContent){
             click: () => {
                 booking.startDate = startDate.value
                 booking.endDate = endDate.value
-                console.log(booking)
+
                 fetch(`bookings/${bid}`, {
                     method: "PUT",
-                    headers: {"Authorization": sessionStorage.getItem("token")},
+                    headers: {"Authorization": getToken()},
                     body: JSON.stringify({
                         startDate: startDate.value,
                         endDate: endDate.value
@@ -578,8 +593,8 @@ function updateBooking(mainContent){
     })
 }
 
-// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signIn(mainContent) {
+    const errorPlaceholder = div()
     mainContent.replaceChildren(
         h1("Login"),
         label("Username:",
@@ -597,24 +612,21 @@ function signIn(mainContent) {
                         password: document.getElementById("input-password").value
                     }),
                 })
-                    .then((res) => {
-                            if (!res.ok) throw new Error(`Error logging in`)
-                            return res
-                        }
-                    )
                     .then((res) => res.json())
+                    .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                     .then((tokenAndId) => {
-                        sessionStorage.setItem("token", tokenAndId.token)
+                        setToken(tokenAndId.token)
                         updateLoginLogoutLinks()
                         window.location.hash = `home`
                     })
             }
-        })
+        }),
+        errorPlaceholder
     )
 }
 
-// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signUp(mainContent){
+    const errorPlaceholder = div()
     mainContent.replaceChildren(
         h1("Register new user"),
         label("Username:",
@@ -636,19 +648,16 @@ function signUp(mainContent){
                         password: document.getElementById("input-password").value
                     }),
                 })
-                    .then((res) => {
-                            if (!res.ok) throw new Error(`Error logging in`)
-                            return res
-                        }
-                    )
                     .then((res) => res.json())
+                    .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                     .then((tokenAndId) => {
-                    sessionStorage.setItem("token", tokenAndId.token)
+                    setToken(tokenAndId.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
                 })
             }
-        })
+        }),
+        errorPlaceholder
     )
 }
 
@@ -658,7 +667,6 @@ export const handlers = {
     getHouses,
     getHouseDetails,
     getHousesSearch,
-    //getLocationDetails,
     getUserDetails,
     getBookings,
     getBookingDetails,

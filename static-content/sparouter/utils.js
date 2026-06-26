@@ -1,4 +1,5 @@
 import {API_BASE_URL} from "./handlers.js";
+import {p} from "./dsl-functions.js";
 
 export const currentPath = () => window.location.hash.replace("#", "")
 
@@ -23,3 +24,16 @@ export function getQueryParamValue(name){
     const value = queryPrams.get(name)
     return value ? decodeURIComponent(value) : null
 }
+
+export function checkIfErrorsFromApi(maybeError, errorPlaceholder) {
+    if (maybeError.message !== undefined){
+        errorPlaceholder.replaceChildren(p(`ERROR: ${maybeError.message}`, {style: "color:red"}))
+        throw Error(`ERROR: ${maybeError.message}`)
+    }
+
+    return maybeError // not an error
+}
+
+export const getToken = () => sessionStorage.getItem("token")
+export const setToken = (tokenStr) => sessionStorage.setItem("token", tokenStr)
+export const rmToken = () => sessionStorage.removeItem("token")
