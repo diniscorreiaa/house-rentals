@@ -573,8 +573,8 @@ function updateBooking(mainContent){
     })
 }
 
-// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signIn(mainContent) {
+    const errorPlaceholder = div()
     mainContent.replaceChildren(
         h1("Login"),
         label("Username:",
@@ -592,24 +592,21 @@ function signIn(mainContent) {
                         password: document.getElementById("input-password").value
                     }),
                 })
-                    .then((res) => {
-                            if (!res.ok) throw new Error(`Error logging in`)
-                            return res
-                        }
-                    )
                     .then((res) => res.json())
+                    .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                     .then((tokenAndId) => {
                         setToken(tokenAndId.token)
                         updateLoginLogoutLinks()
                         window.location.hash = `home`
                     })
             }
-        })
+        }),
+        errorPlaceholder
     )
 }
 
-// TODO: sign in and sign up functions have a lot of duplicate logic, refactor later
 function signUp(mainContent){
+    const errorPlaceholder = div()
     mainContent.replaceChildren(
         h1("Register new user"),
         label("Username:",
@@ -631,19 +628,16 @@ function signUp(mainContent){
                         password: document.getElementById("input-password").value
                     }),
                 })
-                    .then((res) => {
-                            if (!res.ok) throw new Error(`Error logging in`)
-                            return res
-                        }
-                    )
                     .then((res) => res.json())
+                    .then(maybeError => checkIfErrorsFromApi(maybeError, errorPlaceholder))
                     .then((tokenAndId) => {
                     setToken(tokenAndId.token)
                     updateLoginLogoutLinks()
                     window.location.hash = `home`
                 })
             }
-        })
+        }),
+        errorPlaceholder
     )
 }
 
