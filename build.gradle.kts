@@ -54,3 +54,9 @@ application {
     // Define the main class for the application.
     mainClass = "pt.isel.ls.houses.server.ServerKt"
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
